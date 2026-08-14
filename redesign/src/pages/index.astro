@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import PillarShowcase from '../components/PillarShowcase.astro';
 import { team, letters, firm } from '../data/site';
+import { p } from '../utils/paths';
 
 const services = [
   {
@@ -9,14 +10,14 @@ const services = [
     title: 'Investment Management',
     body: 'Having a thorough understanding of our clients’ financial lives gives us a sound basis for creating their investment plans. The most fundamental decision in those plans is the asset allocation decision. We believe that a diversified portfolio’s asset allocation has a greater impact on future performance than any other factor. We work to identify appropriate asset allocation targets for our clients.',
     details: ['Portfolio design', 'Ongoing oversight'],
-    href: '/services/investment-management',
+    href: p('/services/investment-management'),
   },
   {
     number: '02',
     title: 'Financial Planning',
     body: 'The advisors at Summit have years of experience assisting clients with a broad range of financial matters. We have worked with clients on family partnerships, business transitions, retirement and estate planning, charitable giving, and the creation of all manner of trusts. We walk with clients through everyday questions and complex issues to provide clarity and coherence.',
     details: ['Retirement planning', 'Estate, tax and giving'],
-    href: '/services/financial-planning',
+    href: p('/services/financial-planning'),
   },
 ];
 
@@ -24,7 +25,7 @@ const audiences = [
   ['Individuals & families', 'Long-term guidance for the decisions that affect the people you care about.'],
   ['Business owners', 'Planning for transitions, family partnerships and concentrated wealth.'],
   ['Nonprofit organizations', 'Investment oversight designed to support an organization’s mission.'],
-  ['Current clients', 'Secure access to accounts and documents.', '/client-access'],
+  ['Current clients', 'Secure access to accounts and documents.', p('/client-access')],
 ];
 
 const distinctions = [
@@ -46,9 +47,9 @@ const distinctions = [
         loop
         playsinline
         preload="metadata"
-        poster="/img/summit-hero-poster.webp"
+        poster={p('/img/summit-hero-poster.webp')}
       >
-        <source src="/video/summit-hero-film.mp4" type="video/mp4" />
+        <source src={p('/video/summit-hero-film.mp4')} type="video/mp4" />
       </video>
     </div>
 
@@ -60,8 +61,8 @@ const distinctions = [
           Summit serves individuals, families, businesses and nonprofit organizations with experienced, fee-only advice.
         </p>
         <div class="hero-actions" data-reveal data-delay="0.09">
-          <a href="/contact" class="solid-button" target="_blank" rel="noopener noreferrer">Talk with an advisor</a>
-          <a href="/services" class="plain-link">View our services <span aria-hidden="true">→</span></a>
+          <a href={p('/contact')} class="solid-button" target="_blank" rel="noopener noreferrer">Talk with an advisor</a>
+          <a href={p('/services')} class="plain-link">View our services <span aria-hidden="true">→</span></a>
         </div>
       </div>
 
@@ -81,12 +82,12 @@ const distinctions = [
       if (!hero || hero.dataset.depthReady === 'true') return;
       hero.dataset.depthReady = 'true';
 
-      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
       let scheduled = false;
 
-      const update = () => {
+      const applyParallax = () => {
         scheduled = false;
-        if (reducedMotion.matches) {
+        if (prefersReducedMotion.matches) {
           hero.style.removeProperty('--hero-scroll-progress');
           hero.style.removeProperty('--hero-media-opacity');
           hero.style.removeProperty('--hero-media-scale');
@@ -96,12 +97,15 @@ const distinctions = [
           return;
         }
 
-        const rect = hero.getBoundingClientRect();
-        const header = document.querySelector<HTMLElement>('.site-header');
-        const pinnedTop = header?.offsetHeight ?? 0;
-        const cover = document.querySelector<HTMLElement>('.hero-cover');
-        const coverTop = cover?.getBoundingClientRect().top ?? window.innerHeight;
-        const progress = Math.min(1, Math.max(0, 1 - (coverTop - pinnedTop) / Math.max(1, window.innerHeight - pinnedTop)));
+        const bounds = hero.getBoundingClientRect();
+        const headerHeight = (document.querySelector('.site-header') as HTMLElement | null)?.offsetHeight ?? 0;
+        const heroCover = document.querySelector('.hero-cover') as HTMLElement | null;
+        const coverTop = heroCover ? heroCover.getBoundingClientRect().top : window.innerHeight;
+        const totalDistance = Math.max(1, window.innerHeight - headerHeight);
+        const distanceCovered = totalDistance - (coverTop - headerHeight);
+        const rawProgress = Math.max(0, distanceCovered / totalDistance);
+        const progress = Math.min(1, rawProgress);
+
         hero.style.setProperty('--hero-scroll-progress', progress.toFixed(4));
         hero.style.setProperty('--hero-media-opacity', (1 - progress * 0.38).toFixed(4));
         hero.style.setProperty('--hero-media-scale', (1 + progress * 0.035).toFixed(4));
@@ -110,16 +114,17 @@ const distinctions = [
         hero.style.setProperty('--hero-content-shift', `${(progress * -2.25).toFixed(3)}rem`);
       };
 
-      const requestUpdate = () => {
-        if (scheduled) return;
-        scheduled = true;
-        requestAnimationFrame(update);
+      const onScroll = () => {
+        if (!scheduled) {
+          scheduled = true;
+          requestAnimationFrame(applyParallax);
+        }
       };
 
-      update();
-      window.addEventListener('scroll', requestUpdate, { passive: true });
-      window.addEventListener('resize', requestUpdate, { passive: true });
-      reducedMotion.addEventListener('change', requestUpdate);
+      applyParallax();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      prefersReducedMotion.addEventListener('change', onScroll);
     };
 
     setupHeroDepth();
@@ -176,7 +181,7 @@ const distinctions = [
     <div class="institutional-shell firm-columns">
       <figure class="firm-editorial" data-reveal>
         <img
-          src="/img/_MG_9114b_1-thumb620x260.jpg"
+          src={p('/img/_MG_9114b_1-thumb620x260.jpg')}
           alt="Three Summit colleagues reviewing a document together in the office"
           width="620"
           height="260"
@@ -208,17 +213,17 @@ const distinctions = [
         </dl>
 
         <nav class="firm-pathways" aria-label="Explore Summit" data-reveal>
-          <a href="/our-firm/attributes">
+          <a href={p('/our-firm/attributes')}>
             <span>How we work</span>
             <strong>See the principles behind the practice</strong>
             <i aria-hidden="true">→</i>
           </a>
-          <a href="/our-firm/history">
+          <a href={p('/our-firm/history')}>
             <span>Our history</span>
             <strong>Memphis roots and employee ownership</strong>
             <i aria-hidden="true">→</i>
           </a>
-          <a href="/our-team">
+          <a href={p('/our-team')}>
             <span>Our people</span>
             <strong>Meet the team serving clients</strong>
             <i aria-hidden="true">→</i>
@@ -270,8 +275,8 @@ const distinctions = [
         <p class="kicker">Latest client letter</p>
         <h3>{letters[0].title.replace('Client Letter — ', '')}</h3>
         <p>Summit’s current perspective on the markets, written for clients rather than headlines.</p>
-        <a href={letters[0].href}>Read the latest letter <span aria-hidden="true">→</span></a>
-        <a href="/news">View the complete archive <span aria-hidden="true">→</span></a>
+        <a href={letters[0].href} target="_blank" rel="noopener noreferrer">Read the latest letter <span aria-hidden="true">→</span></a>
+        <a href={p('/news')}>View the complete archive <span aria-hidden="true">→</span></a>
       </aside>
     </div>
   </section>

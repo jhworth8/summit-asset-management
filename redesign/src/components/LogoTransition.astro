@@ -1,7 +1,11 @@
+---
+import { p } from '../utils/paths';
+---
+
 <div id="route-loader" class="route-loader" aria-hidden="true" transition:persist="summit-route-loader">
   <div class="route-loader__field">
     <div class="route-loader__mark">
-      <img src="/img/logo.png" alt="" width="268" height="67" />
+      <img src={p('/img/logo.png')} alt="" width="268" height="67" />
       <span class="route-loader__rule" aria-hidden="true"></span>
     </div>
   </div>

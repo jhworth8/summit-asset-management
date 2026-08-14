@@ -1,7 +1,8 @@
 ---
 import Page from '../layouts/Page.astro';
+import { p } from '../utils/paths';
 ---
 <Page title="Client Relationship Summary | Summit Asset Management" description="Summit Asset Management's Form CRS client relationship summary." section="Disclosures" heading="Client Relationship Summary" intro="Form CRS provides a concise overview of services, fees, conflicts and questions to consider when choosing an investment professional.">
-  <div class="document-link"><div><p>Current document</p><h2>Form CRS · March 2026</h2><span>Portable Document Format (PDF)</span></div><a href="/letters/20260316_Summit-Asset-Management-LLC_Form_CRS_March-2026.pdf" target="_blank" rel="noopener noreferrer">Open the relationship summary →</a></div>
+  <div class="document-link"><div><p>Current document</p><h2>Form CRS · March 2026</h2><span>Portable Document Format (PDF)</span></div><a href={p('/letters/20260316_Summit-Asset-Management-LLC_Form_CRS_March-2026.pdf')} target="_blank" rel="noopener noreferrer">Open the relationship summary →</a></div>
   <style>.document-link{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:2rem;padding:1.5rem;border-block:1px solid var(--color-ink);background:var(--color-paper-2)}p{margin:0;color:var(--color-crimson-deep);font-size:.72rem;font-weight:700;text-transform:uppercase}h2{margin:.4rem 0 0;font-size:1.6rem}span{color:var(--color-ink-3);font-size:.76rem}.document-link a{padding:.8rem 1rem;background:var(--color-crimson);color:white;font-size:.82rem;font-weight:700}</style>
 </Page>

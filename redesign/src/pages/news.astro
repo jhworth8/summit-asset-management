@@ -1,9 +1,11 @@
 ---
 import Page from '../layouts/Page.astro';
+import { p } from '../utils/paths';
+
 const archive = [
-  { year:'2026', items:[['July','“GOOOOAAAALLLL! maybe.”','/letters/2026_0715_Client_Letter.pdf'],['April','“It Takes Two to TACO”','/letters/2026_0415_Client-Letter.pdf'],['January','“Persistent Uncertainty”','/letters/2026_0115_Client_Letter.pdf']] },
-  { year:'2025', items:[['October','“AI vs. Everybody”','/letters/2025-1015_Client-Letter.pdf'],['July','“Big Beautiful Quarter”','/letters/2025_0715_Client_Letter.pdf'],['April','“What Game Are We Playing?”','/letters/2025_0415_Client_Letter.pdf'],['January','“You will go safest in the middle course”','/letters/2025_0115_Client_Letter.pdf']] },
-  { year:'2024', items:[['October','“What Comes Next…”','/letters/2024_1015_Client_Letter.pdf'],['July','“Swim at Your Own Risk”','/letters/2024_0715_Client_Letter.pdf'],['April','“Spring Is in the Air”','/letters/2024_0415_Client_Letter.pdf'],['January','“The Big Pivot”','/letters/2024_0115_Client-Letter.pdf']] },
+  { year:'2026', items:[['July','“GOOOOAAAALLLL! maybe.”', p('/letters/2026_0715_Client_Letter.pdf')],['April','“It Takes Two to TACO”', p('/letters/2026_0415_Client-Letter.pdf')],['January','“Persistent Uncertainty”', p('/letters/2026_0115_Client_Letter.pdf')]] },
+  { year:'2025', items:[['October','“AI vs. Everybody”', p('/letters/2025-1015_Client-Letter.pdf')],['July','“Big Beautiful Quarter”', p('/letters/2025_0715_Client_Letter.pdf')],['April','“What Game Are We Playing?”', p('/letters/2025_0415_Client_Letter.pdf')],['January','“You will go safest in the middle course”', p('/letters/2025_0115_Client_Letter.pdf')]] },
+  { year:'2024', items:[['October','“What Comes Next…”', p('/letters/2024_1015_Client_Letter.pdf')],['July','“Swim at Your Own Risk”', p('/letters/2024_0715_Client_Letter.pdf')],['April','“Spring Is in the Air”', p('/letters/2024_0415_Client_Letter.pdf')],['January','“The Big Pivot”', p('/letters/2024_0115_Client-Letter.pdf')]] },
 ];
 ---
 <Page title="Views & News | Summit Asset Management" description="Quarterly client letters and market commentary from Summit Asset Management." section="Views & News" heading="Perspective for clients, not headlines." intro="Each quarter Summit shares views on investments, the economy and personal financial issues that may matter to clients." image="/img/SAM_MG_9054_enhanced.webp" imageAlt="Reading materials at Summit's office">

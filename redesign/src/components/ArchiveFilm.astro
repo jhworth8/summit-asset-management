@@ -1,3 +1,7 @@
+---
+import { p } from '../utils/paths';
+---
+
 <figure class="archive-film" data-reveal>
   <div class="archive-film__frame">
     <video
@@ -6,10 +10,10 @@
       loop
       playsinline
       preload="metadata"
-      poster="/img/SAM_MG_8110_FPO-thumb620x260.jpg"
+      poster={p('/img/SAM_MG_8110_FPO-thumb620x260.jpg')}
       aria-label="A quiet AI-extended film grounded in Summit's original photographic archive"
     >
-      <source src="/video/summit-photo-archive-loop.mp4" type="video/mp4" />
+      <source src={p('/video/summit-photo-archive-loop.mp4')} type="video/mp4" />
     </video>
 
     <div class="archive-film__label" aria-hidden="true">

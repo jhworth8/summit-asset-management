@@ -1,5 +1,6 @@
 ---
 import { firm, legalNav } from '../data/site';
+import { p } from '../utils/paths';
 const year = new Date().getFullYear();
 ---
 
@@ -7,7 +8,7 @@ const year = new Date().getFullYear();
   <div class="footer-shell">
     <div class="footer-main">
       <div class="footer-brand">
-        <img src="/img/logo-footer.svg" alt={firm.name} width="197" height="49" />
+        <img src={p('/img/logo-footer.svg')} alt={firm.name} width="197" height="49" />
         <p>Independent investment management and financial planning in Memphis, Tennessee.</p>
       </div>
 

@@ -1,18 +1,19 @@
 ---
 import { nav, firm } from '../data/site';
+import { p } from '../utils/paths';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
-const items = [{ label: 'Home', href: '/' }, ...nav.filter((item) => item.href !== '/contact')];
-const contactHref = '/contact';
-const isActive = (href: string) => href.startsWith('/') && (path === href || path.startsWith(href + '/'));
+const items = [{ label: 'Home', href: p('/') }, ...nav.filter((item) => item.label !== 'Contact')];
+const contactHref = p('/contact');
+const isActive = (href: string) => path === href || path.startsWith(href + '/');
 ---
 
 <a href="#main" class="skip-link">Skip to main content</a>
 
 <header class="site-header">
   <div class="header-shell">
-    <a href={path === '/' ? '#top' : '/'} aria-label={`${firm.name} — ${path === '/' ? 'back to top' : 'home'}`} class="brand-link">
-      <img src="/img/logo.svg" alt={firm.name} width="268" height="67" />
+    <a href={path === p('/') ? '#top' : p('/')} aria-label={`${firm.name} — ${path === p('/') ? 'back to top' : 'home'}`} class="brand-link">
+      <img src={p('/img/logo.svg')} alt={firm.name} width="268" height="67" />
     </a>
 
     <nav class="desktop-nav" aria-label="Main navigation">
@@ -24,7 +25,7 @@ const isActive = (href: string) => href.startsWith('/') && (path === href || pat
     </nav>
 
     <div class="desktop-actions">
-      <a href="/client-access" class="client-access" target="_blank" rel="noopener noreferrer">Client access</a>
+      <a href={p('/client-access')} class="client-access" target="_blank" rel="noopener noreferrer">Client access</a>
       <a href={contactHref} class="contact-button" target="_blank" rel="noopener noreferrer">Contact us</a>
     </div>
 
@@ -37,7 +38,7 @@ const isActive = (href: string) => href.startsWith('/') && (path === href || pat
   <div id="mobile-navigation" class="mobile-navigation" hidden>
     <nav aria-label="Mobile navigation">
       {items.map((item) => <a href={item.href}>{item.label}<span aria-hidden="true">→</span></a>)}
-      <a href="/client-access" target="_blank" rel="noopener noreferrer">Client access<span aria-hidden="true">→</span></a>
+      <a href={p('/client-access')} target="_blank" rel="noopener noreferrer">Client access<span aria-hidden="true">→</span></a>
       <a href={contactHref} class="mobile-contact" target="_blank" rel="noopener noreferrer">Contact us<span aria-hidden="true">→</span></a>
     </nav>
   </div>

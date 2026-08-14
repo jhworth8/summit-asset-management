@@ -6,6 +6,8 @@ import Footer from '../components/Footer.astro';
 import BackToTop from '../components/BackToTop.astro';
 import LogoTransition from '../components/LogoTransition.astro';
 
+import { p } from '../utils/paths';
+
 interface Props {
   title: string;
   description: string;
@@ -26,14 +28,14 @@ const { title, description } = Astro.props;
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta name="theme-color" content="#ffffff" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="preload" href="/fonts/eb-garamond-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/karla-latin-400.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/karla-latin-700.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" type="image/svg+xml" href={p('/favicon.svg')} />
+    <link rel="icon" type="image/png" sizes="32x32" href={p('/favicon-32x32.png')} />
+    <link rel="icon" type="image/png" sizes="16x16" href={p('/favicon-16x16.png')} />
+    <link rel="apple-touch-icon" sizes="180x180" href={p('/apple-touch-icon.png')} />
+    <link rel="shortcut icon" href={p('/favicon.ico')} />
+    <link rel="preload" href={p('/fonts/eb-garamond-latin-variable.woff2')} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={p('/fonts/karla-latin-400.woff2')} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={p('/fonts/karla-latin-700.woff2')} as="font" type="font/woff2" crossorigin />
     <ClientRouter fallback="swap" />
     <script is:inline>
       // Browsers restore scroll position on reload. On a page whose argument

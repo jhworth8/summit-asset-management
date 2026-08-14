@@ -1,5 +1,6 @@
 ---
 import Base from './Base.astro';
+import { p } from '../utils/paths';
 
 interface NavItem {
   label: string;
@@ -27,13 +28,13 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     <div class="page-shell page-hero-grid">
       <div>
         <nav class="breadcrumbs" aria-label="Breadcrumb">
-          <a href="/">Home</a><span aria-hidden="true">/</span><span>{section}</span>
+          <a href={p('/')}>Home</a><span aria-hidden="true">/</span><span>{section}</span>
         </nav>
         <p class="page-kicker">{section}</p>
         <h1>{heading}</h1>
         {intro && <p class="page-intro">{intro}</p>}
       </div>
-      {image && <img src={image} alt={imageAlt} width="938" height="406" />}
+      {image && <img src={p(image)} alt={imageAlt} width="938" height="406" />}
     </div>
   </section>
 
@@ -41,7 +42,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     <nav class="section-nav" aria-label={`${section} pages`}>
       <div class="page-shell">
         {subnav.map((item) => (
-          <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>{item.label}</a>
+          <a href={p(item.href)} aria-current={path === item.href || path === p(item.href) ? 'page' : undefined}>{item.label}</a>
         ))}
       </div>
     </nav>

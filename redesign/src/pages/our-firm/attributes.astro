@@ -1,6 +1,7 @@
 ---
 import Page from '../../layouts/Page.astro';
 import { attributes } from '../../data/site';
+import { p } from '../../utils/paths';
 const subnav = [
   { label: 'Overview', href: '/our-firm' },
   { label: 'Firm attributes', href: '/our-firm/attributes' },
@@ -17,7 +18,7 @@ const subnav = [
   <aside class="disclosure-callout">
     <h2>More detail, without a treasure hunt.</h2>
     <p>Summit’s Form ADV Part 2A explains the firm’s services, fee structure, client types and business practices in detail.</p>
-    <a href="/letters/20260316_Summit-Asset-Management-LLC_Brochure_March-2026.pdf" target="_blank" rel="noopener noreferrer">Read the firm brochure (PDF) →</a>
+    <a href={p('/letters/20260316_Summit-Asset-Management-LLC_Brochure_March-2026.pdf')} target="_blank" rel="noopener noreferrer">Read the firm brochure (PDF) →</a>
   </aside>
   <style>
     .attribute-list{margin:0;padding:0;border-top:1px solid var(--color-ink);list-style:none}.attribute-list li{display:grid;grid-template-columns:2.5rem 1fr;gap:1rem;padding:1.25rem 0;border-bottom:1px solid var(--color-rule)}.attribute-list>li>span{padding-top:.35rem;color:var(--color-crimson-deep);font-size:.74rem;font-weight:700}.attribute-list h2{margin:0;color:var(--color-board);font-size:1.55rem}.attribute-list p{max-width:50rem;margin:.35rem 0 0;color:var(--color-ink-2);line-height:1.55}.disclosure-callout{margin-top:2.5rem;padding:1.5rem;border-left:5px solid var(--color-crimson);background:var(--color-paper-2)}.disclosure-callout h2{margin:0;font-size:1.45rem}.disclosure-callout p{max-width:45rem;color:var(--color-ink-2);line-height:1.55}.disclosure-callout a{color:var(--color-crimson-deep);font-weight:700;text-decoration:underline;text-underline-offset:.2em}@media(min-width:60rem){.attribute-list{display:grid;grid-template-columns:repeat(2,1fr)}.attribute-list li{padding:1.5rem}.attribute-list li:nth-child(odd){padding-left:0;border-right:1px solid var(--color-rule)}.attribute-list li:nth-child(even){padding-right:0}}

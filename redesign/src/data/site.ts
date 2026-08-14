@@ -1,6 +1,7 @@
 // Single source of truth for content that repeats across pages.
 // All copy here is taken verbatim from the existing summitassetmanagement.com
 // -- nothing about a registered investment advisor should be invented.
+import { p } from '../utils/paths';
 
 export const firm = {
   name: 'Summit Asset Management',
@@ -14,18 +15,18 @@ export const firm = {
 };
 
 export const nav = [
-  { label: 'Our Firm', href: '/our-firm' },
-  { label: 'Our Team', href: '/our-team' },
-  { label: 'Services', href: '/services' },
-  { label: 'Views & News', href: '/news' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Our Firm', href: p('/our-firm') },
+  { label: 'Our Team', href: p('/our-team') },
+  { label: 'Services', href: p('/services') },
+  { label: 'Views & News', href: p('/news') },
+  { label: 'Contact', href: p('/contact') },
 ];
 
 export const legalNav = [
-  { label: 'Client Relationship Summary', href: '/client-relationship-summary' },
-  { label: 'Privacy Notice', href: '/privacy-notice' },
-  { label: 'Disclosures', href: '/disclosure' },
-  { label: 'Terms of Service', href: '/terms-of-service' },
+  { label: 'Client Relationship Summary', href: p('/client-relationship-summary') },
+  { label: 'Privacy Notice', href: p('/privacy-notice') },
+  { label: 'Disclosures', href: p('/disclosure') },
+  { label: 'Terms of Service', href: p('/terms-of-service') },
 ];
 
 export const attributes = [
@@ -53,63 +54,63 @@ export const team = [
     name: 'Alex Thompson',
     credentials: 'CLU, ChFC',
     role: 'Chairman, Advisor',
-    photo: '/img/alex_revised_hair-thumb180x220.jpg',
+    photo: p('/img/alex_revised_hair-thumb180x220.jpg'),
     email: 'alex@summitassetmanagement.com',
-    href: '/our-team/chairmen/alex-thompson-clu-chfc',
+    href: p('/our-team/chairmen/alex-thompson-clu-chfc'),
   },
   {
     name: 'John N. Laughlin',
     credentials: 'CFP®',
     role: 'Principal, Advisor',
-    photo: '/img/John_180x220-thumb180x220.jpg',
+    photo: p('/img/John_180x220-thumb180x220.jpg'),
     email: 'john@summitassetmanagement.com',
-    href: '/our-team/principals/john-n-laughlin',
+    href: p('/our-team/principals/john-n-laughlin'),
   },
   {
     name: 'Lance Hollingsworth',
     credentials: 'CFP®',
     role: 'Principal, Advisor',
-    photo: '/img/Lance_180x220-thumb180x220.jpg',
+    photo: p('/img/Lance_180x220-thumb180x220.jpg'),
     email: 'lance@summitassetmanagement.com',
-    href: '/our-team/principals/lance-hollingsworth-cfp',
+    href: p('/our-team/principals/lance-hollingsworth-cfp'),
   },
   {
     name: 'Peggy K. Adler',
     credentials: 'MBA',
     role: 'Principal',
-    photo: '/img/peggy-thumb180x220.jpg',
+    photo: p('/img/peggy-thumb180x220.jpg'),
     email: 'peggy@summitassetmanagement.com',
-    href: '/our-team/principals/peggy-k-adler',
+    href: p('/our-team/principals/peggy-k-adler'),
   },
   {
     name: 'Sarah Haizlip',
     credentials: '',
     role: 'Advisor',
-    photo: '/img/Sarah-thumb180x220.jpg',
+    photo: p('/img/Sarah-thumb180x220.jpg'),
     email: 'sarah@summitassetmanagement.com',
-    href: '/our-team/advisors/sarah-haizlip-ma',
+    href: p('/our-team/advisors/sarah-haizlip-ma'),
   },
   {
     name: 'Leslie Drummond',
     credentials: 'CFP®',
     role: 'Advisor',
-    photo: '/img/Leslie_180x220-thumb180x220.jpg',
+    photo: p('/img/Leslie_180x220-thumb180x220.jpg'),
     email: 'leslie@summitassetmanagement.com',
-    href: '/our-team/advisors/leslie-drummond-cfp',
+    href: p('/our-team/advisors/leslie-drummond-cfp'),
   },
   {
     name: 'Soleil Lum',
     credentials: 'CFP®',
     role: 'Associate',
-    photo: '/img/Soleil_8_X_10_updated-thumb180x220.jpg',
+    photo: p('/img/Soleil_8_X_10_updated-thumb180x220.jpg'),
     email: 'soleil@summitassetmanagement.com',
-    href: '/our-team/associates/soleil-lum-cfp',
+    href: p('/our-team/associates/soleil-lum-cfp'),
   },
 ];
 
 export const letters = [
-  { title: 'Client Letter — July 2026', href: '/letters/2026_0715_Client_Letter.pdf' },
-  { title: 'Client Letter — April 2026', href: '/letters/2026_0415_Client-Letter.pdf' },
-  { title: 'Client Letter — January 2026', href: '/letters/2026_0115_Client_Letter.pdf' },
-  { title: 'Client Letter — October 2025', href: '/letters/2025-1015_Client-Letter.pdf' },
+  { title: 'Client Letter — July 2026', href: p('/letters/2026_0715_Client_Letter.pdf') },
+  { title: 'Client Letter — April 2026', href: p('/letters/2026_0415_Client-Letter.pdf') },
+  { title: 'Client Letter — January 2026', href: p('/letters/2026_0115_Client_Letter.pdf') },
+  { title: 'Client Letter — October 2025', href: p('/letters/2025-1015_Client-Letter.pdf') },
 ];

@@ -1,17 +1,20 @@
 ---
 import { serviceOverview } from '../data/services';
+import { p } from '../utils/paths';
 
 const services = [
   {
     ...serviceOverview.investment,
+    href: p(serviceOverview.investment.href),
     number: '01',
-    image: '/img/SAM_MG_8429_enhanced.webp',
+    image: p('/img/SAM_MG_8429_enhanced.webp'),
     imageAlt: 'A Summit advisor reviewing portfolio information with a client',
   },
   {
     ...serviceOverview.planning,
+    href: p(serviceOverview.planning.href),
     number: '02',
-    image: '/img/SAM_MG_8222_enhanced.webp',
+    image: p('/img/SAM_MG_8222_enhanced.webp'),
     imageAlt: 'A planning conversation at Summit',
   },
 ];

@@ -2,6 +2,8 @@
 import Page from '../../layouts/Page.astro';
 import { teamProfiles } from '../../data/profiles';
 
+import { p } from '../../utils/paths';
+
 export function getStaticPaths() {
   return teamProfiles.map((profile) => ({ params: { slug: profile.slug }, props: { profile } }));
 }
@@ -40,8 +42,8 @@ const [introduction, ...background] = profile.paragraphs;
       </div>
 
       <nav class="profile-return" aria-label="Team navigation">
-        <a href="/our-team">← Return to all team members</a>
-        <a href="/contact">Talk with the firm →</a>
+        <a href={p('/our-team')}>← Return to all team members</a>
+        <a href={p('/contact')}>Talk with the firm →</a>
       </nav>
     </div>
   </article>
