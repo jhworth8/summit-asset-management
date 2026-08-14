@@ -52,28 +52,31 @@ const featurePhoto = profile.editorialPhoto || profile.photo;
       </div>
 
       <nav class="team-subnav" aria-label="Team directory">
-        <p class="subnav-heading">The Firm Team</p>
+        <a href={p('/our-team')} class="subnav-heading-link">
+          <span class="subnav-heading">The Firm Team</span>
+          <span class="view-all-hint">All members →</span>
+        </a>
         <ul>
           <li>
             <a href={p('/our-team')}>All Members</a>
           </li>
           <li>
-            <a href={p('/our-team/chairmen/alex-thompson-clu-chfc')} aria-current={profile.group === 'chairman' ? 'page' : undefined}>
+            <a href={p('/our-team?filter=chairman')} aria-current={profile.group === 'chairman' ? 'page' : undefined}>
               Chairman
             </a>
           </li>
           <li>
-            <a href={p('/our-team/principals/john-n-laughlin')} aria-current={profile.group === 'principals' ? 'page' : undefined}>
+            <a href={p('/our-team?filter=principals')} aria-current={profile.group === 'principals' ? 'page' : undefined}>
               Principals
             </a>
           </li>
           <li>
-            <a href={p('/our-team/advisors/sarah-haizlip-ma')} aria-current={profile.group === 'advisors' ? 'page' : undefined}>
+            <a href={p('/our-team?filter=advisors')} aria-current={profile.group === 'advisors' ? 'page' : undefined}>
               Advisors
             </a>
           </li>
           <li>
-            <a href={p('/our-team/associates/soleil-lum-cfp')} aria-current={profile.group === 'associates' ? 'page' : undefined}>
+            <a href={p('/our-team?filter=associates')} aria-current={profile.group === 'associates' ? 'page' : undefined}>
               Associates
             </a>
           </li>
@@ -212,14 +215,34 @@ const featurePhoto = profile.editorialPhoto || profile.photo;
       padding: 1.25rem 1.4rem;
     }
 
+    .subnav-heading-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      text-decoration: none;
+      border-bottom: 1px solid var(--color-rule);
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
+      transition: opacity 0.15s ease;
+    }
+
+    .subnav-heading-link:hover {
+      opacity: 0.8;
+    }
+
     .subnav-heading {
-      margin: 0 0 0.75rem 0;
+      margin: 0;
       font-family: var(--font-serif);
       font-size: 1.15rem;
       font-weight: 600;
       color: var(--color-board);
-      border-bottom: 1px solid var(--color-rule);
-      padding-bottom: 0.5rem;
+    }
+
+    .view-all-hint {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--color-crimson-deep);
     }
 
     .team-subnav ul {

@@ -1,6 +1,7 @@
 ---
 import Page from '../layouts/Page.astro';
 import { teamProfiles } from '../data/profiles';
+import { p } from '../utils/paths';
 
 const filters = [
   ['all', 'All'],
@@ -28,7 +29,7 @@ const filters = [
   <ul class="team-grid" data-team-grid>
     {teamProfiles.map((person) => (
       <li data-team-member data-team-group={person.group}>
-        <a href={`/our-team/${person.slug}`}>
+        <a href={p(`/our-team/${person.slug}`)}>
           <img src={person.photo} alt={person.name} width="600" height="720" loading="lazy" />
           {person.note && <span class="profile-note">{person.note}</span>}
           <h2>{person.name}{person.credentials && <small>, {person.credentials}</small>}</h2>
@@ -47,11 +48,25 @@ const filters = [
         const grid = controls.nextElementSibling;
         const members = [...(grid?.querySelectorAll<HTMLElement>('[data-team-member]') || [])];
         const buttons = [...controls.querySelectorAll<HTMLButtonElement>('[data-team-filter]')];
+
+        const applyFilter = (filter: string) => {
+          buttons.forEach((item) => item.setAttribute('aria-pressed', String((item.dataset.teamFilter || 'all') === filter)));
+          members.forEach((member) => {
+            member.hidden = filter !== 'all' && member.dataset.teamGroup !== filter;
+          });
+        };
+
         buttons.forEach((button) => button.addEventListener('click', () => {
           const filter = button.dataset.teamFilter || 'all';
-          buttons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
-          members.forEach((member) => { member.hidden = filter !== 'all' && member.dataset.teamGroup !== filter; });
+          applyFilter(filter);
         }));
+
+        // Check if there is a URL query param ?filter=
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialFilter = urlParams.get('filter');
+        if (initialFilter) {
+          applyFilter(initialFilter);
+        }
       });
     };
     setupTeamFilters();
@@ -59,26 +74,6 @@ const filters = [
   </script>
 
   <style>
-    .team-intro{display:grid;gap:1rem;margin-bottom:1.7rem;padding-bottom:2rem;border-bottom:1px solid var(--color-ink)}
-    .team-intro h2{max-width:18ch;margin:0;font-size:clamp(2rem,4vw,3rem);line-height:1}
-    .team-intro p{max-width:40rem;margin:0;color:var(--color-ink-2);line-height:1.6}
-    .team-filters{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:2rem}
-    .team-filters button{display:flex;gap:.55rem;align-items:center;padding:.6rem .75rem;border:1px solid var(--color-rule);background:white;color:var(--color-board);font:700 .75rem var(--font-sans);cursor:pointer}
-    .team-filters button span{display:grid;min-width:1.25rem;height:1.25rem;place-items:center;border-radius:50%;background:var(--color-paper-2);font-size:.62rem}
-    .team-filters button[aria-pressed="true"]{border-color:var(--color-board);background:var(--color-board);color:white}
-    .team-filters button[aria-pressed="true"] span{background:var(--color-crimson);color:white}
-    .team-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem 1rem;margin:0;padding:0;list-style:none}
-    .team-grid li{animation:member-in .35s var(--ease-out-soft)}
-    .team-grid a{display:block;position:relative}
-    .team-grid img{display:block;width:100%;aspect-ratio:4/4.8;object-fit:cover;object-position:top;filter:saturate(.75)}
-    .team-grid h2{margin:.75rem 0 0;color:var(--color-board);font-size:1.25rem;line-height:1.05}
-    .team-grid h2 small{font-size:.8em;font-weight:500}
-    .team-grid p{margin:.25rem 0 0;color:var(--color-ink-3);font-size:.78rem;line-height:1.35}
-    .profile-link{display:inline-block;margin-top:.65rem;border-bottom:1px solid currentColor;color:var(--color-crimson-deep);font-size:.76rem;font-weight:700}
-    .profile-note{position:absolute;top:.5rem;left:.5rem;padding:.3rem .45rem;background:var(--color-board);color:white;font-size:.64rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
-    @keyframes member-in{from{opacity:0;transform:translateY(.5rem)}}
-    @media(min-width:44rem){.team-grid{grid-template-columns:repeat(4,1fr)}}
-    @media(min-width:64rem){.team-intro{grid-template-columns:1fr 1fr;align-items:end}.team-grid{grid-template-columns:repeat(4,1fr);gap:2.5rem 1.25rem}}
-    @media(prefers-reduced-motion:reduce){.team-grid li{animation:none}}
+    .team-intro{display:grid;gap:1rem;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--color-rule)}.team-intro h2{margin:0;font-size:clamp(1.8rem,3vw,2.4rem)}.team-intro p{max-width:48rem;margin:0;color:var(--color-ink-2);font-size:1.05rem;line-height:1.6}.team-filters{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem}.team-filters button{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .9rem;border:1px solid var(--color-rule);background:white;color:var(--color-ink-2);font-size:.82rem;font-weight:700;cursor:pointer;transition:all .15s ease}.team-filters button span{padding:.1rem .35rem;background:var(--color-paper-2);color:var(--color-ink-3);font-size:.7rem}.team-filters button[aria-pressed="true"]{background:var(--color-board);border-color:var(--color-board);color:white}.team-filters button[aria-pressed="true"] span{background:rgba(255,255,255,.2);color:white}.team-grid{display:grid;gap:1.5rem;margin:0;padding:0;list-style:none}.team-grid li{background:white;border:1px solid var(--color-rule);transition:transform .2s ease,box-shadow .2s ease}.team-grid li:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(23,47,64,.08)}.team-grid a{display:flex;flex-direction:column;height:100%;padding:1.25rem;color:inherit;text-decoration:none}.team-grid img{display:block;width:100%;aspect-ratio:4/4.8;object-fit:cover;object-position:top;background:var(--color-paper-2);filter:saturate(.85)}.team-grid .profile-note{display:inline-block;margin-top:.75rem;padding:.3rem .5rem;background:var(--color-board);color:white;font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}.team-grid h2{margin:.85rem 0 0;font-family:var(--font-serif);font-size:1.35rem}.team-grid h2 small{color:var(--color-crimson-deep);font-family:var(--font-sans);font-size:.78rem;font-weight:700}.team-grid p{flex-grow:1;margin:.35rem 0 0;color:var(--color-ink-3);font-size:.82rem;line-height:1.4}.profile-link{margin-top:1rem;color:var(--color-crimson-deep);font-size:.78rem;font-weight:700}@media(min-width:40rem){.team-grid{grid-template-columns:repeat(2,1fr)}}@media(min-width:64rem){.team-grid{grid-template-columns:repeat(3,1fr)}}@media(min-width:80rem){.team-grid{grid-template-columns:repeat(4,1fr)}}
   </style>
 </Page>
