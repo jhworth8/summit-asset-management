@@ -56,8 +56,9 @@ export const teamProfiles = [
     title: 'Chief Administrative Officer, Principal',
     group: 'principals',
     email: 'peggy@summitassetmanagement.com',
-    photo: p('/img/peggy-thumb180x220.jpg'),
-    editorialPhoto: p('/img/Summit_MG_8997.jpg'),
+    photo: p('/img/galactic-peggy.jpg'),
+    editorialPhoto: p('/img/galactic-peggy.jpg'),
+    note: 'Galactic Officer',
     paragraphs: [
       'Peggy Adler joined Summit in 2007 as Chief Administrative Officer and became a Principal in 2012. She focuses on client service and the firm’s administrative work in human resources, accounting, compliance, marketing, planning and strategy.',
       'Peggy brings extensive experience from both corporate and nonprofit environments. Before joining Summit, she served as a Financial Analyst at AutoZone and as Vice President of Administration for a regional nonprofit organisation.',
