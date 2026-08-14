@@ -1,7 +1,6 @@
 ---
 import Page from '../../layouts/Page.astro';
 import { teamProfiles } from '../../data/profiles';
-
 import { p } from '../../utils/paths';
 
 export function getStaticPaths() {
@@ -9,76 +8,267 @@ export function getStaticPaths() {
 }
 
 const { profile } = Astro.props;
-const [introduction, ...background] = profile.paragraphs;
+const featurePhoto = profile.editorialPhoto || profile.photo;
 ---
 
-<Page title={`${profile.name} | Summit Asset Management`} description={`Meet ${profile.name}, ${profile.title} at Summit Asset Management in Memphis.`} section="Our Team" heading={profile.name} intro={`${profile.title}${profile.credentials ? ` · ${profile.credentials}` : ''}`} compact>
+<Page
+  title={`${profile.name} | Summit Asset Management`}
+  description={`Meet ${profile.name}, ${profile.title} at Summit Asset Management in Memphis.`}
+  section="Our Team"
+  heading={profile.name}
+  intro={`${profile.title}${profile.credentials ? ` · ${profile.credentials}` : ''}`}
+  compact
+>
   <article class="profile-layout">
-    <aside>
-      <img src={profile.photo} alt={profile.name} width="600" height="720" />
-      {profile.note && <p class="special-note">{profile.note}</p>}
-      <dl>
-        <div><dt>Role</dt><dd>{profile.title}</dd></div>
-        {profile.credentials && <div><dt>Credentials</dt><dd>{profile.credentials}</dd></div>}
-      </dl>
-      <a class="email-button" href={`mailto:${profile.email}`}>Email {profile.name.split(' ')[0]}</a>
+    {/* Left Column: Role Details & Team Subnavigation */}
+    <aside class="profile-sidebar">
+      <div class="sidebar-meta">
+        <dl>
+          <div>
+            <dt>Role</dt>
+            <dd>{profile.title}</dd>
+          </div>
+          {
+            profile.credentials && (
+              <div>
+                <dt>Credentials</dt>
+                <dd>{profile.credentials}</dd>
+              </div>
+            )
+          }
+        </dl>
+
+        <a class="email-button" href={`mailto:${profile.email}`}>
+          Email {profile.name.split(' ')[0]} →
+        </a>
+      </div>
+
+      <nav class="team-quick-nav" aria-label="Team member quick links">
+        <p class="quick-nav-title">Our Team</p>
+        <ul>
+          <li><a href={p('/our-team')}>All Members</a></li>
+          <li><a href={p('/our-team/chairmen/alex-thompson-clu-chfc')} aria-current={profile.group === 'chairman' ? 'page' : undefined}>Chairman</a></li>
+          <li><a href={p('/our-team/principals/john-n-laughlin')} aria-current={profile.group === 'principals' ? 'page' : undefined}>Principals</a></li>
+          <li><a href={p('/our-team/advisors/sarah-haizlip-ma')} aria-current={profile.group === 'advisors' ? 'page' : undefined}>Advisors</a></li>
+          <li><a href={p('/our-team/associates/soleil-lum-cfp')} aria-current={profile.group === 'associates' ? 'page' : undefined}>Associates</a></li>
+        </ul>
+      </nav>
     </aside>
 
-    <div class="profile-copy">
-      <figure class="editorial-photo">
-        <img src={profile.editorialPhoto} alt={`${profile.name} at Summit Asset Management`} width="938" height="560" />
-        <figcaption><span>At Summit</span><strong>{profile.name}</strong></figcaption>
+    {/* Main Column: Large Feature Photography & Full Bio */}
+    <div class="profile-content">
+      <figure class="featured-portrait">
+        <div class="portrait-frame">
+          <img
+            src={featurePhoto}
+            alt={`${profile.name} at Summit Asset Management`}
+            width="938"
+            height="560"
+            loading="eager"
+          />
+        </div>
       </figure>
 
-      <div class="biography">
-        <p class="bio-label">Biography</p>
-        <p class="bio-lead">{introduction}</p>
-        {background.length > 0 && (
-          <details>
-            <summary>Experience, education and community <span aria-hidden="true">+</span></summary>
-            <div>{background.map((paragraph) => <p>{paragraph}</p>)}</div>
-          </details>
-        )}
+      <div class="biography-body">
+        {profile.paragraphs.map((paragraph, idx) => (
+          <p class={idx === 0 ? 'lead-paragraph' : ''}>{paragraph}</p>
+        ))}
       </div>
 
       <nav class="profile-return" aria-label="Team navigation">
         <a href={p('/our-team')}>← Return to all team members</a>
-        <a href={p('/contact')}>Talk with the firm →</a>
+        <a href={p('/contact')}>Begin a conversation →</a>
       </nav>
     </div>
   </article>
 
   <style>
-    .profile-layout{display:grid;gap:2.5rem;align-items:start}
-    .profile-layout aside{max-width:22rem}
-    .profile-layout aside>img{display:block;width:100%;aspect-ratio:4/4.55;object-fit:cover;object-position:top;filter:saturate(.78)}
-    .profile-layout dl{margin:.8rem 0 0;border-top:1px solid var(--color-rule)}
-    .profile-layout dl>div{display:grid;grid-template-columns:6rem 1fr;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--color-rule)}
-    dt{color:var(--color-ink-3);font-size:.76rem;font-weight:700;text-transform:uppercase}
-    dd{margin:0;color:var(--color-ink-2);font-size:.85rem}
-    .email-button{display:block;margin-top:.8rem;padding:.75rem 1rem;background:var(--color-crimson);color:white;font-size:.84rem;font-weight:700;text-align:center}
-    .special-note{margin:0;padding:.55rem .7rem;background:var(--color-board);color:white;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
-    .profile-copy{min-width:0;max-width:none}
-    .editorial-photo{position:relative;margin:0 0 1.35rem;overflow:hidden;background:var(--color-board)}
-    .editorial-photo img{display:block;width:100%;aspect-ratio:2/1;object-fit:cover;object-position:center top}
-    .editorial-photo figcaption{position:absolute;right:0;bottom:0;display:grid;min-width:11rem;padding:.75rem 1rem;background:rgba(23,47,64,.92);color:white}
-    .editorial-photo figcaption span{color:rgba(255,255,255,.62);font-size:.62rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
-    .editorial-photo figcaption strong{margin-top:.2rem;font-family:var(--font-serif);font-size:1.05rem;font-weight:500}
-    .biography{display:grid;grid-template-columns:7rem minmax(0,1fr);gap:.35rem 1.5rem;align-items:start}
-    .bio-label{margin:.3rem 0 0;color:var(--color-crimson-deep);font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
-    .bio-lead{margin:0;color:var(--color-ink);font-family:var(--font-serif);font-size:1.25rem;line-height:1.42}
-    details{grid-column:2;margin-top:.95rem;border-block:1px solid var(--color-ink)}
-    summary{display:flex;justify-content:space-between;gap:1rem;padding:.8rem 0;color:var(--color-board);font-size:.8rem;font-weight:800;cursor:pointer;list-style:none}
-    summary::-webkit-details-marker{display:none}
-    summary span{color:var(--color-crimson-deep);font-size:1.1rem;transition:transform .2s ease}
-    details[open] summary span{transform:rotate(45deg)}
-    details>div{padding:0 0 .7rem}
-    details p{color:var(--color-ink-2);font-size:.96rem;line-height:1.68}
-    .profile-return{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--color-ink)}
-    .profile-return a{color:var(--color-crimson-deep);font-size:.82rem;font-weight:700}
-    @media(min-width:60rem){.profile-layout{grid-template-columns:16.5rem minmax(0,1fr);gap:3.5rem;width:min(calc(100vw - 4rem),82rem);margin-left:50%;transform:translateX(-50%)}}
-    @media(max-width:48rem){.biography{grid-template-columns:1fr}.bio-label,details{grid-column:1}.bio-label{margin:0 0 .35rem}}
-    @media(max-width:40rem){.editorial-photo img{aspect-ratio:4/3}.editorial-photo figcaption{position:static}}
-    @media(prefers-reduced-motion:reduce){summary span{transition:none}}
+    .profile-layout {
+      display: grid;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    @media (min-width: 56rem) {
+      .profile-layout {
+        grid-template-columns: 16rem 1fr;
+        gap: 3.5rem;
+      }
+    }
+
+    /* Left Sidebar */
+    .profile-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .sidebar-meta {
+      background: var(--color-paper-2);
+      border: 1px solid var(--color-rule);
+      padding: 1.5rem;
+    }
+
+    .sidebar-meta dl {
+      margin: 0;
+    }
+
+    .sidebar-meta dl > div {
+      padding-bottom: 0.8rem;
+      margin-bottom: 0.8rem;
+      border-bottom: 1px solid var(--color-rule);
+    }
+
+    .sidebar-meta dl > div:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
+
+    dt {
+      color: var(--color-crimson-deep);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    dd {
+      margin: 0;
+      color: var(--color-board);
+      font-size: 0.92rem;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .email-button {
+      display: block;
+      margin-top: 1.25rem;
+      padding: 0.8rem 1rem;
+      background: var(--color-crimson);
+      color: white;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      transition: background 0.2s ease;
+    }
+
+    .email-button:hover {
+      background: var(--color-crimson-deep);
+    }
+
+    /* Quick Nav */
+    .team-quick-nav {
+      background: white;
+      border: 1px solid var(--color-rule);
+      padding: 1.25rem 1.5rem;
+    }
+
+    .quick-nav-title {
+      margin: 0 0 0.75rem 0;
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--color-board);
+      border-bottom: 1px solid var(--color-rule);
+      padding-bottom: 0.5rem;
+    }
+
+    .team-quick-nav ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .team-quick-nav a {
+      color: var(--color-ink-2);
+      font-size: 0.86rem;
+      font-weight: 600;
+      display: block;
+      padding: 0.2rem 0;
+      transition: color 0.2s ease;
+    }
+
+    .team-quick-nav a:hover,
+    .team-quick-nav a[aria-current="page"] {
+      color: var(--color-crimson-deep);
+    }
+
+    .team-quick-nav a[aria-current="page"] {
+      font-weight: 700;
+    }
+
+    /* Main Column */
+    .profile-content {
+      min-width: 0;
+    }
+
+    .featured-portrait {
+      margin: 0 0 2.25rem 0;
+      background: white;
+      border: 1px solid var(--color-rule);
+      padding: 0.6rem;
+      box-shadow: 0 4px 20px rgba(23, 47, 64, 0.04);
+    }
+
+    .portrait-frame {
+      overflow: hidden;
+      background: var(--color-board);
+    }
+
+    .featured-portrait img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+
+    .biography-body {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .biography-body p {
+      margin: 0;
+      color: var(--color-ink-2);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .lead-paragraph {
+      color: var(--color-ink) !important;
+      font-size: 1.12rem !important;
+      line-height: 1.6 !important;
+      font-weight: 500;
+    }
+
+    .profile-return {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--color-rule);
+    }
+
+    .profile-return a {
+      color: var(--color-crimson-deep);
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+
+    .profile-return a:hover {
+      color: var(--color-board);
+    }
   </style>
 </Page>
