@@ -8,6 +8,7 @@ export function getStaticPaths() {
 }
 
 const { profile } = Astro.props;
+const featurePhoto = profile.editorialPhoto || profile.photo;
 ---
 
 <Page
@@ -19,63 +20,100 @@ const { profile } = Astro.props;
   compact
 >
   <article class="profile-layout">
-    <aside>
-      <div class="headshot-wrapper">
-        <img
-          src={profile.photo}
-          alt={profile.name}
-          width="180"
-          height="220"
-          loading="eager"
-        />
+    {/* Left Column: Role Details, Email Action & Team Directory Navigation */}
+    <aside class="profile-sidebar">
+      <div class="sidebar-card">
+        <dl class="meta-list">
+          <div>
+            <dt>Role</dt>
+            <dd>{profile.title}</dd>
+          </div>
+          {
+            profile.credentials && (
+              <div>
+                <dt>Credentials</dt>
+                <dd>{profile.credentials}</dd>
+              </div>
+            )
+          }
+          {
+            profile.note && (
+              <div>
+                <dt>Recognition</dt>
+                <dd class="highlight-note">{profile.note}</dd>
+              </div>
+            )
+          }
+        </dl>
+
+        <a class="email-button" href={`mailto:${profile.email}`}>
+          Email {profile.name.split(' ')[0]} <span aria-hidden="true">→</span>
+        </a>
       </div>
-      {profile.note && <p class="special-note">{profile.note}</p>}
-      <dl>
-        <div>
-          <dt>Role</dt>
-          <dd>{profile.title}</dd>
-        </div>
-        {
-          profile.credentials && (
-            <div>
-              <dt>Credentials</dt>
-              <dd>{profile.credentials}</dd>
-            </div>
-          )
-        }
-      </dl>
-      <a class="email-button" href={`mailto:${profile.email}`}>Email {profile.name.split(' ')[0]}</a>
+
+      <nav class="team-subnav" aria-label="Team directory">
+        <p class="subnav-heading">The Firm Team</p>
+        <ul>
+          <li>
+            <a href={p('/our-team')}>All Members</a>
+          </li>
+          <li>
+            <a href={p('/our-team/chairmen/alex-thompson-clu-chfc')} aria-current={profile.group === 'chairman' ? 'page' : undefined}>
+              Chairman
+            </a>
+          </li>
+          <li>
+            <a href={p('/our-team/principals/john-n-laughlin')} aria-current={profile.group === 'principals' ? 'page' : undefined}>
+              Principals
+            </a>
+          </li>
+          <li>
+            <a href={p('/our-team/advisors/sarah-haizlip-ma')} aria-current={profile.group === 'advisors' ? 'page' : undefined}>
+              Advisors
+            </a>
+          </li>
+          <li>
+            <a href={p('/our-team/associates/soleil-lum-cfp')} aria-current={profile.group === 'associates' ? 'page' : undefined}>
+              Associates
+            </a>
+          </li>
+        </ul>
+      </nav>
     </aside>
 
-    <div class="profile-copy">
-      <figure class="editorial-photo">
-        <img
-          src={profile.editorialPhoto}
-          alt={`${profile.name} at Summit Asset Management`}
-          width="938"
-          height="620"
-          loading="eager"
-        />
+    {/* Main Column: Single Featured Portrait Photo & Rich Formatted Biography */}
+    <div class="profile-main">
+      <figure class="featured-media">
+        <div class="media-frame">
+          <img
+            src={featurePhoto}
+            alt={`${profile.name} at Summit Asset Management`}
+            width="938"
+            height="600"
+            loading="eager"
+          />
+        </div>
         <figcaption>
           <span>At Summit</span>
           <strong>{profile.name}</strong>
         </figcaption>
       </figure>
 
-      <div class="biography">
-        <p class="bio-label">Biography</p>
-        <div class="bio-content">
+      <section class="biography-section" aria-label="Biography">
+        <p class="section-label">Biography</p>
+
+        <div class="biography-flow">
           {
             profile.paragraphs.map((paragraph, index) => (
-              <p class={index === 0 ? 'bio-lead' : 'bio-body'}>{paragraph}</p>
+              <p class={index === 0 ? 'lead-para' : 'body-para'}>{paragraph}</p>
             ))
           }
         </div>
-      </div>
+      </section>
 
-      <nav class="profile-return" aria-label="Team navigation">
-        <a href={p('/our-team')}>← Return to all team members</a>
-        <a href={p('/contact')}>Talk with the firm →</a>
+      <nav class="profile-footer-nav" aria-label="Navigation">
+        <a href={p('/our-team')} class="return-link">← Return to all team members</a>
+        <a href={p('/contact')} class="contact-link">Talk with an advisor →</a>
       </nav>
     </div>
   </article>
@@ -86,83 +124,152 @@ const { profile } = Astro.props;
       gap: 2.5rem;
       align-items: start;
     }
-    .profile-layout aside {
-      max-width: 20rem;
+
+    @media (min-width: 58rem) {
+      .profile-layout {
+        grid-template-columns: 16.5rem 1fr;
+        gap: 3.5rem;
+      }
     }
-    .headshot-wrapper {
-      background: white;
-      border: 1px solid var(--color-rule);
-      overflow: hidden;
+
+    /* Left Sidebar */
+    .profile-sidebar {
       display: flex;
-      justify-content: center;
-      align-items: center;
+      flex-direction: column;
+      gap: 1.75rem;
     }
-    .headshot-wrapper > img {
-      display: block;
-      width: 100%;
-      height: auto;
-      object-fit: cover;
-      object-position: top center;
+
+    .sidebar-card {
+      background: var(--color-paper-2);
+      border: 1px solid var(--color-rule);
+      padding: 1.4rem;
     }
-    .profile-layout dl {
-      margin: 0.8rem 0 0;
-      border-top: 1px solid var(--color-rule);
+
+    .meta-list {
+      margin: 0;
     }
-    .profile-layout dl > div {
-      display: grid;
-      grid-template-columns: 6rem 1fr;
-      gap: 1rem;
-      padding: 0.6rem 0;
+
+    .meta-list > div {
+      padding-bottom: 0.85rem;
+      margin-bottom: 0.85rem;
       border-bottom: 1px solid var(--color-rule);
     }
-    dt {
-      color: var(--color-ink-3);
-      font-size: 0.76rem;
-      font-weight: 700;
-      text-transform: uppercase;
+
+    .meta-list > div:last-child {
+      border-bottom: 0;
+      margin-bottom: 0;
+      padding-bottom: 0;
     }
+
+    dt {
+      color: var(--color-crimson-deep);
+      font-family: var(--font-sans);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
     dd {
       margin: 0;
-      color: var(--color-ink-2);
+      color: var(--color-board);
+      font-family: var(--font-sans);
+      font-size: 0.94rem;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .highlight-note {
+      color: var(--color-crimson);
       font-size: 0.85rem;
     }
+
     .email-button {
       display: block;
-      margin-top: 0.8rem;
-      padding: 0.75rem 1rem;
+      margin-top: 1.25rem;
+      padding: 0.85rem 1rem;
       background: var(--color-crimson);
       color: white;
-      font-size: 0.84rem;
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
       font-weight: 700;
       text-align: center;
       text-decoration: none;
-      transition: background 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: background 0.2s ease, transform 0.15s ease;
     }
+
     .email-button:hover {
       background: var(--color-crimson-deep);
     }
-    .special-note {
+
+    /* Team Subnavigation */
+    .team-subnav {
+      background: white;
+      border: 1px solid var(--color-rule);
+      padding: 1.25rem 1.4rem;
+    }
+
+    .subnav-heading {
+      margin: 0 0 0.75rem 0;
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--color-board);
+      border-bottom: 1px solid var(--color-rule);
+      padding-bottom: 0.5rem;
+    }
+
+    .team-subnav ul {
       margin: 0;
-      padding: 0.55rem 0.7rem;
-      background: var(--color-board);
-      color: white;
-      font-size: 0.72rem;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .team-subnav a {
+      color: var(--color-ink-2);
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: block;
+      padding: 0.2rem 0;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .team-subnav a:hover,
+    .team-subnav a[aria-current="page"] {
+      color: var(--color-crimson-deep);
+    }
+
+    .team-subnav a[aria-current="page"] {
       font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
     }
-    .profile-copy {
+
+    /* Main Column */
+    .profile-main {
       min-width: 0;
-      max-width: none;
     }
-    .editorial-photo {
+
+    .featured-media {
       position: relative;
-      margin: 0 0 1.75rem;
-      overflow: hidden;
+      margin: 0 0 2rem 0;
       background: var(--color-paper-2);
       border: 1px solid var(--color-rule);
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(23, 47, 64, 0.05);
     }
-    .editorial-photo img {
+
+    .media-frame {
+      overflow: hidden;
+    }
+
+    .featured-media img {
       display: block;
       width: 100%;
       height: auto;
@@ -170,94 +277,122 @@ const { profile } = Astro.props;
       object-fit: cover;
       object-position: center 20%;
     }
-    .editorial-photo figcaption {
+
+    .featured-media figcaption {
       position: absolute;
       right: 0;
       bottom: 0;
       display: grid;
       min-width: 11rem;
-      padding: 0.75rem 1rem;
-      background: rgba(23, 47, 64, 0.92);
+      padding: 0.75rem 1.1rem;
+      background: rgba(23, 47, 64, 0.93);
+      backdrop-filter: blur(4px);
       color: white;
     }
-    .editorial-photo figcaption span {
-      color: rgba(255, 255, 255, 0.62);
+
+    .featured-media figcaption span {
+      color: rgba(255, 255, 255, 0.65);
+      font-family: var(--font-sans);
       font-size: 0.62rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .editorial-photo figcaption strong {
-      margin-top: 0.2rem;
-      font-family: var(--font-serif);
-      font-size: 1.05rem;
-      font-weight: 500;
-    }
-    .biography {
-      display: grid;
-      grid-template-columns: 7rem minmax(0, 1fr);
-      gap: 0.35rem 1.5rem;
-      align-items: start;
-    }
-    .bio-label {
-      margin: 0.3rem 0 0;
-      color: var(--color-crimson-deep);
-      font-size: 0.7rem;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
-    .bio-content {
+
+    .featured-media figcaption strong {
+      margin-top: 0.15rem;
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    /* Biography Typography Hierarchy */
+    .biography-section {
+      display: grid;
+      gap: 0.75rem 1.75rem;
+      align-items: start;
+      border-top: 1px solid var(--color-rule);
+      padding-top: 1.75rem;
+    }
+
+    @media (min-width: 48rem) {
+      .biography-section {
+        grid-template-columns: 7.5rem 1fr;
+      }
+    }
+
+    .section-label {
+      margin: 0.35rem 0 0 0;
+      color: var(--color-crimson-deep);
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .biography-flow {
       display: flex;
       flex-direction: column;
-      gap: 1.15rem;
+      gap: 1.35rem;
     }
-    .bio-lead {
+
+    /* Lead Paragraph: Editorial Serif Styling */
+    .lead-para {
       margin: 0;
-      color: var(--color-ink);
       font-family: var(--font-serif);
-      font-size: 1.25rem;
+      font-size: 1.32rem;
       line-height: 1.5;
+      color: var(--color-board);
+      font-weight: 400;
     }
-    .bio-body {
+
+    /* Body Paragraphs: Crisp High-Legibility Sans Typography */
+    .body-para {
       margin: 0;
-      color: var(--color-ink-2);
+      font-family: var(--font-sans);
       font-size: 0.98rem;
-      line-height: 1.7;
+      line-height: 1.75;
+      color: #2e3c49;
     }
-    .profile-return {
+
+    /* Return & CTA Links */
+    .profile-footer-nav {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       gap: 1rem;
-      margin-top: 2rem;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--color-ink);
+      margin-top: 2.75rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--color-rule);
     }
-    .profile-return a {
-      color: var(--color-crimson-deep);
-      font-size: 0.82rem;
+
+    .profile-footer-nav a {
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
       font-weight: 700;
+      text-decoration: none;
+      transition: color 0.15s ease;
     }
-    @media (min-width: 60rem) {
-      .profile-layout {
-        grid-template-columns: 16.5rem minmax(0, 1fr);
-        gap: 3.5rem;
-        width: min(calc(100vw - 4rem), 82rem);
-        margin-left: 50%;
-        transform: translateX(-50%);
-      }
+
+    .return-link {
+      color: var(--color-ink-2);
     }
-    @media (max-width: 48rem) {
-      .biography {
-        grid-template-columns: 1fr;
-      }
-      .bio-label {
-        margin: 0 0 0.5rem;
-      }
+
+    .return-link:hover {
+      color: var(--color-board);
     }
+
+    .contact-link {
+      color: var(--color-crimson-deep);
+    }
+
+    .contact-link:hover {
+      color: var(--color-crimson);
+    }
+
     @media (max-width: 40rem) {
-      .editorial-photo figcaption {
+      .featured-media figcaption {
         position: static;
       }
     }
