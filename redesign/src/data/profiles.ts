@@ -51,6 +51,22 @@ export const teamProfiles = [
   },
   {
     slug: 'principals/peggy-k-adler',
+    name: 'Peggy K. Adler',
+    credentials: 'MBA',
+    title: 'Chief Administrative Officer, Principal',
+    group: 'principals',
+    email: 'peggy@summitassetmanagement.com',
+    photo: p('/img/peggy-thumb180x220.jpg'),
+    editorialPhoto: p('/img/Summit_MG_8997.jpg'),
+    paragraphs: [
+      'Peggy Adler joined Summit in 2007 as Chief Administrative Officer and became a Principal in 2012. She focuses on client service and the firm’s administrative work in human resources, accounting, compliance, marketing, planning and strategy.',
+      'Peggy brings extensive experience from both corporate and nonprofit environments. Before joining Summit, she served as a Financial Analyst at AutoZone and as Vice President of Administration for a regional nonprofit organisation.',
+      'She holds a Master of Business Administration in Finance and Marketing from Vanderbilt University and a Bachelor of Arts in Economics from Emory University.',
+      'Peggy has served on several local community boards and remains active with education, youth arts and community leadership programs in Memphis.',
+    ],
+  },
+  {
+    slug: 'principals/galactic-peggy',
     name: 'Galactic Peggy',
     credentials: 'MBA',
     title: 'Chief Intergalactic Administrative Officer, Principal',

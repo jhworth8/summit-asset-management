@@ -78,9 +78,17 @@ export const team = [
     name: 'Peggy K. Adler',
     credentials: 'MBA',
     role: 'Principal',
-    photo: p('/img/galactic-peggy.jpg'),
+    photo: p('/img/peggy-thumb180x220.jpg'),
     email: 'peggy@summitassetmanagement.com',
     href: p('/our-team/principals/peggy-k-adler'),
+  },
+  {
+    name: 'Galactic Peggy',
+    credentials: 'MBA',
+    role: 'Galactic Strategy',
+    photo: p('/img/galactic-peggy.jpg'),
+    email: 'peggy@summitassetmanagement.com',
+    href: p('/our-team/principals/galactic-peggy'),
   },
   {
     name: 'Sarah Haizlip',
