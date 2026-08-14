@@ -1,6 +1,6 @@
 /**
  * Utility to resolve site paths with proper base prefix
- * for GitHub Pages subpaths and custom domains.
+ * for both local dev (root '/') and GitHub Pages subpaths.
  */
 export function p(pathStr: string): string {
   if (!pathStr) return pathStr;
@@ -13,7 +13,7 @@ export function p(pathStr: string): string {
   ) {
     return pathStr;
   }
-  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
   const clean = pathStr.startsWith('/') ? pathStr : `/${pathStr}`;
   return `${base}${clean}`;
 }
