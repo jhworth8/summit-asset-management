@@ -1,0 +1,16 @@
+---
+import Page from '../layouts/Page.astro';
+import { firm } from '../data/site';
+const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${firm.address.street}, ${firm.address.city}, ${firm.address.state} ${firm.address.zip}`)}`;
+---
+<Page title="Contact | Summit Asset Management" description="Contact Summit Asset Management at its Memphis office." section="Contact" heading="Let’s begin with a conversation." intro="Tell us what you are working toward. We will listen, answer questions and explain whether Summit may be a good fit." image="/img/SAM_MG_8636_enhanced.webp" imageAlt="The entrance to Summit's Memphis office">
+  <div class="contact-grid">
+    <section><p>Telephone</p><a href={firm.phoneHref}>{firm.phone}</a><span>Fax {firm.fax}</span></section>
+    <section><p>Email</p><a href={`mailto:${firm.email}`}>{firm.email}</a><span>For general inquiries and meeting requests</span></section>
+    <section><p>Office</p><address>{firm.address.street}<br/>{firm.address.city}, {firm.address.state} {firm.address.zip}</address><a class="map-link" href={mapUrl} target="_blank" rel="noopener noreferrer">Open directions in Google Maps →</a></section>
+  </div>
+  <aside class="contact-note"><h2>What to expect</h2><p>A first conversation is not a product presentation. It is an opportunity to describe your situation, learn how Summit works and determine whether the relationship makes sense.</p></aside>
+  <style>
+    .contact-grid{display:grid;border-block:1px solid var(--color-ink)}.contact-grid section{display:flex;flex-direction:column;gap:.35rem;padding:1.4rem 0;border-bottom:1px solid var(--color-rule)}.contact-grid section:last-child{border-bottom:0}.contact-grid p{margin:0;color:var(--color-crimson-deep);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.contact-grid a:not(.map-link),.contact-grid address{color:var(--color-board);font-family:var(--font-serif);font-size:1.4rem;font-style:normal;line-height:1.25}.contact-grid span{color:var(--color-ink-3);font-size:.76rem}.map-link{margin-top:.5rem;color:var(--color-crimson-deep);font-size:.78rem;font-weight:700}.contact-note{display:grid;gap:.5rem;margin-top:2.5rem;padding:1.5rem;border-left:5px solid var(--color-crimson);background:var(--color-paper-2)}.contact-note h2{margin:0;font-size:1.4rem}.contact-note p{max-width:48rem;margin:0;color:var(--color-ink-2);line-height:1.55}@media(min-width:60rem){.contact-grid{grid-template-columns:repeat(3,1fr)}.contact-grid section{padding:1.5rem;border-right:1px solid var(--color-rule);border-bottom:0}.contact-grid section:first-child{padding-left:0}.contact-grid section:last-child{padding-right:0;border-right:0}.contact-note{grid-template-columns:12rem 1fr;align-items:center}}
+  </style>
+</Page>

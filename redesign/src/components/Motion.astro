@@ -1,0 +1,115 @@
+---
+// Deliberately quiet. A typeset page wants stillness, so this is a soft fade
+// plus rules that draw themselves in -- nothing that slides or bounces.
+// Strictly progressive enhancement: nothing is hidden in CSS, and two guards
+// ensure content can never be left permanently invisible.
+---
+
+<script>
+  import { animate } from 'motion';
+
+  const EASE = [0.16, 1, 0.3, 1];
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const restore = () => {
+    document.querySelectorAll('[data-reveal],[data-rule]').forEach((el) => {
+      el.style.opacity = '';
+      el.style.transform = '';
+    });
+  };
+
+  const ready = () => {
+    if (reduced) return;
+
+    let revealsStarted = 0;
+
+    try {
+      const reveals = document.querySelectorAll('[data-reveal]');
+      reveals.forEach((el) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(12px)';
+      });
+
+      const rules = document.querySelectorAll('[data-rule]');
+      rules.forEach((el) => {
+        el.style.transform = 'scaleX(0)';
+        el.style.transformOrigin = 'left';
+      });
+
+      const pending = new Set([...reveals, ...rules]);
+
+      const play = (el) => {
+        pending.delete(el);
+        io.unobserve(el);
+        if (el.hasAttribute('data-rule')) {
+          animate(el, { transform: ['scaleX(0)', 'scaleX(1)'] }, { duration: 1.1, ease: EASE });
+          return;
+        }
+        revealsStarted++;
+        animate(el, { opacity: [0, 1], transform: ['translateY(12px)', 'translateY(0px)'] }, {
+          duration: 0.8,
+          delay: parseFloat(el.dataset.delay || '0'),
+          ease: EASE,
+        });
+      };
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            // isIntersecting covers the normal case; the rect check catches an
+            // element jumped clean past (scroll restoration, deep anchor link),
+            // which never crosses a threshold and would otherwise stay hidden.
+            if (entry.isIntersecting) {
+              play(entry.target);
+            } else if (entry.boundingClientRect.bottom < 0) {
+              pending.delete(entry.target);
+              io.unobserve(entry.target);
+              revealsStarted++;
+              entry.target.style.opacity = '';
+              entry.target.style.transform = '';
+            }
+          });
+        },
+        { rootMargin: '0px 0px -8% 0px' }
+      );
+      pending.forEach((el) => io.observe(el));
+
+      // Backstop for a single large jump: ratio 0 to ratio 0 crosses no
+      // threshold, so the observer above never fires for those elements.
+      let last = 0;
+      window.addEventListener(
+        'scroll',
+        () => {
+          const now = Date.now();
+          if (now - last < 120 || !pending.size) return;
+          last = now;
+          pending.forEach((el) => {
+            if (el.getBoundingClientRect().bottom < 0) {
+              pending.delete(el);
+              io.unobserve(el);
+              revealsStarted++;
+              el.style.opacity = '';
+              el.style.transform = '';
+            }
+          });
+        },
+        { passive: true }
+      );
+    } catch (err) {
+      restore();
+      return;
+    }
+
+    // If nothing has fired shortly after load the observer is unavailable --
+    // restore the page rather than leave it blank.
+    window.setTimeout(() => {
+      if (revealsStarted === 0) restore();
+    }, 2500);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', ready);
+  } else {
+    ready();
+  }
+</script>

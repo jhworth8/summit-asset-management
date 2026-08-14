@@ -1,0 +1,17 @@
+---
+import Page from '../layouts/Page.astro';
+const archive = [
+  { year:'2026', items:[['July','“GOOOOAAAALLLL! maybe.”','/letters/2026_0715_Client_Letter.pdf'],['April','“It Takes Two to TACO”','/letters/2026_0415_Client-Letter.pdf'],['January','“Persistent Uncertainty”','/letters/2026_0115_Client_Letter.pdf']] },
+  { year:'2025', items:[['October','“AI vs. Everybody”','/letters/2025-1015_Client-Letter.pdf'],['July','“Big Beautiful Quarter”','/letters/2025_0715_Client_Letter.pdf'],['April','“What Game Are We Playing?”','/letters/2025_0415_Client_Letter.pdf'],['January','“You will go safest in the middle course”','/letters/2025_0115_Client_Letter.pdf']] },
+  { year:'2024', items:[['October','“What Comes Next…”','/letters/2024_1015_Client_Letter.pdf'],['July','“Swim at Your Own Risk”','/letters/2024_0715_Client_Letter.pdf'],['April','“Spring Is in the Air”','/letters/2024_0415_Client_Letter.pdf'],['January','“The Big Pivot”','/letters/2024_0115_Client-Letter.pdf']] },
+];
+---
+<Page title="Views & News | Summit Asset Management" description="Quarterly client letters and market commentary from Summit Asset Management." section="Views & News" heading="Perspective for clients, not headlines." intro="Each quarter Summit shares views on investments, the economy and personal financial issues that may matter to clients." image="/img/SAM_MG_9054_enhanced.webp" imageAlt="Reading materials at Summit's office">
+  <div class="archive-intro"><h2>Commentary letters</h2><p>From time to time Summit also publishes special commentary on time-sensitive issues. The archive below is provided for context; each letter reflects the conditions and views at the time it was written.</p></div>
+  <div class="letter-archive">
+    {archive.map(group => <section><h2>{group.year}</h2><ul>{group.items.map(([month,topic,href])=><li><a href={href} target="_blank" rel="noopener noreferrer"><div><strong>{month} {group.year}</strong><span>{topic}</span></div><em>PDF ↓</em></a></li>)}</ul></section>)}
+  </div>
+  <style>
+    .archive-intro{display:grid;gap:1rem;margin-bottom:2.5rem}.archive-intro h2{margin:0;font-size:clamp(2rem,4vw,3rem)}.archive-intro p{max-width:44rem;margin:0;color:var(--color-ink-2);line-height:1.6}.letter-archive{border-top:1px solid var(--color-ink)}.letter-archive section{display:grid;padding:1.3rem 0;border-bottom:1px solid var(--color-ink)}.letter-archive section>h2{margin:0 0 1rem;color:var(--color-crimson-deep);font-size:1.4rem}.letter-archive ul{margin:0;padding:0;list-style:none}.letter-archive li{border-top:1px solid var(--color-rule)}.letter-archive a{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.9rem 0}.letter-archive strong,.letter-archive span{display:block}.letter-archive strong{color:var(--color-board);font-family:var(--font-serif);font-size:1.15rem}.letter-archive span{margin-top:.2rem;color:var(--color-ink-3);font-size:.8rem}.letter-archive em{flex-shrink:0;color:var(--color-crimson-deep);font-size:.72rem;font-style:normal;font-weight:700}@media(min-width:60rem){.archive-intro{grid-template-columns:.7fr 1.3fr;gap:5rem}.letter-archive section{grid-template-columns:10rem 1fr}.letter-archive section>h2{margin:0}}
+  </style>
+</Page>

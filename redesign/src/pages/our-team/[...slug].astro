@@ -1,0 +1,82 @@
+---
+import Page from '../../layouts/Page.astro';
+import { teamProfiles } from '../../data/profiles';
+
+export function getStaticPaths() {
+  return teamProfiles.map((profile) => ({ params: { slug: profile.slug }, props: { profile } }));
+}
+
+const { profile } = Astro.props;
+const [introduction, ...background] = profile.paragraphs;
+---
+
+<Page title={`${profile.name} | Summit Asset Management`} description={`Meet ${profile.name}, ${profile.title} at Summit Asset Management in Memphis.`} section="Our Team" heading={profile.name} intro={`${profile.title}${profile.credentials ? ` · ${profile.credentials}` : ''}`} compact>
+  <article class="profile-layout">
+    <aside>
+      <img src={profile.photo} alt={profile.name} width="600" height="720" />
+      {profile.note && <p class="special-note">{profile.note}</p>}
+      <dl>
+        <div><dt>Role</dt><dd>{profile.title}</dd></div>
+        {profile.credentials && <div><dt>Credentials</dt><dd>{profile.credentials}</dd></div>}
+      </dl>
+      <a class="email-button" href={`mailto:${profile.email}`}>Email {profile.name.split(' ')[0]}</a>
+    </aside>
+
+    <div class="profile-copy">
+      <figure class="editorial-photo">
+        <img src={profile.editorialPhoto} alt={`${profile.name} at Summit Asset Management`} width="938" height="560" />
+        <figcaption><span>At Summit</span><strong>{profile.name}</strong></figcaption>
+      </figure>
+
+      <div class="biography">
+        <p class="bio-label">Biography</p>
+        <p class="bio-lead">{introduction}</p>
+        {background.length > 0 && (
+          <details>
+            <summary>Experience, education and community <span aria-hidden="true">+</span></summary>
+            <div>{background.map((paragraph) => <p>{paragraph}</p>)}</div>
+          </details>
+        )}
+      </div>
+
+      <nav class="profile-return" aria-label="Team navigation">
+        <a href="/our-team">← Return to all team members</a>
+        <a href="/contact">Talk with the firm →</a>
+      </nav>
+    </div>
+  </article>
+
+  <style>
+    .profile-layout{display:grid;gap:2.5rem;align-items:start}
+    .profile-layout aside{max-width:22rem}
+    .profile-layout aside>img{display:block;width:100%;aspect-ratio:4/4.55;object-fit:cover;object-position:top;filter:saturate(.78)}
+    .profile-layout dl{margin:.8rem 0 0;border-top:1px solid var(--color-rule)}
+    .profile-layout dl>div{display:grid;grid-template-columns:6rem 1fr;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--color-rule)}
+    dt{color:var(--color-ink-3);font-size:.76rem;font-weight:700;text-transform:uppercase}
+    dd{margin:0;color:var(--color-ink-2);font-size:.85rem}
+    .email-button{display:block;margin-top:.8rem;padding:.75rem 1rem;background:var(--color-crimson);color:white;font-size:.84rem;font-weight:700;text-align:center}
+    .special-note{margin:0;padding:.55rem .7rem;background:var(--color-board);color:white;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+    .profile-copy{min-width:0;max-width:none}
+    .editorial-photo{position:relative;margin:0 0 1.35rem;overflow:hidden;background:var(--color-board)}
+    .editorial-photo img{display:block;width:100%;aspect-ratio:2/1;object-fit:cover;object-position:center top}
+    .editorial-photo figcaption{position:absolute;right:0;bottom:0;display:grid;min-width:11rem;padding:.75rem 1rem;background:rgba(23,47,64,.92);color:white}
+    .editorial-photo figcaption span{color:rgba(255,255,255,.62);font-size:.62rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    .editorial-photo figcaption strong{margin-top:.2rem;font-family:var(--font-serif);font-size:1.05rem;font-weight:500}
+    .biography{display:grid;grid-template-columns:7rem minmax(0,1fr);gap:.35rem 1.5rem;align-items:start}
+    .bio-label{margin:.3rem 0 0;color:var(--color-crimson-deep);font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+    .bio-lead{margin:0;color:var(--color-ink);font-family:var(--font-serif);font-size:1.25rem;line-height:1.42}
+    details{grid-column:2;margin-top:.95rem;border-block:1px solid var(--color-ink)}
+    summary{display:flex;justify-content:space-between;gap:1rem;padding:.8rem 0;color:var(--color-board);font-size:.8rem;font-weight:800;cursor:pointer;list-style:none}
+    summary::-webkit-details-marker{display:none}
+    summary span{color:var(--color-crimson-deep);font-size:1.1rem;transition:transform .2s ease}
+    details[open] summary span{transform:rotate(45deg)}
+    details>div{padding:0 0 .7rem}
+    details p{color:var(--color-ink-2);font-size:.96rem;line-height:1.68}
+    .profile-return{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--color-ink)}
+    .profile-return a{color:var(--color-crimson-deep);font-size:.82rem;font-weight:700}
+    @media(min-width:60rem){.profile-layout{grid-template-columns:16.5rem minmax(0,1fr);gap:3.5rem;width:min(calc(100vw - 4rem),82rem);margin-left:50%;transform:translateX(-50%)}}
+    @media(max-width:48rem){.biography{grid-template-columns:1fr}.bio-label,details{grid-column:1}.bio-label{margin:0 0 .35rem}}
+    @media(max-width:40rem){.editorial-photo img{aspect-ratio:4/3}.editorial-photo figcaption{position:static}}
+    @media(prefers-reduced-motion:reduce){summary span{transition:none}}
+  </style>
+</Page>

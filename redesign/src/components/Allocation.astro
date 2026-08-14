@@ -1,0 +1,264 @@
+---
+// An operable allocation band -- the firm's central claim ("asset allocation has
+// a greater impact on future performance than any other factor") made into an
+// object you can actually work, rather than a sentence in a paragraph.
+//
+// Drawn as engraved hatching rather than a pie chart, so it belongs to the
+// document. Hatching also sidesteps the contrast trap of a colour-coded chart:
+// the sleeves are told apart by texture, not by hue alone.
+//
+// The band is a figure, never a control. Giving segments a minimum width to
+// keep them tappable made the small sleeves render wider than their true
+// weight -- a chart that misstates a proportion is worse than no chart. The
+// legend rows are the controls instead: always full width, always truthful.
+//
+// !! The percentages below are ILLUSTRATIVE PLACEHOLDERS invented for layout.
+// !! Summit must supply or approve real figures before this goes live -- see
+// !! the disclosure rendered beneath the band.
+
+const sleeves = [
+  {
+    id: 'equities',
+    name: 'Equities',
+    hatch: 'hatch-a',
+    detail: 'Stocks held directly, alongside mutual funds and exchange traded funds.',
+  },
+  {
+    id: 'fixed',
+    name: 'Fixed income',
+    hatch: 'hatch-b',
+    detail: 'Bonds and CDs, held directly or through funds.',
+  },
+  {
+    id: 'alts',
+    name: 'Alternatives',
+    hatch: 'hatch-c',
+    detail: 'Hedge funds of funds, private partnerships, and options.',
+  },
+  {
+    id: 'cash',
+    name: 'Cash',
+    hatch: 'hatch-d',
+    detail: 'Held against near-term needs, and against opportunities worth taking.',
+  },
+];
+
+const profiles = [
+  { id: 'growth', name: 'Longer horizon', weights: [72, 16, 8, 4] },
+  { id: 'balanced', name: 'Balanced', weights: [55, 30, 9, 6] },
+  { id: 'preservation', name: 'Shorter horizon', weights: [32, 52, 6, 10] },
+];
+
+const initial = profiles[1]; // Balanced renders without JavaScript
+const describe = (weights: number[]) =>
+  sleeves.map((s, i) => `${s.name} ${weights[i]}%`).join(', ');
+---
+
+<section class="mt-16" aria-labelledby="alloc-heading" data-allocation>
+  <div class="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-4 border-b border-ink pb-3">
+    <h2 id="alloc-heading" class="caps text-ink-3">
+      <span class="text-crimson">Fig. 2</span> — The allocation decision
+    </h2>
+
+    <div class="flex flex-wrap items-baseline gap-x-6 gap-y-2" role="group" aria-label="Illustrative time horizons">
+      {
+        profiles.map((p) => (
+          <button
+            type="button"
+            data-profile={p.id}
+            data-weights={p.weights.join(',')}
+            aria-pressed={p.id === initial.id ? 'true' : 'false'}
+            class="caps text-ink-3 transition-colors hover:text-crimson aria-pressed:text-crimson"
+          >
+            {p.name}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- The band is a figure, not a control: exact proportions at every width. -->
+  <div
+    data-band
+    role="img"
+    aria-label={`Illustrative allocation: ${describe(initial.weights)}`}
+    class="mt-5 flex h-16 w-full overflow-hidden border border-ink sm:h-24"
+  >
+    {
+      sleeves.map((s, i) => (
+        <div
+          data-sleeve={s.id}
+          style={`width:${initial.weights[i]}%`}
+          class={`relative border-r border-ink last:border-r-0 ${s.hatch} transition-[width] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]`}
+        >
+          <span
+            data-wash
+            class="absolute inset-0 bg-crimson/14 opacity-0 transition-opacity duration-400"
+            aria-hidden="true"
+          />
+          {/* Labels sit on the chart. Container queries drop them as a sleeve
+              narrows, so nothing ever clips mid-word. */}
+          <span class="seg-label absolute bottom-1.5 left-2 bg-paper/85 px-1 leading-none" aria-hidden="true">
+            <span class="seg-name caps text-ink">{s.name}</span>
+            <span class="caps figures text-ink" data-seg-value>
+              {initial.weights[i]}%
+            </span>
+          </span>
+        </div>
+      ))
+    }
+  </div>
+
+  <!-- Legend rows are the controls, and the whole dataset without JavaScript. -->
+  <ul class="mt-5 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-4">
+    {
+      sleeves.map((s, i) => (
+        <li>
+          <button
+            type="button"
+            data-legend={s.id}
+            aria-pressed="false"
+            class="flex w-full items-baseline gap-3 border-t border-rule-soft py-3 text-left transition-colors hover:text-crimson aria-pressed:text-crimson"
+          >
+            <span class={`mt-1 h-3.5 w-3.5 shrink-0 border border-rule ${s.hatch}`} aria-hidden="true" />
+            <span>{s.name}</span>
+            <span class="figures ml-auto tabular-nums text-ink-3" data-legend-value>
+              {initial.weights[i]}%
+            </span>
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+
+  <p
+    id="alloc-detail"
+    class="measure mt-4 min-h-[3.2em] text-[1.05rem] leading-[1.6] text-ink-2 italic"
+    aria-live="polite"
+  >
+    {sleeves.map((s) => `${s.name} — ${s.detail}`).join(' ')}
+  </p>
+
+  <p class="mt-6 border-t border-rule-soft pt-3 text-[0.82rem] leading-relaxed text-ink-3">
+    Illustrative only. The weightings shown are placeholders for design purposes — they are not Summit’s model
+    portfolios, not a recommendation, and not advice. Every client’s allocation is set individually.
+  </p>
+</section>
+
+<style>
+  /* Engraved hatching. Texture, not hue, distinguishes the sleeves -- so it
+     survives greyscale printing and colour-vision differences alike.
+     Spacing is coarser and the strokes lighter than the first cut: at 1px/6px
+     across a 1,500px band the pattern moiréd and read as noise. */
+  .hatch-a {
+    background-image: repeating-linear-gradient(45deg, var(--color-ink-3) 0 1px, transparent 1px 10px);
+  }
+  .hatch-b {
+    background-image: repeating-linear-gradient(0deg, var(--color-ink-3) 0 1px, transparent 1px 8px);
+  }
+  .hatch-c {
+    background-image:
+      repeating-linear-gradient(45deg, var(--color-ink-3) 0 1px, transparent 1px 13px),
+      repeating-linear-gradient(-45deg, var(--color-ink-3) 0 1px, transparent 1px 13px);
+  }
+  .hatch-d {
+    background-image: repeating-linear-gradient(45deg, var(--color-rule) 0 1px, transparent 1px 18px);
+  }
+
+  /* On-chart labels, revealed by available room rather than by breakpoint. */
+  [data-sleeve] {
+    container-type: inline-size;
+  }
+  .seg-label {
+    display: none;
+  }
+  .seg-name {
+    display: none;
+  }
+  @container (min-width: 3.5rem) {
+    .seg-label {
+      display: block;
+    }
+  }
+  @container (min-width: 9rem) {
+    .seg-name {
+      display: inline;
+    }
+    .seg-name::after {
+      content: ' ';
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-sleeve] {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector('[data-allocation]');
+  if (root) {
+    const band = root.querySelector('[data-band]');
+    const segments = [...root.querySelectorAll('[data-sleeve]')];
+    const legendBtns = [...root.querySelectorAll('[data-legend]')];
+    const legendValues = [...root.querySelectorAll('[data-legend-value]')];
+    const detail = root.querySelector('#alloc-detail');
+
+    const NAMES = ['Equities', 'Fixed income', 'Alternatives', 'Cash'];
+    const DETAILS = {
+      equities: 'Equities — stocks held directly, alongside mutual funds and exchange traded funds.',
+      fixed: 'Fixed income — bonds and CDs, held directly or through funds.',
+      alts: 'Alternatives — hedge funds of funds, private partnerships, and options.',
+      cash: 'Cash — held against near-term needs, and against opportunities worth taking.',
+    };
+
+    let weights = segments.map((s) => parseFloat(s.style.width));
+
+    const relabelBand = () => {
+      band?.setAttribute(
+        'aria-label',
+        'Illustrative allocation: ' + NAMES.map((n, i) => `${n} ${weights[i]}%`).join(', ')
+      );
+    };
+
+    root.querySelectorAll('[data-profile]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('[data-profile]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+        btn.setAttribute('aria-pressed', 'true');
+        weights = (btn.dataset.weights || '').split(',').map(Number);
+        segments.forEach((seg, i) => {
+          seg.style.width = weights[i] + '%';
+          if (legendValues[i]) legendValues[i].textContent = weights[i] + '%';
+          const onChart = seg.querySelector('[data-seg-value]');
+          if (onChart) onChart.textContent = weights[i] + '%';
+        });
+        relabelBand();
+      });
+    });
+
+    const select = (id) => {
+      legendBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.legend === id)));
+      segments.forEach((seg) => {
+        const wash = seg.querySelector('[data-wash]');
+        if (wash) wash.style.opacity = seg.dataset.sleeve === id ? '1' : '0';
+      });
+      if (detail) {
+        detail.textContent = id ? DETAILS[id] : 'Select a sleeve to see what Summit holds there.';
+      }
+    };
+
+    legendBtns.forEach((btn) => {
+      const id = btn.dataset.legend;
+      btn.addEventListener('click', () => {
+        select(btn.getAttribute('aria-pressed') === 'true' ? null : id);
+      });
+      btn.addEventListener('mouseenter', () => select(id));
+      btn.addEventListener('focus', () => select(id));
+    });
+
+    // Once JS is running the paragraph becomes a prompt rather than the full
+    // dump the no-JavaScript view needs.
+    select(null);
+  }
+</script>

@@ -1,0 +1,193 @@
+---
+import Base from './Base.astro';
+
+interface NavItem {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  section: string;
+  heading: string;
+  intro?: string;
+  image?: string;
+  imageAlt?: string;
+  subnav?: NavItem[];
+  compact?: boolean;
+}
+
+const { title, description, section, heading, intro, image, imageAlt = '', subnav = [], compact = false } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<Base title={title} description={description}>
+  <section class:list={['page-hero', { 'is-compact': compact }]}>
+    <div class="page-shell page-hero-grid">
+      <div>
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="/">Home</a><span aria-hidden="true">/</span><span>{section}</span>
+        </nav>
+        <p class="page-kicker">{section}</p>
+        <h1>{heading}</h1>
+        {intro && <p class="page-intro">{intro}</p>}
+      </div>
+      {image && <img src={image} alt={imageAlt} width="938" height="406" />}
+    </div>
+  </section>
+
+  {subnav.length > 0 && (
+    <nav class="section-nav" aria-label={`${section} pages`}>
+      <div class="page-shell">
+        {subnav.map((item) => (
+          <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>{item.label}</a>
+        ))}
+      </div>
+    </nav>
+  )}
+
+  <div class:list={['page-shell', 'page-body', { 'is-compact': compact }]}>
+    <slot />
+  </div>
+</Base>
+
+<style>
+  .page-shell {
+    width: min(100% - 3rem, 72rem);
+    margin-inline: auto;
+  }
+
+  .page-hero {
+    padding-block: clamp(2.25rem, 3.75vw, 3.5rem);
+    background: var(--color-board);
+    color: white;
+  }
+
+  .page-hero.is-compact {
+    padding-block: 1.55rem 1.75rem;
+  }
+
+  .page-hero.is-compact .breadcrumbs {
+    margin-bottom: 0.75rem;
+  }
+
+  .page-hero.is-compact h1 {
+    margin-top: 0.45rem;
+    font-size: clamp(2.35rem, 3.6vw, 3.25rem);
+  }
+
+  .page-hero.is-compact .page-intro {
+    margin-top: 0.6rem;
+    font-size: 0.92rem;
+  }
+
+  .page-hero-grid {
+    display: grid;
+    align-items: center;
+    gap: 2.5rem;
+  }
+
+  .breadcrumbs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.4rem;
+    color: rgb(255 255 255 / 0.62);
+    font-size: 0.76rem;
+  }
+
+  .breadcrumbs a {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .page-kicker {
+    margin: 0;
+    color: var(--color-crimson-light);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    max-width: 16ch;
+    margin: 0.7rem 0 0;
+    font-size: clamp(2.5rem, 4.25vw, 3.8rem);
+    letter-spacing: -0.025em;
+    line-height: 0.98;
+  }
+
+  .page-intro {
+    max-width: 39rem;
+    margin: 1rem 0 0;
+    color: rgb(255 255 255 / 0.74);
+    line-height: 1.6;
+  }
+
+  .page-hero img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 1px solid rgb(255 255 255 / 0.35);
+    padding: 0.4rem;
+    object-fit: cover;
+    filter: none;
+  }
+
+  .section-nav {
+    position: sticky;
+    z-index: 30;
+    top: 4.8rem;
+    border-bottom: 1px solid var(--color-rule);
+    background: #fff;
+  }
+
+  .section-nav > div {
+    display: flex;
+    gap: 0.25rem 1.4rem;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .section-nav a {
+    min-height: 3.2rem;
+    align-content: center;
+    border-bottom: 3px solid transparent;
+    color: var(--color-ink-2);
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .section-nav a:hover,
+  .section-nav a[aria-current='page'] {
+    border-bottom-color: var(--color-crimson);
+    color: var(--color-crimson-deep);
+  }
+
+  .page-body {
+    padding-block: clamp(3rem, 5vw, 4.5rem);
+  }
+
+  .page-body.is-compact {
+    padding-block: 2.25rem 3rem;
+  }
+
+  @media (min-width: 64rem) {
+    .page-hero-grid:has(img) {
+      grid-template-columns: 1fr 0.72fr;
+      gap: 5rem;
+    }
+  }
+
+  @media (max-width: 47.99rem) {
+    .page-shell {
+      width: min(100% - 2rem, 72rem);
+    }
+
+    .section-nav {
+      top: 4.35rem;
+    }
+  }
+</style>

@@ -1,0 +1,619 @@
+---
+export const pillars = [
+  {
+    index: '01',
+    keyword: 'Trust',
+    headline: 'Building lasting relationships.',
+    caption: 'We earn and keep the trust of our clients every day by placing their goals, needs and interests first.',
+    image: '/img/SAM_MG_8636_enhanced.webp',
+    alt: "Entrance to Summit Asset Management's Memphis office",
+    href: '/our-team',
+    linkLabel: 'Meet our advisors',
+  },
+  {
+    index: '02',
+    keyword: 'Knowledge',
+    headline: 'Discerning what’s important.',
+    caption: 'We apply deep institutional knowledge to each client’s situation, cutting through market noise to focus on enduring fundamentals.',
+    image: '/img/john-thumb938x406.jpg',
+    alt: 'Summit advisor reviewing portfolio strategies',
+    href: '/services',
+    linkLabel: 'Explore our approach',
+  },
+  {
+    index: '03',
+    keyword: 'Strength',
+    headline: 'Being there when it matters.',
+    caption: 'We walk with clients through some of life’s most difficult moments and volatile market cycles with calm, steady perspective.',
+    image: '/img/SAM_MG_8429_enhanced.webp',
+    alt: 'Advisory consultation room at Summit office',
+    href: '/services/investment-management',
+    linkLabel: 'Portfolio management',
+  },
+  {
+    index: '04',
+    keyword: 'Experience',
+    headline: 'Having real-life perspective.',
+    caption: 'We have served individuals, families, businesses and non-profits since 1991, navigating decades of economic transitions together.',
+    image: '/img/SAM_MG_0059_FPO-thumb938x406.jpg',
+    alt: 'Summit financial analysis workspace',
+    href: '/our-firm/history',
+    linkLabel: 'Firm history',
+  },
+  {
+    index: '05',
+    keyword: 'Professional',
+    headline: 'Serving with integrity and expertise.',
+    caption: 'We hold ourselves to the highest fiduciary standards of excellence in all that we do as an independent, employee-owned firm.',
+    image: '/img/SAM_MG_8222_enhanced.webp',
+    alt: 'Collaborative client service team at Summit',
+    href: '/our-firm/attributes',
+    linkLabel: 'Firm attributes',
+  },
+];
+---
+
+<section class="pillar-showcase" aria-label="Foundational principles of Summit" data-pillar-showcase>
+  <div class="institutional-shell">
+    {/* Section Header with Controls */}
+    <div class="pillar-header-row">
+      <div class="pillar-header">
+        <p class="section-kicker">Guiding Principles</p>
+        <h2>What shapes every client relationship.</h2>
+      </div>
+
+      <div class="pillar-nav-arrows" aria-label="Carousel navigation">
+        <button type="button" class="arrow-btn prev-btn" data-pillar-prev aria-label="Previous principle">
+          <span aria-hidden="true">←</span>
+        </button>
+        <div class="counter-display" aria-live="polite">
+          <strong data-current-index>01</strong>
+          <span>/</span>
+          <span>05</span>
+        </div>
+        <button type="button" class="arrow-btn next-btn" data-pillar-next aria-label="Next principle">
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
+    </div>
+
+    {/* Interactive Tab Navigation */}
+    <div class="pillar-tabs" role="tablist" aria-label="Pillar selector">
+      {
+        pillars.map((item, index) => (
+          <button
+            type="button"
+            role="tab"
+            class={`pillar-tab ${index === 0 ? 'is-active' : ''}`}
+            data-pillar-tab={index}
+            aria-selected={index === 0 ? 'true' : 'false'}
+            aria-controls={`pillar-panel-${index}`}
+            id={`pillar-tab-${index}`}
+          >
+            <span class="tab-progress-bar" aria-hidden="true">
+              <span class="tab-progress-track"></span>
+            </span>
+            <span class="tab-num">{item.index}</span>
+            <span class="tab-label">{item.keyword}</span>
+          </button>
+        ))
+      }
+    </div>
+
+    {/* Animated Card Stack */}
+    <div class="pillar-stage">
+      {
+        pillars.map((item, index) => (
+          <article
+            class={`pillar-slide ${index === 0 ? 'is-active' : ''}`}
+            data-pillar-slide={index}
+            id={`pillar-panel-${index}`}
+            role="tabpanel"
+            aria-labelledby={`pillar-tab-${index}`}
+            aria-hidden={index === 0 ? 'false' : 'true'}
+          >
+            <div class="pillar-copy">
+              <div class="pillar-keyword-badge">
+                <span class="badge-num">{item.index}</span>
+                <strong class="badge-text">{item.keyword}</strong>
+              </div>
+              <h3 class="pillar-headline">{item.headline}</h3>
+              <p class="pillar-caption">{item.caption}</p>
+              <a href={item.href} class="pillar-action-link">
+                <span>{item.linkLabel}</span>
+                <span aria-hidden="true" class="arrow">→</span>
+              </a>
+            </div>
+
+            <div class="pillar-media">
+              <div class="image-wrapper">
+                <img
+                  src={item.image}
+                  alt={item.alt}
+                  width="938"
+                  height="406"
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                />
+              </div>
+              <div class="media-badge">
+                <span>Summit Principle · {item.keyword}</span>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  const initPillars = () => {
+    const showcase = document.querySelector<HTMLElement>('[data-pillar-showcase]');
+    if (!showcase || showcase.dataset.ready === 'true') return;
+    showcase.dataset.ready = 'true';
+
+    const tabs = Array.from(showcase.querySelectorAll<HTMLButtonElement>('[data-pillar-tab]'));
+    const slides = Array.from(showcase.querySelectorAll<HTMLElement>('[data-pillar-slide]'));
+    const prevBtn = showcase.querySelector<HTMLButtonElement>('[data-pillar-prev]');
+    const nextBtn = showcase.querySelector<HTMLButtonElement>('[data-pillar-next]');
+    const counterDisplay = showcase.querySelector<HTMLElement>('[data-current-index]');
+
+    let currentIndex = 0;
+    let timer: any = null;
+    const CYCLE_DURATION = 5500; // 5.5s per slide
+
+    const updateDisplay = (newIndex: number) => {
+      currentIndex = newIndex;
+
+      // Update tabs
+      tabs.forEach((tab, i) => {
+        const isActive = i === newIndex;
+        tab.classList.toggle('is-active', isActive);
+        tab.setAttribute('aria-selected', String(isActive));
+        
+        // Reset progress animation
+        const track = tab.querySelector<HTMLElement>('.tab-progress-track');
+        if (track) {
+          track.style.animation = 'none';
+          if (isActive) {
+            // Force reflow to restart CSS animation
+            void track.offsetWidth;
+            track.style.animation = `pillarTimer ${CYCLE_DURATION}ms linear forwards`;
+          }
+        }
+      });
+
+      // Update slides
+      slides.forEach((slide, i) => {
+        const isActive = i === newIndex;
+        slide.classList.toggle('is-active', isActive);
+        slide.setAttribute('aria-hidden', String(!isActive));
+      });
+
+      // Update counter
+      if (counterDisplay) {
+        counterDisplay.textContent = String(newIndex + 1).padStart(2, '0');
+      }
+    };
+
+    const nextSlide = () => {
+      const next = (currentIndex + 1) % tabs.length;
+      updateDisplay(next);
+    };
+
+    const prevSlide = () => {
+      const prev = (currentIndex - 1 + tabs.length) % tabs.length;
+      updateDisplay(prev);
+    };
+
+    const startTimer = () => {
+      stopTimer();
+      timer = setInterval(nextSlide, CYCLE_DURATION);
+      // Trigger initial progress animation
+      const activeTab = tabs[currentIndex];
+      const track = activeTab?.querySelector<HTMLElement>('.tab-progress-track');
+      if (track) {
+        track.style.animation = 'none';
+        void track.offsetWidth;
+        track.style.animation = `pillarTimer ${CYCLE_DURATION}ms linear forwards`;
+      }
+    };
+
+    const stopTimer = () => {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    };
+
+    // User interactions
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => {
+        updateDisplay(index);
+        startTimer();
+      });
+    });
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        prevSlide();
+        startTimer();
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        nextSlide();
+        startTimer();
+      });
+    }
+
+    // Touch swipe support for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    showcase.addEventListener('touchstart', (e: TouchEvent) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    showcase.addEventListener('touchend', (e: TouchEvent) => {
+      touchEndX = e.changedTouches[0].screenX;
+      if (touchStartX - touchEndX > 50) {
+        nextSlide();
+        startTimer();
+      } else if (touchEndX - touchStartX > 50) {
+        prevSlide();
+        startTimer();
+      }
+    }, { passive: true });
+
+    // Start auto cycling
+    startTimer();
+  };
+
+  initPillars();
+  document.addEventListener('astro:page-load', initPillars);
+</script>
+
+<style>
+  .pillar-showcase {
+    padding: 5.5rem 0;
+    background: var(--color-paper-2);
+    border-top: 1px solid var(--color-rule);
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .pillar-header-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2.25rem;
+  }
+
+  @media (min-width: 48rem) {
+    .pillar-header-row {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+  }
+
+  .section-kicker {
+    margin: 0 0 0.4rem 0;
+    color: var(--color-crimson-deep);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .pillar-header h2 {
+    margin: 0;
+    font-size: clamp(2rem, 3.8vw, 2.9rem);
+    color: var(--color-board);
+    line-height: 1.1;
+  }
+
+  /* Carousel Navigation Arrows */
+  .pillar-nav-arrows {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #ffffff;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--color-rule);
+    width: fit-content;
+  }
+
+  .arrow-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    background: transparent;
+    border: 1px solid var(--color-rule);
+    color: var(--color-board);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .arrow-btn:hover {
+    background: var(--color-board);
+    color: #ffffff;
+    border-color: var(--color-board);
+  }
+
+  .counter-display {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: var(--color-ink-3);
+    padding: 0 0.5rem;
+  }
+
+  .counter-display strong {
+    color: var(--color-board);
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  /* Interactive Tab Strip */
+  .pillar-tabs {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: var(--color-rule);
+    border: 1px solid var(--color-rule);
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 47.99rem) {
+    .pillar-tabs {
+      grid-template-columns: repeat(5, minmax(5.4rem, 1fr));
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .pillar-tabs::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .pillar-tab {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.1rem 1.25rem 1.25rem;
+    background: #ffffff;
+    border: 0;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+
+  @media (max-width: 47.99rem) {
+    .pillar-tab {
+      padding: 0.75rem 0.6rem 0.85rem;
+    }
+  }
+
+  .pillar-tab:hover {
+    background: #faf8f5;
+  }
+
+  .pillar-tab.is-active {
+    background: var(--color-board);
+    color: #ffffff;
+  }
+
+  .tab-num {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-crimson);
+  }
+
+  .pillar-tab.is-active .tab-num {
+    color: var(--color-crimson-light);
+  }
+
+  .tab-label {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--color-board);
+    margin-top: 0.2rem;
+  }
+
+  .pillar-tab.is-active .tab-label {
+    color: #ffffff;
+  }
+
+  /* Animated Timer Progress Bar at top of active tab */
+  .tab-progress-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: transparent;
+    overflow: hidden;
+  }
+
+  .tab-progress-track {
+    display: none;
+    width: 100%;
+    height: 100%;
+    background: var(--color-crimson);
+    transform-origin: left;
+  }
+
+  .pillar-tab.is-active .tab-progress-track {
+    display: block;
+  }
+
+  @keyframes pillarTimer {
+    0% {
+      transform: scaleX(0);
+    }
+    100% {
+      transform: scaleX(1);
+    }
+  }
+
+  /* Animated Card Stage */
+  .pillar-stage {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid var(--color-rule);
+    box-shadow: 0 4px 25px rgba(23, 47, 64, 0.06);
+    min-height: 24rem;
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .pillar-slide {
+    grid-area: 1 / 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px);
+    transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.55s;
+    pointer-events: none;
+  }
+
+  .pillar-slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  @media (min-width: 56rem) {
+    .pillar-slide {
+      grid-template-columns: 1.15fr 1fr;
+      align-items: stretch;
+    }
+  }
+
+  .pillar-copy {
+    padding: 3rem 2.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  @media (min-width: 48rem) {
+    .pillar-copy {
+      padding: 3.5rem 3.5rem;
+    }
+  }
+
+  .pillar-keyword-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .badge-num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--color-crimson);
+    letter-spacing: 0.08em;
+  }
+
+  .badge-text {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    color: var(--color-board);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .pillar-headline {
+    margin: 0 0 1rem 0;
+    font-size: clamp(1.8rem, 2.8vw, 2.4rem);
+    line-height: 1.15;
+    color: var(--color-board);
+  }
+
+  .pillar-caption {
+    margin: 0 0 2rem 0;
+    color: var(--color-ink-2);
+    font-size: 1.02rem;
+    line-height: 1.65;
+    max-width: 32rem;
+  }
+
+  .pillar-action-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-crimson-deep);
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    width: fit-content;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .pillar-action-link:hover {
+    color: var(--color-board);
+  }
+
+  .pillar-action-link:hover .arrow {
+    transform: translateX(3px);
+  }
+
+  .arrow {
+    transition: transform 0.2s ease;
+    display: inline-block;
+  }
+
+  .pillar-media {
+    position: relative;
+    background: var(--color-board);
+    overflow: hidden;
+    min-height: 18rem;
+  }
+
+  .image-wrapper {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .pillar-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .pillar-slide.is-active .pillar-media img {
+    transform: scale(1.03);
+  }
+
+  .media-badge {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    background: rgba(23, 47, 64, 0.88);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+</style>

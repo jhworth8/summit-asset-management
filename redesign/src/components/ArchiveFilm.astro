@@ -1,0 +1,165 @@
+<figure class="archive-film" data-reveal>
+  <div class="archive-film__frame">
+    <video
+      id="summit-archive-film"
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      poster="/img/SAM_MG_8110_FPO-thumb620x260.jpg"
+      aria-label="A quiet AI-extended film grounded in Summit's original photographic archive"
+    >
+      <source src="/video/summit-photo-archive-loop.mp4" type="video/mp4" />
+    </video>
+
+    <div class="archive-film__label" aria-hidden="true">
+      <span></span>
+      AI-extended archive
+    </div>
+
+    <button type="button" class="archive-film__control" aria-controls="summit-archive-film">
+      <span class="archive-film__icon" aria-hidden="true">▶</span>
+      <span class="archive-film__action">Play film</span>
+    </button>
+  </div>
+  <figcaption>
+    Generated motion and wider framing based on Summit’s original photographs. No depicted event is presented as documentary footage.
+  </figcaption>
+</figure>
+
+<script>
+  const setupArchiveFilm = () => {
+    const video = document.getElementById('summit-archive-film') as HTMLVideoElement | null;
+    const control = document.querySelector<HTMLButtonElement>('.archive-film__control');
+    if (!video || !control || control.dataset.ready === 'true') return;
+
+    control.dataset.ready = 'true';
+    const action = control.querySelector<HTMLElement>('.archive-film__action');
+    const icon = control.querySelector<HTMLElement>('.archive-film__icon');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const updateControl = () => {
+      const playing = !video.paused && !video.ended;
+      if (action) action.textContent = playing ? 'Pause film' : 'Play film';
+      if (icon) icon.textContent = playing ? 'Ⅱ' : '▶';
+      control.setAttribute('aria-label', playing ? 'Pause archival film' : 'Play archival film');
+    };
+
+    control.addEventListener('click', async () => {
+      if (video.paused) {
+        try { await video.play(); } catch { /* The poster remains available if playback is blocked. */ }
+      } else {
+        video.pause();
+      }
+      updateControl();
+    });
+
+    video.addEventListener('play', updateControl);
+    video.addEventListener('pause', updateControl);
+    updateControl();
+
+    if (!reducedMotion) {
+      video.play().catch(updateControl);
+    }
+  };
+
+  setupArchiveFilm();
+  document.addEventListener('astro:page-load', setupArchiveFilm);
+</script>
+
+<style>
+  .archive-film {
+    margin: 0;
+    padding: 0.45rem;
+    border: 1px solid var(--color-rule);
+    background: white;
+  }
+
+  .archive-film__frame {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-board);
+  }
+
+  .archive-film video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  .archive-film__frame::after {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 58%, rgb(10 25 36 / 0.62));
+    content: '';
+    pointer-events: none;
+  }
+
+  .archive-film__label {
+    position: absolute;
+    z-index: 1;
+    top: 0.8rem;
+    left: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.5rem;
+    background: rgb(23 47 64 / 0.84);
+    color: white;
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .archive-film__label span {
+    width: 0.35rem;
+    height: 0.35rem;
+    background: var(--color-crimson-light);
+  }
+
+  .archive-film__control {
+    position: absolute;
+    z-index: 2;
+    right: 0.8rem;
+    bottom: 0.8rem;
+    display: inline-flex;
+    min-height: 2.45rem;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid rgb(255 255 255 / 0.68);
+    background: rgb(23 47 64 / 0.9);
+    color: white;
+    font: inherit;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .archive-film__control:hover {
+    background: var(--color-crimson-deep);
+  }
+
+  .archive-film__icon {
+    display: inline-grid;
+    width: 0.9rem;
+    place-items: center;
+    font-size: 0.65rem;
+  }
+
+  .archive-film figcaption {
+    padding: 0.7rem 0.35rem 0.25rem;
+    color: var(--color-ink-3);
+    font-family: var(--font-serif);
+    font-size: 0.78rem;
+    font-style: italic;
+    line-height: 1.35;
+  }
+
+  @media (max-width: 30rem) {
+    .archive-film__action { display: none; }
+    .archive-film__control { min-width: 2.45rem; justify-content: center; }
+  }
+</style>

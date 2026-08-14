@@ -1,0 +1,36 @@
+---
+import Page from '../layouts/Page.astro';
+import { nav } from '../data/site';
+---
+
+<Page
+  title="Page not found | Summit Asset Management"
+  description="The requested page could not be found."
+  section="404"
+  heading="We could not find that page."
+  intro="The address may have changed. Use the links below to continue through the Summit website."
+>
+  <section class="page-section">
+    <div class="page-shell narrow-shell">
+      <nav aria-label="Continue to another page" class="route-list">
+        <a href="/"><strong>Homepage</strong><span aria-hidden="true">→</span></a>
+        {nav.map((item) => <a href={item.href}><strong>{item.label}</strong><span aria-hidden="true">→</span></a>)}
+        <a href="/client-access"><strong>Client access</strong><span aria-hidden="true">→</span></a>
+      </nav>
+    </div>
+  </section>
+</Page>
+
+<style>
+  .narrow-shell { max-width: 52rem; }
+  .route-list { border-top: 1px solid var(--color-rule); }
+  .route-list a {
+    display: flex;
+    min-height: 4rem;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--color-rule-soft);
+    color: var(--color-ink);
+  }
+  .route-list a:hover { color: var(--color-crimson); }
+</style>

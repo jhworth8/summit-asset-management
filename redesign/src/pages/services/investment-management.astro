@@ -1,0 +1,327 @@
+---
+import Page from '../../layouts/Page.astro';
+import InvestmentDiagram from '../../components/InvestmentDiagram.astro';
+
+const subnav = [
+  { label: 'Overview', href: '/services' },
+  { label: 'Investment management', href: '/services/investment-management' },
+  { label: 'Financial planning', href: '/services/financial-planning' },
+];
+---
+
+<Page
+  title="Investment Management | Summit Asset Management"
+  description="Fee-only, collaborative investment management customized for individuals, families, businesses and endowments in Memphis and nationwide."
+  section="Services"
+  heading="Investment decisions begin with the client."
+  intro="A thorough understanding of each client’s financial life gives us the foundation for a sound, customized investment plan."
+  image="/img/SAM_MG_8429_enhanced.webp"
+  imageAlt="A Summit advisor reviewing portfolio information with a client in Memphis"
+  subnav={subnav}
+>
+  <!-- Philosophy & Lead Editorial -->
+  <section class="service-editorial-lead">
+    <div class="lead-header">
+      <p class="section-kicker">Core Philosophy</p>
+      <h2>A disciplined process, personalized in practice.</h2>
+    </div>
+    <div class="lead-prose">
+      <p class="lead-emphasis">
+        For each client we begin the investment process by identifying an appropriate asset allocation. As a first step, we assess goals and objectives. We then work together to craft a custom plan.
+      </p>
+      <p>
+        This includes designing portfolios that are specific to each client but are directed by the firm’s coordinated investment strategies. In addition, we apply changes to the asset mix as needed over time.
+      </p>
+    </div>
+  </section>
+
+  <!-- Interactive Figures: 4-Stage Framework & Asset Sleeves -->
+  <InvestmentDiagram />
+
+  <!-- The 3 Fiduciary Commitments -->
+  <section class="commitments-strip">
+    <div class="commitment-item">
+      <span class="commitment-tag">Fiduciary</span>
+      <h3>Fee-Only Standard</h3>
+      <p>Compensated solely by client fees. No commissions, no proprietary products, no sales quotas.</p>
+    </div>
+    <div class="commitment-item">
+      <span class="commitment-tag">Governance</span>
+      <h3>Committee Direction</h3>
+      <p>Firm-wide Investment Committee sets macroeconomic research and disciplined asset allocation targets.</p>
+    </div>
+    <div class="commitment-item">
+      <span class="commitment-tag">Execution</span>
+      <h3>Tax-Aware Discipline</h3>
+      <p>Continuous attention to asset location, tax-loss harvesting, and transaction cost efficiency.</p>
+    </div>
+  </section>
+
+  <!-- Action Callout Banner -->
+  <div class="service-action-banner">
+    <div class="action-copy">
+      <p class="action-kicker">Next Steps</p>
+      <h2>See how this applies to your situation.</h2>
+      <p>
+        Whether you are evaluating your current portfolio, planning a transition, or seeking a second opinion, our Memphis advisors are ready to discuss your goals.
+      </p>
+    </div>
+    <div class="action-links">
+      <a href="/contact" class="solid-button" target="_blank" rel="noopener noreferrer">Schedule a conversation</a>
+      <a href="tel:9017298100" class="phone-link">
+        <span>Direct line to Memphis office:</span>
+        <strong>901.729.8100</strong>
+      </a>
+      <a href="/services/financial-planning" class="sibling-link">
+        Explore Financial Planning →
+      </a>
+    </div>
+  </div>
+
+  <!-- Bottom Page Navigation -->
+  <nav class="service-pager" aria-label="Services navigation">
+    <a href="/services" class="pager-prev">
+      <span>Previous</span>
+      <strong>← Services Overview</strong>
+    </a>
+    <a href="/services/financial-planning" class="pager-next">
+      <span>Next</span>
+      <strong>Financial Planning →</strong>
+    </a>
+  </nav>
+
+  <style>
+    .section-kicker {
+      margin: 0 0 0.5rem 0;
+      color: var(--color-crimson-deep);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .service-editorial-lead {
+      display: grid;
+      gap: 2.5rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--color-rule);
+    }
+
+    .lead-header h2 {
+      max-width: 17ch;
+      margin: 0;
+      font-size: clamp(2.1rem, 3.8vw, 3.2rem);
+      line-height: 1.05;
+      color: var(--color-board);
+    }
+
+    .lead-prose {
+      max-width: 44rem;
+      color: var(--color-ink-2);
+      font-size: 1.02rem;
+      line-height: 1.68;
+    }
+
+    .lead-emphasis {
+      color: var(--color-board);
+      font-size: 1.12rem;
+      font-weight: 500;
+      line-height: 1.6;
+      margin-top: 0;
+    }
+
+    @media (min-width: 60rem) {
+      .service-editorial-lead {
+        grid-template-columns: 0.85fr 1.15fr;
+        gap: 4.5rem;
+      }
+    }
+
+    /* Commitments Strip */
+    .commitments-strip {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1px;
+      margin-top: 3.5rem;
+      background: var(--color-rule);
+      border: 1px solid var(--color-rule);
+    }
+
+    @media (min-width: 54rem) {
+      .commitments-strip {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .commitment-item {
+      background: #ffffff;
+      padding: 2rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .commitment-tag {
+      color: var(--color-crimson);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .commitment-item h3 {
+      margin: 0.35rem 0 0.5rem 0;
+      font-size: 1.3rem;
+      color: var(--color-board);
+    }
+
+    .commitment-item p {
+      margin: 0;
+      color: var(--color-ink-2);
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    /* Action Banner */
+    .service-action-banner {
+      display: grid;
+      gap: 2.5rem;
+      margin-top: 3.5rem;
+      padding: 3rem 2.5rem;
+      background: var(--color-board);
+      color: #ffffff;
+    }
+
+    .action-kicker {
+      margin: 0 0 0.5rem 0;
+      color: var(--color-crimson-light);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .action-copy h2 {
+      margin: 0 0 1rem 0;
+      color: #ffffff;
+      font-size: clamp(1.85rem, 3vw, 2.4rem);
+      line-height: 1.15;
+    }
+
+    .action-copy p {
+      max-width: 34rem;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 0.98rem;
+      line-height: 1.6;
+    }
+
+    .action-links {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.25rem;
+    }
+
+    .solid-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.9rem 1.75rem;
+      background: var(--color-crimson);
+      color: #ffffff;
+      font-size: 0.94rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background 0.2s ease;
+      width: fit-content;
+    }
+
+    .solid-button:hover {
+      background: var(--color-crimson-deep);
+    }
+
+    .phone-link {
+      display: flex;
+      flex-direction: column;
+      color: rgba(255, 255, 255, 0.88);
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+
+    .phone-link span {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.76rem;
+    }
+
+    .phone-link strong {
+      font-size: 1.2rem;
+      color: #ffffff;
+      font-family: var(--font-serif);
+      letter-spacing: 0.03em;
+    }
+
+    .sibling-link {
+      margin-top: 0.5rem;
+      color: var(--color-crimson-light);
+      font-size: 0.86rem;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 0.25em;
+    }
+
+    .sibling-link:hover {
+      color: #ffffff;
+    }
+
+    @media (min-width: 56rem) {
+      .service-action-banner {
+        grid-template-columns: 1.2fr 0.8fr;
+        align-items: center;
+        gap: 4rem;
+      }
+    }
+
+    /* Bottom Page Navigation Pager */
+    .service-pager {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--color-rule);
+    }
+
+    .service-pager a {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: var(--color-board);
+      transition: color 0.2s ease;
+    }
+
+    .service-pager a:hover {
+      color: var(--color-crimson);
+    }
+
+    .service-pager a span {
+      color: var(--color-ink-3);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .service-pager a strong {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      margin-top: 0.2rem;
+      color: inherit;
+    }
+
+    .service-pager .pager-next {
+      text-align: right;
+      margin-left: auto;
+    }
+  </style>
+</Page>

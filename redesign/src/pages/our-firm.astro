@@ -1,0 +1,50 @@
+---
+import Page from '../layouts/Page.astro';
+
+const subnav = [
+  { label: 'Overview', href: '/our-firm' },
+  { label: 'Firm attributes', href: '/our-firm/attributes' },
+  { label: 'Our history', href: '/our-firm/history' },
+];
+---
+
+<Page
+  title="Our Firm | Summit Asset Management"
+  description="Learn about Summit Asset Management, an independent, fee-only and employee-owned investment advisory firm founded in Memphis in 1991."
+  section="Our Firm"
+  heading="Deep roots. Independent perspective."
+  intro="Summit has provided investment services and financial advice since 1991, with a commitment to lasting relationships and thoughtful client service."
+  image="/img/Summit_MG_8997-thumb570x430.jpg"
+  imageAlt="A meeting space inside Summit's Memphis office"
+  subnav={subnav}
+>
+  <section class="firm-overview">
+    <div>
+      <p class="body-kicker">Built for continuity</p>
+      <h2>A firm designed to serve clients for generations.</h2>
+    </div>
+    <div class="prose">
+      <p>Summit Asset Management has deep roots connecting the firm to the Memphis community and the financial services industry. That history informs how we think about stewardship, trust and long-term relationships.</p>
+      <p>The firm is 100% employee-owned. There is no outside parent company or product provider directing the advice clients receive. Summit’s advisors work together, bringing collective knowledge to each relationship while preserving a clear personal point of contact.</p>
+    </div>
+  </section>
+
+  <div class="firm-links">
+    <a href="/our-firm/attributes"><span>Firm attributes</span><strong>How ownership, compensation and service shape the client experience.</strong><em>Read more →</em></a>
+    <a href="/our-firm/history"><span>Our history</span><strong>From Frank A. Jones’s founding vision to today’s employee-owned firm.</strong><em>Read more →</em></a>
+  </div>
+
+  <style>
+    .firm-overview { display:grid; gap:2rem; }
+    .body-kicker,.firm-links span { margin:0; color:var(--color-crimson-deep); font-size:.74rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+    h2 { max-width:18ch; margin:.6rem 0 0; font-size:clamp(2rem,4vw,3.2rem); line-height:1.03; }
+    .prose { max-width:42rem; color:var(--color-ink-2); line-height:1.68; }
+    .prose p:first-child { margin-top:0; }
+    .firm-links { display:grid; margin-top:3rem; border-block:1px solid var(--color-ink); }
+    .firm-links a { display:flex; flex-direction:column; gap:.65rem; padding:1.5rem 0; border-bottom:1px solid var(--color-rule); }
+    .firm-links a:last-child { border-bottom:0; }
+    .firm-links strong { max-width:34rem; color:var(--color-board); font-family:var(--font-serif); font-size:1.45rem; line-height:1.15; }
+    .firm-links em { color:var(--color-crimson-deep); font-size:.82rem; font-style:normal; font-weight:700; }
+    @media(min-width:64rem){ .firm-overview{grid-template-columns:.8fr 1.2fr;gap:5rem}.firm-links{grid-template-columns:repeat(2,1fr)}.firm-links a{padding:2rem;border-right:1px solid var(--color-rule);border-bottom:0}.firm-links a:first-child{padding-left:0}.firm-links a:last-child{padding-right:0;border-right:0} }
+  </style>
+</Page>

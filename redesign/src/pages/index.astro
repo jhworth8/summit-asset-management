@@ -1,0 +1,279 @@
+---
+import Base from '../layouts/Base.astro';
+import PillarShowcase from '../components/PillarShowcase.astro';
+import { team, letters, firm } from '../data/site';
+
+const services = [
+  {
+    number: '01',
+    title: 'Investment Management',
+    body: 'Having a thorough understanding of our clients’ financial lives gives us a sound basis for creating their investment plans. The most fundamental decision in those plans is the asset allocation decision. We believe that a diversified portfolio’s asset allocation has a greater impact on future performance than any other factor. We work to identify appropriate asset allocation targets for our clients.',
+    details: ['Portfolio design', 'Ongoing oversight'],
+    href: '/services/investment-management',
+  },
+  {
+    number: '02',
+    title: 'Financial Planning',
+    body: 'The advisors at Summit have years of experience assisting clients with a broad range of financial matters. We have worked with clients on family partnerships, business transitions, retirement and estate planning, charitable giving, and the creation of all manner of trusts. We walk with clients through everyday questions and complex issues to provide clarity and coherence.',
+    details: ['Retirement planning', 'Estate, tax and giving'],
+    href: '/services/financial-planning',
+  },
+];
+
+const audiences = [
+  ['Individuals & families', 'Long-term guidance for the decisions that affect the people you care about.'],
+  ['Business owners', 'Planning for transitions, family partnerships and concentrated wealth.'],
+  ['Nonprofit organizations', 'Investment oversight designed to support an organization’s mission.'],
+  ['Current clients', 'Secure access to accounts and documents.', '/client-access'],
+];
+
+const distinctions = [
+  ['Fee-only', 'Summit is compensated by its clients, not by commissions or product sales.'],
+  ['Employee-owned', 'The people serving clients own the firm. There is no outside owner directing recommendations.'],
+  ['Team-based', 'Clients benefit from the experience and perspective of the firm—not only one individual.'],
+];
+---
+
+<Base
+  title="Summit Asset Management | Investment Management & Financial Planning"
+  description="Fee-only investment management and financial planning for individuals, families, businesses and nonprofits from an employee-owned Memphis firm."
+>
+  <section class="institutional-hero video-hero">
+    <div class="hero-media" aria-hidden="true">
+      <video
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        poster="/img/summit-hero-poster.webp"
+      >
+        <source src="/video/summit-hero-film.mp4" type="video/mp4" />
+      </video>
+    </div>
+
+    <div class="institutional-shell hero-columns video-hero-content">
+      <div class="hero-message">
+        <p class="kicker" data-reveal>Independent financial guidance · Memphis, Tennessee</p>
+        <h1 data-reveal data-delay="0.03">Investment management and financial planning for the whole of your financial life.</h1>
+        <p class="hero-intro" data-reveal data-delay="0.06">
+          Summit serves individuals, families, businesses and nonprofit organizations with experienced, fee-only advice.
+        </p>
+        <div class="hero-actions" data-reveal data-delay="0.09">
+          <a href="/contact" class="solid-button" target="_blank" rel="noopener noreferrer">Talk with an advisor</a>
+          <a href="/services" class="plain-link">View our services <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="institutional-shell trust-strip" aria-label="About Summit">
+      <div><strong>1991</strong><span>Founded in Memphis</span></div>
+      <div><strong>Fee-only</strong><span>No commissions or loads</span></div>
+      <div><strong>100%</strong><span>Employee-owned</span></div>
+      <div><strong>20+ years</strong><span>Average client-service experience</span></div>
+    </div>
+  </section>
+
+  <script>
+    const setupHeroDepth = () => {
+      const hero = document.querySelector<HTMLElement>('.video-hero');
+      if (!hero || hero.dataset.depthReady === 'true') return;
+      hero.dataset.depthReady = 'true';
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let scheduled = false;
+
+      const update = () => {
+        scheduled = false;
+        if (reducedMotion.matches) {
+          hero.style.removeProperty('--hero-scroll-progress');
+          hero.style.removeProperty('--hero-media-opacity');
+          hero.style.removeProperty('--hero-media-scale');
+          hero.style.removeProperty('--hero-media-shift');
+          hero.style.removeProperty('--hero-content-opacity');
+          hero.style.removeProperty('--hero-content-shift');
+          return;
+        }
+
+        const rect = hero.getBoundingClientRect();
+        const header = document.querySelector<HTMLElement>('.site-header');
+        const pinnedTop = header?.offsetHeight ?? 0;
+        const cover = document.querySelector<HTMLElement>('.hero-cover');
+        const coverTop = cover?.getBoundingClientRect().top ?? window.innerHeight;
+        const progress = Math.min(1, Math.max(0, 1 - (coverTop - pinnedTop) / Math.max(1, window.innerHeight - pinnedTop)));
+        hero.style.setProperty('--hero-scroll-progress', progress.toFixed(4));
+        hero.style.setProperty('--hero-media-opacity', (1 - progress * 0.38).toFixed(4));
+        hero.style.setProperty('--hero-media-scale', (1 + progress * 0.035).toFixed(4));
+        hero.style.setProperty('--hero-media-shift', `${(progress * 1.5).toFixed(3)}rem`);
+        hero.style.setProperty('--hero-content-opacity', (1 - progress * 0.82).toFixed(4));
+        hero.style.setProperty('--hero-content-shift', `${(progress * -2.25).toFixed(3)}rem`);
+      };
+
+      const requestUpdate = () => {
+        if (scheduled) return;
+        scheduled = true;
+        requestAnimationFrame(update);
+      };
+
+      update();
+      window.addEventListener('scroll', requestUpdate, { passive: true });
+      window.addEventListener('resize', requestUpdate, { passive: true });
+      reducedMotion.addEventListener('change', requestUpdate);
+    };
+
+    setupHeroDepth();
+    document.addEventListener('astro:page-load', setupHeroDepth);
+  </script>
+
+  <div class="hero-cover">
+  <section id="services" class="institutional-section expertise-section">
+    <div class="institutional-shell">
+      <div class="institutional-heading" data-reveal>
+        <p class="kicker">What we do</p>
+        <h2>Investing and planning, together.</h2>
+        <p>One coordinated view of your portfolio and financial life.</p>
+      </div>
+
+      <div class="expertise-grid">
+        {
+          services.map((service, index) => (
+            <article class="expertise-item" data-reveal data-delay={index * 0.05}>
+              <p class="item-number">Service {service.number}</p>
+              <h3>{service.title}</h3>
+              <p>{service.body}</p>
+              <ul>
+                {service.details.map((detail) => <li>{detail}</li>)}
+              </ul>
+              <a href={service.href}>Explore {service.title.toLowerCase()} <span aria-hidden="true">→</span></a>
+            </article>
+          ))
+        }
+      </div>
+
+      <div id="who-we-help" class="audience-panel" data-reveal>
+        <div class="audience-title">
+          <p class="kicker">Who we serve</p>
+          <h2>Advice shaped to the client.</h2>
+        </div>
+        <ul>
+          {
+            audiences.map(([title, body, href]) => (
+              <li>
+                {href ? <a href={href}><strong>{title}</strong><span>{body}</span></a> : <div><strong>{title}</strong><span>{body}</span></div>}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Original Brand Phrases & Captions: Changing Cards Showcase -->
+  <PillarShowcase />
+
+  <section id="why-summit" class="institutional-section firm-section">
+    <div class="institutional-shell firm-columns">
+      <figure class="firm-editorial" data-reveal>
+        <img
+          src="/img/_MG_9114b_1-thumb620x260.jpg"
+          alt="Three Summit colleagues reviewing a document together in the office"
+          width="620"
+          height="260"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption>
+          <span>Team-based by design</span>
+          <strong>More than one perspective, organized around one client.</strong>
+        </figcaption>
+      </figure>
+
+      <div class="firm-copy">
+        <div class="institutional-heading" data-reveal>
+          <p class="kicker">Why Summit</p>
+          <h2>Independent by structure. Personal by practice.</h2>
+          <p>Summit was built to serve clients through lasting relationships—not transactions.</p>
+        </div>
+
+        <dl class="distinction-list">
+          {
+            distinctions.map(([title, body], index) => (
+              <div data-reveal data-delay={index * 0.04}>
+                <dt>{title}</dt>
+                <dd>{body}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <nav class="firm-pathways" aria-label="Explore Summit" data-reveal>
+          <a href="/our-firm/attributes">
+            <span>How we work</span>
+            <strong>See the principles behind the practice</strong>
+            <i aria-hidden="true">→</i>
+          </a>
+          <a href="/our-firm/history">
+            <span>Our history</span>
+            <strong>Memphis roots and employee ownership</strong>
+            <i aria-hidden="true">→</i>
+          </a>
+          <a href="/our-team">
+            <span>Our people</span>
+            <strong>Meet the team serving clients</strong>
+            <i aria-hidden="true">→</i>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <section id="team" class="institutional-section team-section">
+    <div class="institutional-shell">
+      <div class="team-heading" data-reveal>
+        <div>
+          <p class="kicker">Our people</p>
+          <h2>The team clients actually work with.</h2>
+        </div>
+        <p>Experienced professionals who know their clients, collaborate with one another and remain accessible over time.</p>
+      </div>
+
+      <ul class="people-directory" aria-label="Summit team">
+        {
+          team.map((person, index) => (
+            <li data-reveal data-delay={index * 0.025}>
+              <a href={person.href} aria-label={`View ${person.name}'s profile`}>
+                <img src={person.photo} alt="" width="180" height="220" loading="lazy" />
+                <strong>{person.name}</strong>
+                <span>{person.role}{person.credentials && ` · ${person.credentials}`}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section id="contact" class="institutional-section closing-section">
+    <div class="institutional-shell closing-columns">
+      <div class="closing-message" data-reveal>
+        <p class="kicker">Begin a conversation</p>
+        <h2>Tell us what you are working toward.</h2>
+        <p>A first meeting is a chance to ask questions, understand how Summit works and decide whether the relationship feels right.</p>
+        <div class="closing-actions">
+          <a href={`mailto:${firm.email}`} class="solid-button">Email our team</a>
+          <a href={firm.phoneHref} class="plain-link">Call {firm.phone}</a>
+        </div>
+      </div>
+
+      <aside class="letter-summary" data-reveal data-delay="0.04">
+        <p class="kicker">Latest client letter</p>
+        <h3>{letters[0].title.replace('Client Letter — ', '')}</h3>
+        <p>Summit’s current perspective on the markets, written for clients rather than headlines.</p>
+        <a href={letters[0].href}>Read the latest letter <span aria-hidden="true">→</span></a>
+        <a href="/news">View the complete archive <span aria-hidden="true">→</span></a>
+      </aside>
+    </div>
+  </section>
+  </div>
+</Base>

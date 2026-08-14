@@ -1,0 +1,14 @@
+---
+import Page from '../layouts/Page.astro';
+import { firm } from '../data/site';
+---
+<Page title="Client Access | Summit Asset Management" description="Secure client access information and support for Summit Asset Management clients." section="Client Access" heading="Secure access for current clients." intro="Client information belongs in the secure systems established for your relationship—not in ordinary email or public web forms.">
+  <div class="access-grid">
+    <section><p>Existing clients</p><h2>Use your established secure portal.</h2><p>Continue through the portal link supplied by your Summit service team. Bookmark that verified address rather than following unfamiliar links.</p><a href={`mailto:${firm.email}?subject=Client%20portal%20access`}>Request portal assistance →</a></section>
+    <section><p>Access help</p><h2>We can help you reconnect.</h2><p>If you have forgotten a password, changed devices or are unsure which portal to use, contact Summit directly. Do not send account numbers or sensitive documents by email.</p><a href={firm.phoneHref}>Call {firm.phone} →</a></section>
+  </div>
+  <aside class="security-note"><strong>Security reminder</strong><span>Summit will not ask you to send passwords or authentication codes by email.</span></aside>
+  <style>
+    .access-grid{display:grid;border-block:1px solid var(--color-ink)}.access-grid section{padding:1.5rem 0;border-bottom:1px solid var(--color-rule)}.access-grid section:last-child{border-bottom:0}.access-grid section>p:first-child{margin:0;color:var(--color-crimson-deep);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.access-grid h2{margin:.6rem 0 0;color:var(--color-board);font-size:1.8rem;line-height:1.08}.access-grid section>p:not(:first-child){color:var(--color-ink-2);line-height:1.58}.access-grid a{display:inline-block;border-bottom:1px solid currentColor;color:var(--color-crimson-deep);font-size:.82rem;font-weight:700}.security-note{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;margin-top:2rem;padding:1.2rem 1.4rem;background:var(--color-paper-2);color:var(--color-ink-2);font-size:.84rem}.security-note strong{color:var(--color-board)}@media(min-width:60rem){.access-grid{grid-template-columns:repeat(2,1fr)}.access-grid section{padding:2rem;border-right:1px solid var(--color-rule);border-bottom:0}.access-grid section:first-child{padding-left:0}.access-grid section:last-child{padding-right:0;border-right:0}}
+  </style>
+</Page>

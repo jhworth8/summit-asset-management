@@ -1,0 +1,8 @@
+---
+import Page from '../layouts/Page.astro';
+import { firm } from '../data/site';
+---
+<Page title="Website Terms | Summit Asset Management" description="Website use and information notice for Summit Asset Management." section="Disclosures" heading="Website information and use" intro="Important context for information presented on this website.">
+  <div class="terms"><h2>General information</h2><p>Website materials are provided for general informational purposes. They are not individualized investment, legal or tax advice, and they do not create an advisory relationship.</p><h2>No performance promise</h2><p>Past performance does not guarantee future results. Investing involves risk, including possible loss of principal.</p><h2>Questions</h2><p>For current legal terms or questions about information on this site, contact Summit at <a href={`mailto:${firm.email}`}>{firm.email}</a> or <a href={firm.phoneHref}>{firm.phone}</a>.</p></div>
+  <style>.terms{max-width:48rem}.terms h2{margin:1.8rem 0 .4rem;color:var(--color-board);font-size:1.45rem}.terms h2:first-child{margin-top:0}.terms p{color:var(--color-ink-2);line-height:1.65}.terms a{color:var(--color-crimson-deep);font-weight:700;text-decoration:underline;text-underline-offset:.2em}</style>
+</Page>

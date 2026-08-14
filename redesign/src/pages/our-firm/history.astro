@@ -1,0 +1,32 @@
+---
+import Page from '../../layouts/Page.astro';
+const subnav = [
+  { label: 'Overview', href: '/our-firm' },
+  { label: 'Firm attributes', href: '/our-firm/attributes' },
+  { label: 'Our history', href: '/our-firm/history' },
+];
+const milestones = [
+  ['1991', 'Frank A. Jones registers Summit with the Securities & Exchange Commission after beginning to manage money for relatives, friends and nonprofit institutions.'],
+  ['1995', 'Lance Hollingsworth joins as Summit’s first employee.'],
+  ['1999', 'Steve Rhea, Alex Thompson and Lance Hollingsworth become principals, providing a foundation for long-term succession.'],
+  ['2001–07', 'John Laughlin joins as an advisor; Summit later acquires The Jenkins Advisory and John becomes a principal.'],
+  ['Today', 'The employee-owned team continues building on the firm’s legacy with an emphasis on continuity, collaboration and personal service.'],
+];
+---
+
+<Page title="Our History | Summit Asset Management" description="The history of Summit Asset Management, founded in Memphis by Frank A. Jones in 1991." section="Our Firm" heading="Built in Memphis. Built to continue." intro="Summit’s history is a story of investment experience, thoughtful succession and service to clients and the community." image="/img/SAM_MG_8110_enhanced.webp" imageAlt="Details from Summit's Memphis office" subnav={subnav}>
+  <div class="history-grid">
+    <div class="history-prose">
+      <h2>Our beginning</h2>
+      <p>Summit Asset Management was founded by Frank A. Jones, a Memphis businessman, experienced investor and former member of the Federal Reserve Board of St. Louis.</p>
+      <p>The idea grew from Frank’s service on nonprofit investment committees and requests from relatives and friends to manage their personal money. As the firm grew, he deliberately brought in partners who could succeed him and preserve its continuity.</p>
+      <p>The team continues to build on that legacy today—strengthening the firm for future generations of clients rather than managing toward a short-term exit.</p>
+    </div>
+    <ol class="timeline">
+      {milestones.map(([year, text]) => <li><strong>{year}</strong><p>{text}</p></li>)}
+    </ol>
+  </div>
+  <style>
+    .history-grid{display:grid;gap:3rem}.history-prose{max-width:38rem}.history-prose h2{margin:0;font-size:2rem}.history-prose p{color:var(--color-ink-2);line-height:1.68}.timeline{margin:0;padding:0;border-top:1px solid var(--color-ink);list-style:none}.timeline li{display:grid;grid-template-columns:5rem 1fr;gap:1rem;padding:1rem 0;border-bottom:1px solid var(--color-rule)}.timeline strong{color:var(--color-crimson-deep);font-family:var(--font-serif);font-size:1.3rem}.timeline p{margin:0;color:var(--color-ink-2);line-height:1.5}@media(min-width:64rem){.history-grid{grid-template-columns:.75fr 1.25fr;gap:6rem}}
+  </style>
+</Page>

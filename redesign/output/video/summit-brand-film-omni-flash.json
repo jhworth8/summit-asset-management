@@ -1,0 +1,15 @@
+{
+  "interaction_id": "v1_Chdzalo5YW9HcElwMzNqckVQM2RmbTRBMBIXc2paOWFvR3BJcDMzanJFUDNkZm00QTA",
+  "model": "gemini-omni-flash-preview",
+  "status": "completed",
+  "output": "C:\\Users\\jesse\\SummitAssetManagement\\redesign\\output\\video\\summit-brand-film-omni-flash.mp4",
+  "bytes": 2938576,
+  "references": [
+    "C:\\Users\\jesse\\SummitAssetManagement\\redesign\\public\\img\\SAM_MG_8110_enhanced.webp",
+    "C:\\Users\\jesse\\SummitAssetManagement\\redesign\\public\\img\\SAM_MG_8429_enhanced.webp",
+    "C:\\Users\\jesse\\SummitAssetManagement\\redesign\\public\\img\\SAM_MG_8222_enhanced.webp",
+    "C:\\Users\\jesse\\SummitAssetManagement\\redesign\\public\\img\\SAM_MG_9054_enhanced.webp",
+    "C:\\Users\\jesse\\SummitAssetManagement\\redesign\\public\\img\\SAM_MG_8636_enhanced.webp"
+  ],
+  "prompt": "Create a polished 10-second, 16:9 institutional brand film for an established independent financial advisory firm. Use all five supplied photographs as visual references, not as a literal slideshow.\n\n[# References <IMAGE_REF_0>@Image1 <IMAGE_REF_1>@Image2 <IMAGE_REF_2>@Image3 <IMAGE_REF_3>@Image4 <IMAGE_REF_4>@Image5]\n[0-2s] Begin with <IMAGE_REF_0>, the Summit office sign. A very slow, stable camera drift reveals the dimensional metal lettering under soft architectural light. If the sign is visible, it must read exactly \u201cSUMMIT ASSET MANAGEMENT.\u201d\n[2-5s] Transition naturally into <IMAGE_REF_1>: the advisor and client review planning materials together. Add only subtle, realistic human movement\u2014small hand gestures, breathing, and attentive posture. Preserve their identities, clothing, room and professional relationship.\n[5-7s] Use <IMAGE_REF_2> and <IMAGE_REF_3> for elegant close details: crossed hands and watch, then eyeglasses resting above the polished table. Use shallow but realistic focus and restrained camera movement.\n[7-10s] Finish in <IMAGE_REF_4>: the two colleagues walk through the lobby toward the daylight, with natural fabric movement and a slow, confident camera push.\n\nVisual direction: premium editorial documentary photography, established and trustworthy, natural skin tones, neutral warm color, controlled highlights, realistic physics, understated and timeless. No startup aesthetic, no flashy transitions, no exaggerated smiles, no new people, no altered identities, no extra fingers, no warped hands, no invented architecture, no charts, no text overlays, no captions, no slogans, no dialogue, no watermark. Preserve the supplied environments and subjects. Audio: subtle calm instrumental bed with quiet natural office ambience, no voices. Use the given images as references for video generation; they should not be used as frozen literal frames."
+}

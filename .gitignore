@@ -1,0 +1,15 @@
+# Node & Dependencies
+node_modules/
+.pnpm-store/
+
+# Build artifacts
+dist/
+.astro/
+.output/
+
+# Logs & OS files
+*.log
+.DS_Store
+Thumbs.db
+.env
+.env.*

@@ -1,0 +1,113 @@
+---
+import type { ServiceStage } from '../data/services';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  center: string;
+  centerNote: string;
+  stages: ServiceStage[];
+}
+
+const { eyebrow, title, center, centerNote, stages } = Astro.props;
+const id = `story-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+---
+
+<section class="process-story" data-process-story aria-labelledby={id}>
+  <div class="story-layout">
+    <aside class="story-guide">
+      <p>{eyebrow}</p>
+      <h2 id={id}>{title}</h2>
+      <div class="story-context"><span>{center}</span><strong>{centerNote}</strong></div>
+      <div class="story-progress" aria-hidden="true"><span></span></div>
+      <p class="story-count"><span data-story-current>01</span> / {String(stages.length).padStart(2, '0')}</p>
+    </aside>
+
+    <ol class="story-stages">
+      {stages.map((stage, index) => (
+        <li data-story-stage={index} class:list={{ 'is-active': index === 0 }}>
+          <span class="stage-number">{String(index + 1).padStart(2, '0')}</span>
+          <article>
+            <p>Step {String(index + 1).padStart(2, '0')}</p>
+            <h3>{stage.title}</h3>
+            <div>{stage.summary}</div>
+            <ul>{stage.bullets.map((bullet) => <li>{bullet}</li>)}</ul>
+          </article>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  const setupProcessStories = () => {
+    document.querySelectorAll<HTMLElement>('[data-process-story]').forEach((root) => {
+      if (root.dataset.motionReady === 'true') return;
+      root.dataset.motionReady = 'true';
+
+      const stages = [...root.querySelectorAll<HTMLElement>('[data-story-stage]')];
+      const progress = root.querySelector<HTMLElement>('.story-progress span');
+      const current = root.querySelector<HTMLElement>('[data-story-current]');
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      gsap.registerPlugin(ScrollTrigger);
+      stages.forEach((stage, index) => {
+        ScrollTrigger.create({
+          trigger: stage,
+          start: 'top 58%',
+          end: 'bottom 58%',
+          onToggle: ({ isActive }) => {
+            if (!isActive) return;
+            stages.forEach((item, itemIndex) => item.classList.toggle('is-active', itemIndex === index));
+            if (current) current.textContent = String(index + 1).padStart(2, '0');
+            if (progress) gsap.to(progress, { scaleY: (index + 1) / stages.length, duration: .45, ease: 'power2.out' });
+          },
+        });
+        gsap.from(stage.querySelector('article'), {
+          y: 24,
+          opacity: 0,
+          duration: .7,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: stage, start: 'top 84%', once: true },
+        });
+      });
+    });
+  };
+
+  setupProcessStories();
+  document.addEventListener('astro:page-load', setupProcessStories);
+</script>
+
+<style>
+  .process-story{margin-block:3.5rem 2rem;border-top:1px solid var(--color-ink)}
+  .story-layout{display:grid;grid-template-columns:minmax(17rem,.68fr) minmax(0,1.32fr);gap:5rem}
+  .story-guide{position:sticky;top:10rem;align-self:start;padding:3rem 0}
+  .story-guide>p:first-child{margin:0;color:var(--color-crimson-deep);font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+  .story-guide h2{max-width:15ch;margin:.75rem 0 0;color:var(--color-board);font-size:clamp(2.25rem,4vw,3.45rem);line-height:.98}
+  .story-context{display:grid;margin-top:2rem;padding-top:1rem;border-top:1px solid var(--color-rule)}
+  .story-context span{color:var(--color-crimson-deep);font-size:.62rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+  .story-context strong{margin-top:.35rem;color:var(--color-board);font-family:var(--font-serif);font-size:1.08rem;font-weight:500}
+  .story-progress{position:absolute;top:3rem;right:-2.5rem;bottom:3rem;width:2px;background:var(--color-rule)}
+  .story-progress span{display:block;width:100%;height:100%;background:var(--color-crimson-deep);transform:scaleY(.25);transform-origin:top center}
+  .story-count{margin:1.25rem 0 0;color:var(--color-ink-3);font-size:.65rem;font-weight:800;letter-spacing:.1em}
+  .story-count span{color:var(--color-board)}
+
+  .story-stages{margin:0;padding:0;list-style:none}
+  .story-stages>li{display:grid;grid-template-columns:3.5rem 1fr;gap:1.5rem;min-height:31rem;align-items:center;padding:4rem 0;border-bottom:1px solid var(--color-rule);opacity:.55;transition:opacity .35s ease}
+  .story-stages>li.is-active{opacity:1}
+  .stage-number{align-self:start;padding-top:.25rem;color:var(--color-crimson-deep);font-family:var(--font-serif);font-size:1.25rem}
+  .story-stages article>p{margin:0;color:var(--color-crimson-deep);font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+  .story-stages h3{margin:.65rem 0 0;color:var(--color-board);font-size:clamp(2.75rem,5vw,4.75rem);line-height:.9}
+  .story-stages article>div{max-width:38rem;margin:1.3rem 0 0;color:var(--color-ink-2);font-size:1rem;line-height:1.55}
+  .story-stages ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:2rem 0 0;padding:0;border-top:1px solid var(--color-rule);list-style:none}
+  .story-stages ul li{position:relative;padding:1rem 1rem 1rem 1.25rem;border-bottom:1px solid var(--color-rule);color:var(--color-ink-2);font-size:.82rem;line-height:1.4}
+  .story-stages ul li:nth-child(odd){border-right:1px solid var(--color-rule)}
+  .story-stages ul li:before{position:absolute;top:1.35rem;left:0;width:.35rem;height:.35rem;background:var(--color-crimson-deep);content:''}
+
+  @media(max-width:58rem){.story-layout{grid-template-columns:1fr;gap:0}.story-guide{position:relative;top:auto;padding-bottom:2rem}.story-progress{display:none}.story-stages>li{min-height:0;padding:3rem 0;opacity:1}}
+  @media(max-width:38rem){.story-stages>li{grid-template-columns:1fr;gap:.5rem}.story-stages ul{grid-template-columns:1fr}.story-stages ul li:nth-child(odd){border-right:0}}
+  @media(prefers-reduced-motion:reduce){.story-stages>li{opacity:1;transition:none}}
+</style>

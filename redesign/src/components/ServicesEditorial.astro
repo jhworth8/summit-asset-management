@@ -1,0 +1,130 @@
+---
+import { serviceOverview } from '../data/services';
+
+const services = [
+  {
+    ...serviceOverview.investment,
+    number: '01',
+    image: '/img/SAM_MG_8429_enhanced.webp',
+    imageAlt: 'A Summit advisor reviewing portfolio information with a client',
+  },
+  {
+    ...serviceOverview.planning,
+    number: '02',
+    image: '/img/SAM_MG_8222_enhanced.webp',
+    imageAlt: 'A planning conversation at Summit',
+  },
+];
+---
+
+<section class="services-editorial" data-services-editorial aria-labelledby="services-editorial-title">
+  <header class="editorial-intro">
+    <p>How Summit serves clients</p>
+    <h2 id="services-editorial-title">Two disciplines. One ongoing conversation.</h2>
+    <div>Investment management and financial planning are distinct areas of work. At Summit, each is informed by the other.</div>
+  </header>
+
+  <div class="service-pair">
+    {services.map((service) => (
+      <article class="service-chapter" data-service-reveal>
+        <a class="chapter-image" href={service.href} aria-label={`Explore ${service.label.toLowerCase()}`}>
+          <img src={service.image} alt={service.imageAlt} width="1876" height="812" loading="lazy" />
+          <span aria-hidden="true">{service.number}</span>
+        </a>
+        <div class="chapter-copy">
+          <p>{service.label}</p>
+          <h3>{service.title}</h3>
+          <div>{service.body}</div>
+          <ul>{service.points.map((point) => <li>{point}</li>)}</ul>
+          <a class="chapter-link" href={service.href}>Explore {service.label.toLowerCase()} <span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+    ))}
+  </div>
+
+  <div class="shared-principle" data-shared-principle>
+    <p>The relationship between the two</p>
+    <h3>The plan gives the portfolio context. The portfolio gives the plan resources.</h3>
+    <div class="shared-line" aria-hidden="true"><span></span></div>
+    <ul>
+      <li><span>01</span>One view of the client</li>
+      <li><span>02</span>Decisions coordinated over time</li>
+      <li><span>03</span>Continuity across people and generations</li>
+    </ul>
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  const setupServicesEditorial = () => {
+    document.querySelectorAll<HTMLElement>('[data-services-editorial]').forEach((root) => {
+      if (root.dataset.motionReady === 'true') return;
+      root.dataset.motionReady = 'true';
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      gsap.registerPlugin(ScrollTrigger);
+      const chapters = root.querySelectorAll('[data-service-reveal]');
+      const principle = root.querySelector('[data-shared-principle]');
+      const line = root.querySelector('.shared-line span');
+
+      gsap.from(chapters, {
+        y: 34,
+        opacity: 0,
+        duration: .85,
+        stagger: .14,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: chapters[0], start: 'top 82%', once: true },
+      });
+
+      if (principle) {
+        const timeline = gsap.timeline({
+          scrollTrigger: { trigger: principle, start: 'top 82%', once: true },
+        });
+        timeline.from(principle.children, { y: 20, opacity: 0, duration: .65, stagger: .07, ease: 'power2.out' });
+        if (line) timeline.fromTo(line, { scaleX: 0 }, { scaleX: 1, duration: .8, ease: 'power3.inOut' }, '<.05');
+      }
+    });
+  };
+
+  setupServicesEditorial();
+  document.addEventListener('astro:page-load', setupServicesEditorial);
+</script>
+
+<style>
+  .services-editorial{margin-block:1.25rem 4rem}
+  .editorial-intro{display:grid;grid-template-columns:.48fr 1.05fr .72fr;gap:2.5rem;align-items:end;padding-bottom:2rem;border-bottom:1px solid var(--color-ink)}
+  .editorial-intro>p{margin:0;color:var(--color-crimson-deep);font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+  .editorial-intro h2{max-width:17ch;margin:0;color:var(--color-board);font-size:clamp(2.2rem,4vw,3.35rem);line-height:.98}
+  .editorial-intro>div{max-width:31rem;color:var(--color-ink-2);font-size:.86rem;line-height:1.55}
+
+  .service-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin-top:2.25rem;background:var(--color-rule);border:1px solid var(--color-rule)}
+  .service-chapter{min-width:0;background:#fff}
+  .chapter-image{position:relative;display:block;overflow:hidden;aspect-ratio:2.1/1;background:var(--color-board)}
+  .chapter-image:after{position:absolute;inset:0;background:linear-gradient(180deg,transparent 52%,rgba(9,22,31,.48));content:''}
+  .chapter-image img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease-out-soft)}
+  .chapter-image>span{position:absolute;z-index:1;right:1.2rem;bottom:.8rem;color:white;font-family:var(--font-serif);font-size:2rem}
+  .chapter-image:hover img{transform:scale(1.025)}
+  .chapter-copy{padding:2.15rem 2.35rem 2.4rem}
+  .chapter-copy>p{margin:0;color:var(--color-crimson-deep);font-size:.68rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
+  .chapter-copy h3{max-width:15ch;margin:.65rem 0 0;color:var(--color-board);font-size:clamp(2rem,3vw,2.75rem);line-height:.98}
+  .chapter-copy>div{max-width:34rem;margin:1rem 0 0;color:var(--color-ink-2);font-size:.88rem;line-height:1.55}
+  .chapter-copy ul{display:flex;flex-wrap:wrap;gap:.45rem;margin:1.35rem 0 0;padding:0;list-style:none}
+  .chapter-copy li{padding:.42rem .62rem;border:1px solid var(--color-rule);color:var(--color-ink-2);font-size:.67rem;font-weight:700}
+  .chapter-link{display:inline-flex;gap:.55rem;margin-top:1.5rem;border-bottom:1px solid currentColor;color:var(--color-crimson-deep);font-size:.78rem;font-weight:800}
+
+  .shared-principle{margin-top:1px;padding:2.7rem 3rem 2.4rem;background:var(--color-board);color:white}
+  .shared-principle>p{margin:0;color:var(--color-crimson-light);font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+  .shared-principle h3{max-width:24ch;margin:.8rem 0 0;color:white;font-size:clamp(2rem,3.7vw,3.15rem);line-height:1}
+  .shared-line{height:1px;margin:2rem 0 0;background:rgba(255,255,255,.22);overflow:hidden}
+  .shared-line span{display:block;width:100%;height:100%;background:var(--color-crimson-light);transform-origin:left center}
+  .shared-principle ul{display:grid;grid-template-columns:repeat(3,1fr);margin:0;padding:0;list-style:none}
+  .shared-principle li{display:grid;grid-template-columns:2rem 1fr;gap:.7rem;padding:1.1rem 1rem 0 0;color:rgba(255,255,255,.78);font-size:.76rem;font-weight:700}
+  .shared-principle li+li{padding-left:1rem;border-left:1px solid rgba(255,255,255,.18)}
+  .shared-principle li span{color:var(--color-crimson-light);font-size:.62rem;letter-spacing:.08em}
+
+  @media(max-width:62rem){.editorial-intro{grid-template-columns:1fr;gap:.75rem}.service-pair{grid-template-columns:1fr}.shared-principle ul{grid-template-columns:1fr}.shared-principle li+li{padding-left:0;border-left:0}}
+  @media(max-width:38rem){.chapter-copy,.shared-principle{padding:1.6rem 1.35rem}.chapter-image{aspect-ratio:1.45/1}}
+  @media(prefers-reduced-motion:reduce){.chapter-image img{transition:none}}
+</style>

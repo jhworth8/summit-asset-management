@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Summit hero video trimmer</title>
+  <style>
+    :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #111619; color: #f7f3ed; }
+    main { width: min(1100px, calc(100% - 32px)); margin: 32px auto; }
+    header { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 20px; }
+    h1 { margin: 0; font-family: Georgia, serif; font-size: clamp(28px, 4vw, 46px); font-weight: 400; }
+    header p { max-width: 520px; margin: 0; color: #aeb9be; line-height: 1.5; }
+    .stage { overflow: hidden; border: 1px solid #354148; background: #050708; }
+    video { display: block; width: 100%; max-height: 62vh; background: #000; }
+    .controls { display: grid; gap: 18px; padding: 20px; border: 1px solid #354148; border-top: 0; background: #182025; }
+    .timebar { width: 100%; accent-color: #bd1837; }
+    .readout { display: flex; justify-content: space-between; color: #cad2d5; font-variant-numeric: tabular-nums; }
+    .marks { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 14px; }
+    label { display: grid; gap: 7px; color: #aeb9be; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+    input[type=number], select { width: 100%; padding: 12px; border: 1px solid #526069; background: #0e1316; color: #fff; font: inherit; }
+    button { min-height: 44px; padding: 10px 16px; border: 1px solid #65737b; background: transparent; color: #fff; font: 700 14px/1 inherit; cursor: pointer; }
+    button:hover { border-color: #fff; }
+    button.primary { border-color: #bd1837; background: #bd1837; }
+    button:disabled { cursor: wait; opacity: .55; }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+    .status { flex: 1 1 320px; color: #aeb9be; line-height: 1.4; }
+    .status a { color: #fff; }
+    code { color: #d8dee0; }
+    @media (max-width: 680px) {
+      header { display: grid; }
+      .marks { grid-template-columns: 1fr 1fr; }
+      .marks > button { grid-column: 1 / -1; }
+      .actions button, .actions select { flex: 1 1 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Hero video trimmer</h1>
+      <p>Mark a range, preview it, then keep that range or remove it. Every export is a new file; the website video remains untouched.</p>
+    </header>
+
+    <div class="stage"><video id="video" src="/source.mp4" controls muted playsinline></video></div>
+    <div class="controls">
+      <input id="scrubber" class="timebar" type="range" min="0" max="30" step="0.01" value="0" aria-label="Video position" />
+      <div class="readout"><span id="current">00:00.00</span><span id="duration">00:00.00</span></div>
+
+      <div class="marks">
+        <label>In point
+          <input id="inPoint" type="number" min="0" step="0.01" value="0" />
+        </label>
+        <button id="markIn" type="button">Set in to playhead</button>
+        <label>Out point
+          <input id="outPoint" type="number" min="0" step="0.01" value="30" />
+        </label>
+      </div>
+      <div class="actions">
+        <button id="markOut" type="button">Set out to playhead</button>
+        <button id="preview" type="button">Preview selected range</button>
+        <select id="mode" aria-label="Export mode">
+          <option value="keep">Keep selected range</option>
+          <option value="remove">Remove selected range</option>
+        </select>
+        <button id="export" class="primary" type="button">Export new MP4</button>
+        <div id="status" class="status" aria-live="polite">Ready.</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const video = document.getElementById('video');
+    const scrubber = document.getElementById('scrubber');
+    const current = document.getElementById('current');
+    const durationLabel = document.getElementById('duration');
+    const inPoint = document.getElementById('inPoint');
+    const outPoint = document.getElementById('outPoint');
+    const status = document.getElementById('status');
+    let previewing = false;
+
+    const format = value => {
+      const seconds = Math.max(0, Number(value) || 0);
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds - mins * 60;
+      return `${String(mins).padStart(2, '0')}:${secs.toFixed(2).padStart(5, '0')}`;
+    };
+    const clampMarks = () => {
+      const total = video.duration || 30;
+      let start = Math.max(0, Math.min(Number(inPoint.value), total));
+      let end = Math.max(0, Math.min(Number(outPoint.value), total));
+      if (end <= start) end = Math.min(total, start + 0.25);
+      inPoint.value = start.toFixed(2);
+      outPoint.value = end.toFixed(2);
+      return { start, end, total };
+    };
+
+    video.addEventListener('loadedmetadata', () => {
+      scrubber.max = video.duration;
+      outPoint.max = video.duration;
+      inPoint.max = video.duration;
+      outPoint.value = video.duration.toFixed(2);
+      durationLabel.textContent = format(video.duration);
+    });
+    video.addEventListener('timeupdate', () => {
+      scrubber.value = video.currentTime;
+      current.textContent = format(video.currentTime);
+      if (previewing && video.currentTime >= Number(outPoint.value)) {
+        video.pause();
+        previewing = false;
+        status.textContent = 'Preview finished.';
+      }
+    });
+    scrubber.addEventListener('input', () => {
+      video.currentTime = Number(scrubber.value);
+      current.textContent = format(video.currentTime);
+    });
+    document.getElementById('markIn').addEventListener('click', () => {
+      inPoint.value = video.currentTime.toFixed(2);
+      clampMarks();
+    });
+    document.getElementById('markOut').addEventListener('click', () => {
+      outPoint.value = video.currentTime.toFixed(2);
+      clampMarks();
+    });
+    document.getElementById('preview').addEventListener('click', async () => {
+      const { start } = clampMarks();
+      video.currentTime = start;
+      previewing = true;
+      status.textContent = 'Previewing selected range…';
+      await video.play();
+    });
+    document.getElementById('export').addEventListener('click', async event => {
+      const button = event.currentTarget;
+      const { start, end, total } = clampMarks();
+      button.disabled = true;
+      status.textContent = 'Exporting with FFmpeg…';
+      try {
+        const response = await fetch('/export', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ start, end, duration: total, mode: document.getElementById('mode').value }),
+        });
+        const result = await response.json();
+        if (!result.ok) throw new Error(result.error);
+        status.innerHTML = `Finished: <a href="${result.url}" target="_blank">preview exported video</a><br><code>${result.path}</code>`;
+      } catch (error) {
+        status.textContent = `Export failed: ${error.message}`;
+      } finally {
+        button.disabled = false;
+      }
+    });
+    [inPoint, outPoint].forEach(input => input.addEventListener('change', clampMarks));
+  </script>
+</body>
+</html>
+

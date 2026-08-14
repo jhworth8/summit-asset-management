@@ -1,0 +1,141 @@
+---
+import { firm, legalNav } from '../data/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="footer-shell">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <img src="/img/logo-footer.svg" alt={firm.name} width="197" height="49" />
+        <p>Independent investment management and financial planning in Memphis, Tennessee.</p>
+      </div>
+
+      <address>
+        <span>Visit</span>
+        {firm.address.street}<br />
+        {firm.address.city}, {firm.address.state} {firm.address.zip}
+      </address>
+
+      <div class="footer-contact">
+        <span>Contact</span>
+        <a href={firm.phoneHref}>{firm.phone}</a>
+        <a href={`mailto:${firm.email}`}>{firm.email}</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2012–{year} {firm.legalName}</p>
+      <nav aria-label="Legal and disclosures">
+        {legalNav.map((item) => <a href={item.href}>{item.label}</a>)}
+        <a href="#top">Back to top ↑</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-board);
+    color: white;
+  }
+
+  .footer-shell {
+    width: min(100% - 3rem, 76rem);
+    margin-inline: auto;
+    padding: 4.5rem 0 2rem;
+  }
+
+  .footer-main {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .footer-brand img {
+    width: auto;
+    height: 2.25rem;
+  }
+
+  .footer-brand p {
+    max-width: 23rem;
+    margin: 1.2rem 0 0;
+    color: rgb(255 255 255 / 0.54);
+    line-height: 1.55;
+  }
+
+  .footer-main address,
+  .footer-contact {
+    color: rgb(255 255 255 / 0.72);
+    font-size: 0.9rem;
+    font-style: normal;
+    line-height: 1.65;
+  }
+
+  .footer-main address > span,
+  .footer-contact > span {
+    display: block;
+    margin-bottom: 0.8rem;
+    color: var(--color-crimson-light);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .footer-contact a {
+    display: block;
+    width: fit-content;
+    color: inherit;
+  }
+
+  .footer-contact a:hover {
+    color: white;
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgb(255 255 255 / 0.16);
+    color: rgb(255 255 255 / 0.4);
+    font-size: 0.72rem;
+  }
+
+  .footer-bottom p {
+    margin: 0;
+  }
+
+  .footer-bottom nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem 1rem;
+  }
+
+  .footer-bottom a {
+    color: inherit;
+  }
+
+  .footer-bottom a:hover {
+    color: white;
+  }
+
+  @media (min-width: 48rem) {
+    .footer-main {
+      grid-template-columns: 1.5fr 0.8fr 1fr;
+    }
+
+    .footer-bottom {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  @media (max-width: 47.99rem) {
+    .footer-shell {
+      width: min(100% - 2rem, 76rem);
+    }
+  }
+</style>

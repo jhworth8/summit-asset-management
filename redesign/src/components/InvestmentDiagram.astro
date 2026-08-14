@@ -1,0 +1,829 @@
+---
+const stages = [
+  {
+    id: 'goals',
+    num: '01',
+    name: 'Client Goals',
+    kicker: 'Phase 01 · Discovery',
+    tagline: 'Portfolios engineered from your life milestones outward.',
+    desc: 'We start by mapping your financial landscape—understanding not just numbers, but time horizons, liquidity requirements, tax sensitivity, and personal comfort with volatility.',
+    metrics: [
+      { label: 'Time Horizon', val: 'Multi-Year / Generational' },
+      { label: 'Risk Profile', val: 'Custom Volatility Bands' },
+      { label: 'Tax Sensitivity', val: 'Tax-Location Optimized' },
+      { label: 'Cash Flow', val: 'Liquidity Tailored' },
+    ],
+    deliverables: [
+      'Comprehensive risk-tolerance profile',
+      'Near-term liquidity & distribution model',
+      'Target asset allocation blueprint',
+    ],
+  },
+  {
+    id: 'collaboration',
+    num: '02',
+    name: 'Collaboration',
+    kicker: 'Phase 02 · Collective Rigor',
+    tagline: 'Investment Committee oversight combined with dedicated advisor attention.',
+    desc: 'Our Investment Committee establishes firm-wide macroeconomic perspective, asset class targets, and strict security vetting—empowering your advisor to craft a disciplined, bespoke strategy.',
+    metrics: [
+      { label: 'Oversight', val: 'Investment Committee' },
+      { label: 'Research', val: 'Macro & Micro Analysis' },
+      { label: 'Advisory', val: 'Direct Principal Access' },
+      { label: 'Independence', val: '100% Fee-Only / No Loads' },
+    ],
+    deliverables: [
+      'Disciplined asset allocation ranges',
+      'Independent security & manager selection',
+      'Stress-testing against market scenarios',
+    ],
+  },
+  {
+    id: 'construction',
+    num: '03',
+    name: 'Portfolio Construction',
+    kicker: 'Phase 03 · Architecture',
+    tagline: 'Multi-asset diversification across institutional instruments.',
+    desc: 'Portfolios are built using a broad spectrum of asset classes. We blend direct securities, index ETFs, institutional mutual funds, and selective alternatives to balance growth and capital preservation.',
+    metrics: [
+      { label: 'Asset Classes', val: 'Equities, Fixed, Alts' },
+      { label: 'Vehicles', val: 'ETFs, Stocks, Bonds, Funds' },
+      { label: 'Structure', val: 'Custom Tax-Efficient' },
+      { label: 'Cost Focus', val: 'Low Institutional Expense' },
+    ],
+    deliverables: [
+      'Institutional ETF and mutual fund selection',
+      'Individual equity & fixed-income ladders',
+      'Private partnerships & alternatives (when suitable)',
+    ],
+  },
+  {
+    id: 'continuity',
+    num: '04',
+    name: 'Continuity & Oversight',
+    kicker: 'Phase 04 · Active Stewardship',
+    tagline: 'Continuous monitoring, tax-aware rebalancing, and life-stage adjustments.',
+    desc: 'Markets shift and life evolves. We continually evaluate positions, harvest tax losses, and rebalance allocations opportunistically to keep your investments aligned with your long-term plan.',
+    metrics: [
+      { label: 'Monitoring', val: 'Continuous Daily Oversight' },
+      { label: 'Rebalancing', val: 'Disciplined Thresholds' },
+      { label: 'Tax Efficiency', val: 'Active Loss-Harvesting' },
+      { label: 'Reviews', val: 'Regular Strategic Meetings' },
+    ],
+    deliverables: [
+      'Proactive discretionary rebalancing',
+      'Systematic tax-loss harvesting reports',
+      'Transparent quarterly portfolio reviews',
+    ],
+  },
+];
+
+const sleeves = [
+  {
+    id: 'equities',
+    name: 'Equities & Stocks',
+    role: 'Capital Growth & Dividend Income',
+    desc: 'Core domestic and international equities selected for strong balance sheets, earnings durability, and sector diversity.',
+    instruments: ['Large, Mid & Small Cap US Stocks', 'International Developed & Emerging', 'Dividend Growth Leaders'],
+    target: 'Growth Engine',
+    accent: '#a51d35',
+  },
+  {
+    id: 'fixed',
+    name: 'Fixed Income & Bonds',
+    role: 'Capital Preservation & Yield',
+    desc: 'High-quality government, municipal, and corporate debt designed to provide steady cash flow and dampen equity volatility.',
+    instruments: ['US Treasury Notes & TIPS', 'Municipal Tax-Exempt Bonds', 'Investment Grade Corporate Bonds', 'Certificates of Deposit (CDs)'],
+    target: 'Stability & Income',
+    accent: '#172f40',
+  },
+  {
+    id: 'funds',
+    name: 'Institutional ETFs & Funds',
+    role: 'Low-Cost Index & Factor Exposure',
+    desc: 'Cost-efficient liquid vehicles providing targeted factor exposures, international diversification, and market-cap indexing.',
+    instruments: ['Broad Market Index ETFs', 'Factor-Tilted Smart Beta', 'Active Fixed-Income Funds'],
+    target: 'Market Efficiency',
+    accent: '#2a4659',
+  },
+  {
+    id: 'alts',
+    name: 'Alternative Strategies',
+    role: 'Uncorrelated Diversification',
+    desc: 'Carefully vetted private partnerships, hedge funds of funds, and hedging strategies with lower correlation to public markets.',
+    instruments: ['Private Real Estate & Credit', 'Hedge Funds of Funds', 'Hedging & Structured Options'],
+    target: 'Downside Mitigation',
+    accent: '#7a2233',
+  },
+];
+---
+
+<div class="interactive-engine" data-investment-engine>
+  <!-- SECTION TITLE -->
+  <div class="engine-header">
+    <div class="engine-tag">
+      <span class="pulse-dot"></span>
+      Interactive Advisory Engine
+    </div>
+    <h2>The Summit Investment Architecture</h2>
+    <p>Explore the four phases of how we construct, oversee, and optimize your portfolio.</p>
+  </div>
+
+  <!-- INTERACTIVE STEPPER / VISUAL PIPELINE -->
+  <div class="pipeline-container">
+    <!-- Visual Pathway Track -->
+    <div class="pipeline-nav" role="tablist" aria-label="Investment Phases">
+      {stages.map((stage, idx) => (
+        <button
+          type="button"
+          role="tab"
+          id={`engine-tab-${idx}`}
+          aria-controls={`engine-panel-${idx}`}
+          aria-selected={idx === 0 ? 'true' : 'false'}
+          data-stage-index={idx}
+          class:list={['pipeline-node', { 'is-active': idx === 0 }]}
+        >
+          <div class="node-indicator">
+            <span class="node-num">{stage.num}</span>
+            <div class="node-ring"></div>
+          </div>
+          <div class="node-text">
+            <span class="node-kicker">{stage.kicker}</span>
+            <strong class="node-title">{stage.name}</strong>
+          </div>
+        </button>
+      ))}
+    </div>
+
+    <!-- Active Stage Display Console -->
+    <div class="stage-console">
+      {stages.map((stage, idx) => (
+        <div
+          id={`engine-panel-${idx}`}
+          role="tabpanel"
+          aria-labelledby={`engine-tab-${idx}`}
+          data-stage-view={idx}
+          class:list={['console-panel', { 'is-active': idx === 0 }]}
+        >
+          <div class="console-main">
+            <div class="console-badge">{stage.kicker}</div>
+            <h3>{stage.name}</h3>
+            <p class="console-tagline">{stage.tagline}</p>
+            <p class="console-desc">{stage.desc}</p>
+
+            <div class="deliverables-box">
+              <span class="deliverables-label">Key Deliverables:</span>
+              <ul class="deliverables-list">
+                {stage.deliverables.map((item) => (
+                  <li>
+                    <svg class="check-icon" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div class="console-metrics">
+            <div class="metrics-header">Phase Parameters</div>
+            <div class="metrics-grid">
+              {stage.metrics.map((m) => (
+                <div class="metric-card">
+                  <span class="metric-label">{m.label}</span>
+                  <strong class="metric-val">{m.val}</strong>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- ASSET ALLOCATION VISUAL EXPLORER -->
+  <div class="sleeves-section">
+    <div class="sleeves-header">
+      <div>
+        <span class="engine-tag-sub">Asset Architecture</span>
+        <h3>Multi-Asset Class Building Blocks</h3>
+      </div>
+      <p>Select an asset class to inspect its tactical role and representative holdings.</p>
+    </div>
+
+    <!-- Visual Interactive Selector -->
+    <div class="sleeves-interactive">
+      <div class="sleeves-tabs" role="tablist" aria-label="Asset Sleeves">
+        {sleeves.map((s, idx) => (
+          <button
+            type="button"
+            role="tab"
+            id={`sleeve-tab-${idx}`}
+            aria-controls={`sleeve-panel-${idx}`}
+            aria-selected={idx === 0 ? 'true' : 'false'}
+            data-sleeve-index={idx}
+            class:list={['sleeve-tab-btn', { 'is-active': idx === 0 }]}
+          >
+            <span class="sleeve-tab-role">{s.target}</span>
+            <strong class="sleeve-tab-name">{s.name}</strong>
+          </button>
+        ))}
+      </div>
+
+      <div class="sleeves-deck">
+        {sleeves.map((s, idx) => (
+          <div
+            id={`sleeve-panel-${idx}`}
+            role="tabpanel"
+            aria-labelledby={`sleeve-tab-${idx}`}
+            data-sleeve-view={idx}
+            class:list={['sleeve-card', { 'is-active': idx === 0 }]}
+          >
+            <div class="sleeve-card-left">
+              <div class="sleeve-pill">{s.target}</div>
+              <h4>{s.name}</h4>
+              <p class="sleeve-role-lead">{s.role}</p>
+              <p class="sleeve-card-desc">{s.desc}</p>
+            </div>
+            <div class="sleeve-card-right">
+              <span class="holdings-title">Representative Portfolio Holdings</span>
+              <ul class="holdings-list">
+                {s.instruments.map((inst) => (
+                  <li>
+                    <span class="holding-dot"></span>
+                    <span>{inst}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const setupInvestmentEngine = () => {
+    const root = document.querySelector<HTMLElement>('[data-investment-engine]');
+    if (!root) return;
+
+    // Stepper logic
+    const stageBtns = root.querySelectorAll<HTMLButtonElement>('[data-stage-index]');
+    const stageViews = root.querySelectorAll<HTMLElement>('[data-stage-view]');
+
+    stageBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const index = Number(btn.dataset.stageIndex);
+        stageBtns.forEach((b, i) => {
+          const active = i === index;
+          b.classList.toggle('is-active', active);
+          b.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        stageViews.forEach((v, i) => {
+          v.classList.toggle('is-active', i === index);
+        });
+      });
+    });
+
+    // Sleeves logic
+    const sleeveBtns = root.querySelectorAll<HTMLButtonElement>('[data-sleeve-index]');
+    const sleeveViews = root.querySelectorAll<HTMLElement>('[data-sleeve-view]');
+
+    sleeveBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const index = Number(btn.dataset.sleeveIndex);
+        sleeveBtns.forEach((b, i) => {
+          const active = i === index;
+          b.classList.toggle('is-active', active);
+          b.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        sleeveViews.forEach((v, i) => {
+          v.classList.toggle('is-active', i === index);
+        });
+      });
+    });
+  };
+
+  setupInvestmentEngine();
+  document.addEventListener('astro:page-load', setupInvestmentEngine);
+</script>
+
+<style>
+  .interactive-engine {
+    margin-block: 3.5rem;
+  }
+
+  .engine-header {
+    margin-bottom: 2rem;
+  }
+
+  .engine-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.85rem;
+    background: #fdf2f4;
+    border: 1px solid #f8d7dc;
+    border-radius: 9999px;
+    color: var(--color-crimson);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--color-crimson);
+    border-radius: 50%;
+    animation: pulse 2s infinite ease-in-out;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(0.9); opacity: 0.6; }
+    50% { transform: scale(1.4); opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0.6; }
+  }
+
+  .engine-header h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    color: var(--color-board);
+    line-height: 1.1;
+  }
+
+  .engine-header p {
+    margin: 0;
+    color: var(--color-ink-2);
+    font-size: 1.02rem;
+  }
+
+  /* Pipeline Container */
+  .pipeline-container {
+    background: #ffffff;
+    border: 1px solid rgba(23, 47, 64, 0.12);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px -10px rgba(23, 47, 64, 0.08);
+    overflow: hidden;
+  }
+
+  .pipeline-nav {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: #f8fafc;
+    border-bottom: 1px solid rgba(23, 47, 64, 0.1);
+  }
+
+  .pipeline-node {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: transparent;
+    border: none;
+    border-right: 1px solid rgba(23, 47, 64, 0.08);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.25s ease;
+    position: relative;
+  }
+
+  .pipeline-node:last-child {
+    border-right: none;
+  }
+
+  .pipeline-node:hover {
+    background: #ffffff;
+  }
+
+  .pipeline-node.is-active {
+    background: #ffffff;
+  }
+
+  .pipeline-node.is-active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--color-crimson);
+  }
+
+  .node-indicator {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 1.5px solid var(--color-rule);
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: all 0.25s ease;
+  }
+
+  .node-num {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-ink-3);
+  }
+
+  .pipeline-node.is-active .node-indicator {
+    border-color: var(--color-crimson);
+    background: var(--color-crimson);
+  }
+
+  .pipeline-node.is-active .node-num {
+    color: #ffffff;
+  }
+
+  .node-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .node-kicker {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-3);
+  }
+
+  .pipeline-node.is-active .node-kicker {
+    color: var(--color-crimson);
+  }
+
+  .node-title {
+    font-size: 0.88rem;
+    color: var(--color-board);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Console Panel */
+  .stage-console {
+    padding: 2.75rem 2.5rem;
+  }
+
+  .console-panel {
+    display: none;
+    animation: fadeSlide 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .console-panel.is-active {
+    display: grid;
+    gap: 3rem;
+  }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .console-badge {
+    color: var(--color-crimson);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+
+  .console-main h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: clamp(2rem, 3.5vw, 2.5rem);
+    color: var(--color-board);
+    line-height: 1.1;
+  }
+
+  .console-tagline {
+    margin: 0 0 1rem 0;
+    font-size: 1.12rem;
+    font-weight: 500;
+    color: var(--color-board);
+    font-family: var(--font-serif);
+    font-style: italic;
+  }
+
+  .console-desc {
+    margin: 0 0 1.75rem 0;
+    color: var(--color-ink-2);
+    font-size: 0.98rem;
+    line-height: 1.65;
+    max-width: 42rem;
+  }
+
+  .deliverables-box {
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .deliverables-label {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-board);
+  }
+
+  .deliverables-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .deliverables-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--color-ink);
+    font-size: 0.9rem;
+  }
+
+  .check-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--color-crimson);
+    flex-shrink: 0;
+  }
+
+  /* Metrics Column */
+  .console-metrics {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--color-board);
+    border-radius: 8px;
+    padding: 2rem;
+    color: #ffffff;
+  }
+
+  .metrics-header {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-crimson-light);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .metric-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .metric-label {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .metric-val {
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-family: var(--font-serif);
+    margin-top: 0.2rem;
+  }
+
+  @media (min-width: 60rem) {
+    .console-panel.is-active {
+      grid-template-columns: 1.25fr 0.75fr;
+      align-items: stretch;
+    }
+  }
+
+  @media (max-width: 52rem) {
+    .pipeline-nav {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .pipeline-node {
+      border-bottom: 1px solid rgba(23, 47, 64, 0.08);
+    }
+    .stage-console {
+      padding: 1.75rem 1.5rem;
+    }
+  }
+
+  /* Sleeves Explorer Section */
+  .sleeves-section {
+    margin-top: 4.5rem;
+    padding: 2.75rem 2.5rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid rgba(23, 47, 64, 0.08);
+  }
+
+  .sleeves-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .engine-tag-sub {
+    color: var(--color-crimson);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .sleeves-header h3 {
+    margin: 0.35rem 0 0 0;
+    font-size: clamp(1.65rem, 2.5vw, 2.2rem);
+    color: var(--color-board);
+  }
+
+  .sleeves-header p {
+    margin: 0;
+    color: var(--color-ink-2);
+    font-size: 0.95rem;
+    max-width: 26rem;
+  }
+
+  .sleeves-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .sleeve-tab-btn {
+    padding: 1rem 1.25rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+  }
+
+  .sleeve-tab-btn:hover {
+    border-color: var(--color-board-soft);
+  }
+
+  .sleeve-tab-btn.is-active {
+    background: var(--color-board);
+    border-color: var(--color-board);
+    box-shadow: 0 4px 12px rgba(23, 47, 64, 0.15);
+  }
+
+  .sleeve-tab-role {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-crimson);
+  }
+
+  .sleeve-tab-btn.is-active .sleeve-tab-role {
+    color: var(--color-crimson-light);
+  }
+
+  .sleeve-tab-name {
+    margin-top: 0.25rem;
+    font-size: 0.88rem;
+    color: var(--color-board);
+  }
+
+  .sleeve-tab-btn.is-active .sleeve-tab-name {
+    color: #ffffff;
+  }
+
+  .sleeve-deck {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 2.25rem 2rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  }
+
+  .sleeve-card {
+    display: none;
+    animation: fadeSlide 0.3s ease;
+  }
+
+  .sleeve-card.is-active {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .sleeve-pill {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    background: #fdf2f4;
+    color: var(--color-crimson);
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .sleeve-card-left h4 {
+    margin: 0 0 0.4rem 0;
+    font-size: 1.75rem;
+    color: var(--color-board);
+  }
+
+  .sleeve-role-lead {
+    margin: 0 0 0.75rem 0;
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--color-board);
+  }
+
+  .sleeve-card-desc {
+    margin: 0;
+    color: var(--color-ink-2);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    max-width: 36rem;
+  }
+
+  .sleeve-card-right {
+    padding: 1.5rem 1.75rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    border-left: 3px solid var(--color-crimson);
+  }
+
+  .holdings-title {
+    display: block;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-board);
+    margin-bottom: 0.85rem;
+  }
+
+  .holdings-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .holdings-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--color-board);
+    font-size: 0.92rem;
+    font-weight: 500;
+  }
+
+  .holding-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--color-crimson);
+    border-radius: 50%;
+  }
+
+  @media (min-width: 58rem) {
+    .sleeve-card.is-active {
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: center;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .sleeves-tabs {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,120 @@
+---
+import Base from './Base.astro';
+
+interface SubNavItem {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  eyebrow: string;
+  heading: string;
+  intro?: string;
+  mark?: string;
+  image?: string;
+  imageAlt?: string;
+  caption?: string;
+  subnav?: SubNavItem[];
+}
+
+const {
+  title,
+  description,
+  eyebrow,
+  heading,
+  intro,
+  mark = 'I',
+  image,
+  imageAlt = '',
+  caption,
+  subnav = [],
+} = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<Base title={title} description={description}>
+  <!-- Title block, set like the opening of a chapter -->
+  <section class="mx-auto max-w-[78rem] px-6 pt-10 pb-12 lg:px-10 lg:pt-12 lg:pb-14">
+    <p class="caps text-ink-3" data-reveal>
+      <span class="text-crimson">§ {mark}</span> — {eyebrow}
+    </p>
+
+    <div class="mt-8 grid gap-14 lg:grid-cols-[1.5fr_1fr] lg:gap-20">
+      <div>
+        <h1 class="t-masthead" data-reveal data-delay="0.06">{heading}</h1>
+        <div class="mt-9 h-px w-full origin-left bg-ink" data-rule></div>
+        {
+          intro && (
+            <p class="measure mt-8 text-[1.15rem] leading-[1.65] text-ink-2" data-reveal data-delay="0.14">
+              {intro}
+            </p>
+          )
+        }
+      </div>
+
+      {
+        image && (
+          <figure class="lg:pt-3" data-reveal data-delay="0.2">
+            <div class="border border-rule bg-paper-2 p-2">
+              <img src={image} alt={imageAlt} width="938" height="406" class="aspect-[938/406] w-full object-cover" />
+            </div>
+            {caption && (
+              <figcaption class="mt-3 flex items-baseline gap-2.5">
+                <span class="caps shrink-0 text-crimson">Fig. 1</span>
+                <span class="text-[0.95rem] text-ink-3 italic">{caption}</span>
+              </figcaption>
+            )}
+          </figure>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Body, with the section list kept in the margin -->
+  <div class="border-t border-rule">
+    {/* The margin column only exists when there is a subnav to put in it.
+        Declaring it unconditionally drops the body copy into a 200px column
+        when a page forgets to pass one. */}
+    <div
+      class:list={[
+        'mx-auto grid max-w-[78rem] gap-10 px-6 py-12 lg:gap-16 lg:px-10 lg:py-16',
+        subnav.length > 0 ? 'lg:grid-cols-[10rem_1fr]' : 'lg:grid-cols-1',
+      ]}
+    >
+      {
+        subnav.length > 0 && (
+          <aside class="lg:sticky lg:top-10 lg:self-start">
+            <nav aria-label="Section">
+              <h2 class="caps border-b border-rule pb-2 text-ink-3">In this section</h2>
+              <ul class="mt-4 space-y-2.5">
+                {subnav.map((item) => {
+                  const active = path === item.href;
+                  return (
+                    <li>
+                      <a
+                        href={item.href}
+                        aria-current={active ? 'page' : undefined}
+                        class:list={[
+                          'block leading-snug transition-colors hover:text-crimson',
+                          active ? 'text-crimson' : 'text-ink-2',
+                        ]}
+                      >
+                        {item.label}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+          </aside>
+        )
+      }
+
+      <div class="min-w-0">
+        <slot />
+      </div>
+    </div>
+  </div>
+</Base>

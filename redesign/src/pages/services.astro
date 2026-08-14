@@ -1,0 +1,15 @@
+---
+import Page from '../layouts/Page.astro';
+import ServicesEditorial from '../components/ServicesEditorial.astro';
+
+const subnav = [
+  { label: 'Overview', href: '/services' },
+  { label: 'Investment management', href: '/services/investment-management' },
+  { label: 'Financial planning', href: '/services/financial-planning' },
+];
+---
+
+<Page title="Services | Summit Asset Management" description="Summit's coordinated investment management and financial planning services for individuals, families, businesses and nonprofits." section="Services" heading="The plan and the portfolio belong together." intro="Summit approaches investment management in the context of each client’s complete financial picture." subnav={subnav}>
+  <ServicesEditorial />
+</Page>
+

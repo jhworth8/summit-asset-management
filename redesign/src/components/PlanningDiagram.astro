@@ -1,0 +1,752 @@
+---
+const disciplines = [
+  {
+    num: '01',
+    name: 'Comprehensive',
+    kicker: 'Pillar 01 · 360° Context',
+    tagline: 'Seeing both the big picture and the interconnected details.',
+    desc: 'We provide unbiased advice across the full spectrum of your financial life. Rather than looking at investments or insurance in isolation, we model how every decision impacts cash flow, taxes, family wealth, and legacy.',
+    metrics: [
+      { label: 'Scope', val: 'Holistic 360° Review' },
+      { label: 'Modeling', val: 'Multi-Scenario Cash Flow' },
+      { label: 'Focus', val: 'Blind Spot Mitigation' },
+      { label: 'Objective', val: 'Fiduciary Clarity' },
+    ],
+    deliverables: [
+      'Comprehensive financial life inventory',
+      'Long-term cash flow & retirement projection',
+      'Risk exposure & insurance gap analysis',
+    ],
+  },
+  {
+    num: '02',
+    name: 'Concrete',
+    kicker: 'Pillar 02 · Action Roadmaps',
+    tagline: 'Moving from abstract concepts to prioritized execution.',
+    desc: 'Planning only creates value when it leads to action. We identify priority items requiring attention, provide quantitative recommendations, and establish a clear timeline for execution.',
+    metrics: [
+      { label: 'Roadmap', val: 'Prioritized Milestones' },
+      { label: 'Decisions', val: 'Objective Trade-Offs' },
+      { label: 'Tracking', val: 'Continuous Milestone Reviews' },
+      { label: 'Action', val: 'Concrete Next Steps' },
+    ],
+    deliverables: [
+      'Prioritized step-by-step action plan',
+      'Tax-efficient distribution roadmap',
+      'Actionable savings & gifting targets',
+    ],
+  },
+  {
+    num: '03',
+    name: 'Coordinated',
+    kicker: 'Pillar 03 · Advisory Team Alignment',
+    tagline: 'Orchestrating legal, tax, and fiduciary advisors into one voice.',
+    desc: 'We actively partner with your estate attorneys, CPAs, insurance brokers, and corporate fiduciaries to ensure legal titling, tax mitigation strategies, and investment portfolios work in complete concert.',
+    metrics: [
+      { label: 'Partners', val: 'CPAs, Attorneys, Trustees' },
+      { label: 'Role', val: 'Central Quarterback' },
+      { label: 'Synergy', val: 'Zero Conflicting Advice' },
+      { label: 'Efficiency', val: 'Streamlined Administration' },
+    ],
+    deliverables: [
+      'Annual tax coordination with your CPA',
+      'Trust & beneficiary alignment review',
+      'Business transition & buy-sell audit',
+    ],
+  },
+  {
+    num: '04',
+    name: 'Connected',
+    kicker: 'Pillar 04 · Multi-Generational Continuity',
+    tagline: 'Enduring stewardship across spouses, beneficiaries, and successors.',
+    desc: 'Wealth transitions can be vulnerable without institutional memory. We serve as a trusted repository of family financial history, values, and governance—seamlessly guiding surviving spouses, heirs, and non-profit boards.',
+    metrics: [
+      { label: 'Horizon', val: 'Multi-Generational' },
+      { label: 'Stewardship', val: 'Fiduciary Institutional Memory' },
+      { label: 'Governance', val: 'Family & Board Continuity' },
+      { label: 'Transition', val: 'Seamless Heir Support' },
+    ],
+    deliverables: [
+      'Generational wealth transfer blueprints',
+      'Successor trustee & heir education',
+      'Board & foundation stewardship guidelines',
+    ],
+  },
+];
+
+const practiceCategories = [
+  { id: 'all', label: 'All Practice Areas' },
+  { id: 'retirement', label: 'Retirement & Income' },
+  { id: 'tax-estate', label: 'Tax & Estate' },
+  { id: 'family-biz', label: 'Business & Family' },
+];
+
+const practiceAreas = [
+  {
+    category: 'retirement',
+    tag: 'Cash Flow & Lifestyle',
+    title: 'Retirement Readiness & Income',
+    desc: 'Sustainable spending models, Social Security timing, pension elections, and required minimum distribution (RMD) strategies.',
+  },
+  {
+    category: 'tax-estate',
+    tag: 'Preservation',
+    title: 'Tax Planning & Mitigation',
+    desc: 'Asset location optimization, tax-loss harvesting, Roth IRA conversion analysis, and strategic timing of deductions with your CPA.',
+  },
+  {
+    category: 'tax-estate',
+    tag: 'Legacy',
+    title: 'Estate & Trust Structuring',
+    desc: 'Reviewing wills, trusts, and beneficiary designations to ensure wealth transfers smoothly, privately, and according to your wishes.',
+  },
+  {
+    category: 'family-biz',
+    tag: 'Risk Shield',
+    title: 'Insurance & Risk Management',
+    desc: 'Objective evaluation of life, disability, long-term care, and liability policies to eliminate costly coverage gaps or redundancies.',
+  },
+  {
+    category: 'retirement',
+    tag: 'Education',
+    title: 'Education & 529 Planning',
+    desc: 'Tax-advantaged 529 plans, custodial accounts, and family education trusts designed to support children and grandchildren.',
+  },
+  {
+    category: 'tax-estate',
+    tag: 'Philanthropy',
+    title: 'Charitable & Impact Giving',
+    desc: 'Donor-Advised Funds (DAFs), Charitable Remainder Trusts, and appreciated asset donations to maximize community impact and tax savings.',
+  },
+  {
+    category: 'family-biz',
+    tag: 'Entrepreneurs',
+    title: 'Business Succession & Transitions',
+    desc: 'Buy-sell agreements, key-person continuity, liquidity planning, and exit strategy design for privately held companies.',
+  },
+  {
+    category: 'family-biz',
+    tag: 'Generations',
+    title: 'Family Governance & Partnerships',
+    desc: 'Facilitating family financial discussions, educating rising generations on stewardship, and managing shared entity structures.',
+  },
+];
+---
+
+<div class="planning-engine" data-planning-engine>
+  <!-- HEADER -->
+  <div class="engine-header">
+    <div class="engine-tag">
+      <span class="pulse-dot"></span>
+      Interactive Planning Framework
+    </div>
+    <h2>Four Disciplines. One Connected Plan.</h2>
+    <p>Select a discipline below to see how our planning philosophy brings clarity to every stage of life.</p>
+  </div>
+
+  <!-- 4-C INTERACTIVE STEPPER -->
+  <div class="pipeline-container">
+    <div class="pipeline-nav" role="tablist" aria-label="Planning Disciplines">
+      {disciplines.map((d, idx) => (
+        <button
+          type="button"
+          role="tab"
+          id={`plan-tab-${idx}`}
+          aria-controls={`plan-panel-${idx}`}
+          aria-selected={idx === 0 ? 'true' : 'false'}
+          data-plan-index={idx}
+          class:list={['pipeline-node', { 'is-active': idx === 0 }]}
+        >
+          <div class="node-indicator">
+            <span class="node-num">{d.num}</span>
+          </div>
+          <div class="node-text">
+            <span class="node-kicker">{d.kicker}</span>
+            <strong class="node-title">{d.name}</strong>
+          </div>
+        </button>
+      ))}
+    </div>
+
+    <!-- Active Pillar Console -->
+    <div class="stage-console">
+      {disciplines.map((d, idx) => (
+        <div
+          id={`plan-panel-${idx}`}
+          role="tabpanel"
+          aria-labelledby={`plan-tab-${idx}`}
+          data-plan-view={idx}
+          class:list={['console-panel', { 'is-active': idx === 0 }]}
+        >
+          <div class="console-main">
+            <div class="console-badge">{d.kicker}</div>
+            <h3>{d.name} Planning</h3>
+            <p class="console-tagline">{d.tagline}</p>
+            <p class="console-desc">{d.desc}</p>
+
+            <div class="deliverables-box">
+              <span class="deliverables-label">Strategic Deliverables:</span>
+              <ul class="deliverables-list">
+                {d.deliverables.map((item) => (
+                  <li>
+                    <svg class="check-icon" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div class="console-metrics">
+            <div class="metrics-header">Discipline Metrics</div>
+            <div class="metrics-grid">
+              {d.metrics.map((m) => (
+                <div class="metric-card">
+                  <span class="metric-label">{m.label}</span>
+                  <strong class="metric-val">{m.val}</strong>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- PRACTICE AREAS EXPLORER -->
+  <div class="areas-section">
+    <div class="areas-header">
+      <div>
+        <span class="engine-tag-sub">Practice Specializations</span>
+        <h3>Explore Key Advisory Areas</h3>
+      </div>
+      <p>Filter by focus area to see how we address critical milestones and opportunities.</p>
+    </div>
+
+    <!-- Filter Pills -->
+    <div class="filter-pills-bar" role="tablist" aria-label="Practice Categories">
+      {practiceCategories.map((cat, idx) => (
+        <button
+          type="button"
+          role="tab"
+          data-filter-cat={cat.id}
+          aria-selected={idx === 0 ? 'true' : 'false'}
+          class:list={['filter-pill-btn', { 'is-active': idx === 0 }]}
+        >
+          {cat.label}
+        </button>
+      ))}
+    </div>
+
+    <!-- Practice Cards Grid -->
+    <div class="practice-cards-grid">
+      {practiceAreas.map((area) => (
+        <div class="practice-item-card" data-practice-card data-category={area.category}>
+          <span class="practice-tag">{area.tag}</span>
+          <h4>{area.title}</h4>
+          <p>{area.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+<script>
+  const setupPlanningEngine = () => {
+    const root = document.querySelector<HTMLElement>('[data-planning-engine]');
+    if (!root) return;
+
+    // Stepper logic
+    const planBtns = root.querySelectorAll<HTMLButtonElement>('[data-plan-index]');
+    const planViews = root.querySelectorAll<HTMLElement>('[data-plan-view]');
+
+    planBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const index = Number(btn.dataset.planIndex);
+        planBtns.forEach((b, i) => {
+          const active = i === index;
+          b.classList.toggle('is-active', active);
+          b.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        planViews.forEach((v, i) => {
+          v.classList.toggle('is-active', i === index);
+        });
+      });
+    });
+
+    // Category filter logic
+    const filterBtns = root.querySelectorAll<HTMLButtonElement>('[data-filter-cat]');
+    const practiceCards = root.querySelectorAll<HTMLElement>('[data-practice-card]');
+
+    filterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.filterCat;
+        filterBtns.forEach((b) => {
+          const active = b === btn;
+          b.classList.toggle('is-active', active);
+          b.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+
+        practiceCards.forEach((card) => {
+          if (target === 'all' || card.dataset.category === target) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  };
+
+  setupPlanningEngine();
+  document.addEventListener('astro:page-load', setupPlanningEngine);
+</script>
+
+<style>
+  .planning-engine {
+    margin-block: 3.5rem;
+  }
+
+  .engine-header {
+    margin-bottom: 2rem;
+  }
+
+  .engine-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.85rem;
+    background: #fdf2f4;
+    border: 1px solid #f8d7dc;
+    border-radius: 9999px;
+    color: var(--color-crimson);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--color-crimson);
+    border-radius: 50%;
+    animation: pulse 2s infinite ease-in-out;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(0.9); opacity: 0.6; }
+    50% { transform: scale(1.4); opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0.6; }
+  }
+
+  .engine-header h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    color: var(--color-board);
+    line-height: 1.1;
+  }
+
+  .engine-header p {
+    margin: 0;
+    color: var(--color-ink-2);
+    font-size: 1.02rem;
+  }
+
+  /* Pipeline Container */
+  .pipeline-container {
+    background: #ffffff;
+    border: 1px solid rgba(23, 47, 64, 0.12);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px -10px rgba(23, 47, 64, 0.08);
+    overflow: hidden;
+  }
+
+  .pipeline-nav {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: #f8fafc;
+    border-bottom: 1px solid rgba(23, 47, 64, 0.1);
+  }
+
+  .pipeline-node {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: transparent;
+    border: none;
+    border-right: 1px solid rgba(23, 47, 64, 0.08);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.25s ease;
+    position: relative;
+  }
+
+  .pipeline-node:last-child {
+    border-right: none;
+  }
+
+  .pipeline-node:hover {
+    background: #ffffff;
+  }
+
+  .pipeline-node.is-active {
+    background: #ffffff;
+  }
+
+  .pipeline-node.is-active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--color-crimson);
+  }
+
+  .node-indicator {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 1.5px solid var(--color-rule);
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: all 0.25s ease;
+  }
+
+  .node-num {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-ink-3);
+  }
+
+  .pipeline-node.is-active .node-indicator {
+    border-color: var(--color-crimson);
+    background: var(--color-crimson);
+  }
+
+  .pipeline-node.is-active .node-num {
+    color: #ffffff;
+  }
+
+  .node-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .node-kicker {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-3);
+  }
+
+  .pipeline-node.is-active .node-kicker {
+    color: var(--color-crimson);
+  }
+
+  .node-title {
+    font-size: 0.88rem;
+    color: var(--color-board);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Console Panel */
+  .stage-console {
+    padding: 2.75rem 2.5rem;
+  }
+
+  .console-panel {
+    display: none;
+    animation: fadeSlide 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .console-panel.is-active {
+    display: grid;
+    gap: 3rem;
+  }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .console-badge {
+    color: var(--color-crimson);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+
+  .console-main h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: clamp(2rem, 3.5vw, 2.5rem);
+    color: var(--color-board);
+    line-height: 1.1;
+  }
+
+  .console-tagline {
+    margin: 0 0 1rem 0;
+    font-size: 1.12rem;
+    font-weight: 500;
+    color: var(--color-board);
+    font-family: var(--font-serif);
+    font-style: italic;
+  }
+
+  .console-desc {
+    margin: 0 0 1.75rem 0;
+    color: var(--color-ink-2);
+    font-size: 0.98rem;
+    line-height: 1.65;
+    max-width: 42rem;
+  }
+
+  .deliverables-box {
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .deliverables-label {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-board);
+  }
+
+  .deliverables-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .deliverables-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--color-ink);
+    font-size: 0.9rem;
+  }
+
+  .check-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--color-crimson);
+    flex-shrink: 0;
+  }
+
+  /* Metrics Column */
+  .console-metrics {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--color-board);
+    border-radius: 8px;
+    padding: 2rem;
+    color: #ffffff;
+  }
+
+  .metrics-header {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-crimson-light);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .metric-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .metric-label {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .metric-val {
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-family: var(--font-serif);
+    margin-top: 0.2rem;
+  }
+
+  @media (min-width: 60rem) {
+    .console-panel.is-active {
+      grid-template-columns: 1.25fr 0.75fr;
+      align-items: stretch;
+    }
+  }
+
+  @media (max-width: 52rem) {
+    .pipeline-nav {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .pipeline-node {
+      border-bottom: 1px solid rgba(23, 47, 64, 0.08);
+    }
+    .stage-console {
+      padding: 1.75rem 1.5rem;
+    }
+  }
+
+  /* Practice Areas Section */
+  .areas-section {
+    margin-top: 4.5rem;
+    padding: 2.75rem 2.5rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid rgba(23, 47, 64, 0.08);
+  }
+
+  .areas-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .engine-tag-sub {
+    color: var(--color-crimson);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .areas-header h3 {
+    margin: 0.35rem 0 0 0;
+    font-size: clamp(1.65rem, 2.5vw, 2.2rem);
+    color: var(--color-board);
+  }
+
+  .areas-header p {
+    margin: 0;
+    color: var(--color-ink-2);
+    font-size: 0.95rem;
+    max-width: 26rem;
+  }
+
+  .filter-pills-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .filter-pill-btn {
+    padding: 0.6rem 1.25rem;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 9999px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--color-ink-2);
+    transition: all 0.2s ease;
+  }
+
+  .filter-pill-btn:hover {
+    border-color: var(--color-board);
+    color: var(--color-board);
+  }
+
+  .filter-pill-btn.is-active {
+    background: var(--color-board);
+    border-color: var(--color-board);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(23, 47, 64, 0.15);
+  }
+
+  .practice-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+  }
+
+  .practice-item-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.75rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.25s ease;
+  }
+
+  .practice-item-card:hover {
+    border-color: var(--color-board-soft);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+  }
+
+  .practice-tag {
+    color: var(--color-crimson);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .practice-item-card h4 {
+    margin: 0 0 0.65rem 0;
+    font-size: 1.25rem;
+    color: var(--color-board);
+    line-height: 1.2;
+  }
+
+  .practice-item-card p {
+    margin: 0;
+    color: var(--color-ink-2);
+    font-size: 0.86rem;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 64rem) {
+    .practice-cards-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .practice-cards-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

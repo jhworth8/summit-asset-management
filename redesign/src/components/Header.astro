@@ -1,0 +1,300 @@
+---
+import { nav, firm } from '../data/site';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const items = [{ label: 'Home', href: '/' }, ...nav.filter((item) => item.href !== '/contact')];
+const contactHref = '/contact';
+const isActive = (href: string) => href.startsWith('/') && (path === href || path.startsWith(href + '/'));
+---
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<header class="site-header">
+  <div class="header-shell">
+    <a href={path === '/' ? '#top' : '/'} aria-label={`${firm.name} — ${path === '/' ? 'back to top' : 'home'}`} class="brand-link">
+      <img src="/img/logo.svg" alt={firm.name} width="268" height="67" />
+    </a>
+
+    <nav class="desktop-nav" aria-label="Main navigation">
+      {
+        items.map((item) => (
+          <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
+        ))
+      }
+    </nav>
+
+    <div class="desktop-actions">
+      <a href="/client-access" class="client-access" target="_blank" rel="noopener noreferrer">Client access</a>
+      <a href={contactHref} class="contact-button" target="_blank" rel="noopener noreferrer">Contact us</a>
+    </div>
+
+    <button type="button" id="menu-toggle" class="menu-button" aria-expanded="false" aria-controls="mobile-navigation">
+      <span>Menu</span>
+      <span class="menu-bars" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div id="mobile-navigation" class="mobile-navigation" hidden>
+    <nav aria-label="Mobile navigation">
+      {items.map((item) => <a href={item.href}>{item.label}<span aria-hidden="true">→</span></a>)}
+      <a href="/client-access" target="_blank" rel="noopener noreferrer">Client access<span aria-hidden="true">→</span></a>
+      <a href={contactHref} class="mobile-contact" target="_blank" rel="noopener noreferrer">Contact us<span aria-hidden="true">→</span></a>
+    </nav>
+  </div>
+  <div class="scroll-progress" aria-hidden="true"><span id="scroll-progress-bar"></span></div>
+</header>
+
+<script>
+  const setupMenu = () => {
+    const toggle = document.getElementById('menu-toggle');
+    const navigation = document.getElementById('mobile-navigation');
+    if (!toggle || !navigation || toggle.dataset.ready === 'true') return;
+    toggle.dataset.ready = 'true';
+
+    const close = () => {
+      toggle.setAttribute('aria-expanded', 'false');
+      navigation.hidden = true;
+    };
+
+    toggle.addEventListener('click', () => {
+      const open = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!open));
+      navigation.hidden = open;
+    });
+
+    navigation.querySelectorAll('a').forEach((link) => link.addEventListener('click', close));
+  };
+
+  setupMenu();
+  document.addEventListener('astro:page-load', setupMenu);
+
+  const updateScrollProgress = () => {
+    const bar = document.getElementById('scroll-progress-bar');
+    if (!bar) return;
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
+    bar.style.transform = `scaleX(${progress})`;
+  };
+
+  window.addEventListener('scroll', updateScrollProgress, { passive: true });
+  window.addEventListener('resize', updateScrollProgress);
+  document.addEventListener('astro:page-load', updateScrollProgress);
+  updateScrollProgress();
+</script>
+
+<style>
+  .skip-link {
+    position: fixed;
+    z-index: 100;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.8rem 1rem;
+    border-radius: 0.3rem;
+    background: var(--color-board);
+    color: white;
+    font-weight: 700;
+    transform: translateY(-150%);
+  }
+
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+
+  .site-header {
+    position: sticky;
+    z-index: 50;
+    top: 0;
+    border-bottom: 1px solid var(--color-rule-soft);
+    background: white;
+  }
+
+  .scroll-progress {
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    height: 2px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .scroll-progress span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--color-crimson);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 80ms linear;
+  }
+
+  .header-shell {
+    display: flex;
+    width: min(100% - 3rem, 72rem);
+    min-height: 4.8rem;
+    align-items: center;
+    gap: 2rem;
+    margin-inline: auto;
+  }
+
+  .brand-link {
+    flex-shrink: 0;
+  }
+
+  .brand-link img {
+    display: block;
+    width: auto;
+    height: 2.25rem;
+  }
+
+  .desktop-nav {
+    display: none;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.9rem, 1.8vw, 1.55rem);
+  }
+
+  .desktop-nav a,
+  .client-access {
+    position: relative;
+    min-height: 2.75rem;
+    align-content: center;
+    color: var(--color-ink-2);
+    font-size: 0.83rem;
+    font-weight: 700;
+  }
+
+  .desktop-nav a::after {
+    position: absolute;
+    right: 0;
+    bottom: 0.1rem;
+    left: 0;
+    height: 2px;
+    background: var(--color-crimson);
+    content: '';
+    transform: scaleX(0);
+    transition: transform 180ms ease;
+  }
+
+  .desktop-nav a:hover,
+  .desktop-nav a[aria-current='page'],
+  .client-access:hover {
+    color: var(--color-crimson-deep);
+  }
+
+  .desktop-nav a:hover::after,
+  .desktop-nav a[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+
+  .desktop-actions {
+    display: none;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .contact-button {
+    display: inline-flex;
+    min-height: 2.8rem;
+    align-items: center;
+    padding: 0.55rem 0.9rem;
+    border: 1px solid var(--color-crimson);
+    background: var(--color-crimson);
+    color: white;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .contact-button:hover {
+    background: var(--color-crimson-deep);
+  }
+
+  .menu-button {
+    display: flex;
+    min-width: 4.2rem;
+    min-height: 3rem;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.65rem;
+    margin-left: auto;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .menu-bars,
+  .menu-bars::before,
+  .menu-bars::after {
+    display: block;
+    width: 1.1rem;
+    height: 2px;
+    background: currentColor;
+    content: '';
+    transition: transform 180ms ease;
+  }
+
+  .menu-bars::before { transform: translateY(-5px); }
+  .menu-bars::after { transform: translateY(3px); }
+
+  .menu-button[aria-expanded='true'] .menu-bars { transform: rotate(45deg); }
+  .menu-button[aria-expanded='true'] .menu-bars::before { transform: rotate(-90deg); }
+  .menu-button[aria-expanded='true'] .menu-bars::after { display: none; }
+
+  .mobile-navigation {
+    border-top: 1px solid var(--color-rule-soft);
+    background: white;
+  }
+
+  .mobile-navigation nav {
+    width: min(100% - 2rem, 72rem);
+    margin-inline: auto;
+    padding: 0.5rem 0 1rem;
+  }
+
+  .mobile-navigation a {
+    display: flex;
+    min-height: 3.4rem;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--color-rule-soft);
+    color: var(--color-ink);
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .mobile-navigation .mobile-contact {
+    justify-content: center;
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+    border: 0;
+    background: var(--color-crimson);
+    color: white;
+  }
+
+  @media (min-width: 68rem) {
+    .desktop-nav,
+    .desktop-actions {
+      display: flex;
+    }
+
+    .menu-button {
+      display: none;
+    }
+  }
+
+  @media (max-width: 47.99rem) {
+    .header-shell {
+      width: min(100% - 2rem, 72rem);
+      min-height: 4.35rem;
+    }
+
+    .brand-link img {
+      height: 2rem;
+    }
+  }
+</style>
