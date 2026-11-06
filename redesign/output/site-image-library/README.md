@@ -6,7 +6,7 @@ This folder is a copied, organized working library for the Summit Asset Manageme
 
 - `00-currently-used` — images referenced by the current Astro site.
 - `01-brand` — header and footer logo files.
-- `02-team-portraits` — employee directory portraits, including Galactic Peggy.
+- `02-team-portraits` — employee directory portraits.
 - `03-team-editorial` — larger environmental and casual team photography.
 - `04-broll-originals` — original office, client-service, and detail photographs.
 - `05-broll-enhanced` — existing 1600px enhanced versions used by the redesign.

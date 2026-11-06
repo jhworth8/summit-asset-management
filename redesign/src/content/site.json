@@ -1,0 +1,30 @@
+{
+  "name": "Summit Asset Management",
+  "legalName": "Summit Asset Management LLC",
+  "building": "Clark Centre",
+  "street": "5100 Wheelis Drive, Suite 107",
+  "city": "Memphis",
+  "state": "TN",
+  "zip": "38117",
+  "phone": "901.729.8100",
+  "fax": "901.729.8101",
+  "email": "info@summitassetmanagement.com",
+  "footerTagline": "Investment services and financial advice in Memphis, Tennessee, since 1991.",
+  "documents": {
+    "brochure": {
+      "title": "Form ADV Part 2 (Firm Brochure)",
+      "date": "March 2026",
+      "file": "/letters/20260316_Summit-Asset-Management-LLC_Brochure_March-2026.pdf"
+    },
+    "crs": {
+      "title": "Client Relationship Summary (Form CRS)",
+      "date": "March 2026",
+      "file": "/letters/20260316_Summit-Asset-Management-LLC_Form_CRS_March-2026.pdf"
+    },
+    "privacy": {
+      "title": "Privacy Notice",
+      "date": "May 2024",
+      "file": "/letters/Summit-Asset-Management-LLC_Privacy-Notice_May-2024.pdf"
+    }
+  }
+}

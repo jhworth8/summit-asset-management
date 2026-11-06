@@ -1,0 +1,29 @@
+{
+  "seoTitle": "Client Access | Summit Asset Management",
+  "seoDescription": "Log in to the Summit Client Portal or Charles Schwab online access.",
+  "heading": "Client access.",
+  "intro": "Summit Asset Management provides online access for clients through a web-portal.",
+  "portal": {
+    "kicker": "Summit Client Portal",
+    "heading": "Accounts, reports and documents.",
+    "paragraphs": [
+      "With online access, clients can view their accounts, see customized reports, receive communications from Summit, and share and store documents through a protected website.",
+      "To learn more about this feature, please contact your financial advisor or call 901.729.8100.",
+      "If you are an existing client with an active portal, use the link below to log in. It will take you to Tamarac’s portal login page."
+    ],
+    "linkLabel": "Log in to the Summit Client Portal",
+    "url": "https://summitam.portal.tamaracinc.com/"
+  },
+  "schwab": {
+    "kicker": "Charles Schwab & Co., Inc.",
+    "heading": "Charles Schwab online access.",
+    "paragraphs": [
+      "Summit Asset Management, LLC has selected Charles Schwab & Co., Inc. (“Schwab”) as primary custodian for our clients’ accounts. Charles Schwab & Co., Inc. provides online access to account information.",
+      "In order to view accounts online you must be signed up with Schwab for web-viewing. The link below will take you away from Summit’s website to the Schwab website.",
+      "Call Schwab Signature Services Alliance at 800.515.2157 to get online access to your Schwab accounts or if you are having difficulty viewing your accounts online."
+    ],
+    "linkLabel": "Go to Schwab Alliance",
+    "url": "https://www.schwaballiance.com/"
+  },
+  "disclaimer": "These materials have been independently produced by Summit Asset Management, LLC. Summit Asset Management, LLC is independent of, and has no affiliation with, Charles Schwab & Co., Inc. or any of its affiliates (“Schwab”). Schwab is a registered broker-dealer and member SIPC. Schwab has not created, supplied, licensed, endorsed, or otherwise sanctioned these materials nor has Schwab independently verified any of the information in them. Summit Asset Management, LLC provides you with investment advice, while Schwab maintains custody of your assets in a brokerage account and will effect transactions for your account on our instruction."
+}

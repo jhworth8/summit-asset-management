@@ -1,0 +1,62 @@
+{
+  "seoTitle": "Financial Planning | Summit Asset Management",
+  "seoDescription": "Financial planning from Summit Asset Management: comprehensive, concrete, coordinated and connected.",
+  "heading": "Clarity for everyday questions and complex issues.",
+  "intro": "We take a comprehensive view of each client’s financial life, outline concrete actions, coordinate plans with CPAs and attorneys, and keep it all connected over the course of time.",
+  "image": "/img/SAM_MG_8222_enhanced.webp",
+  "imageAlt": "Clasped hands resting on a conference table",
+  "leadKicker": "Our approach",
+  "leadHeading": "Unbiased advice and helpful direction.",
+  "leadEmphasis": "Whether it is a decision to sell a business or a question about how much is enough insurance, our advisors and professionals provide unbiased advice and helpful direction.",
+  "leadBody": "We are able to suggest specific solutions as we analyze and organize our clients’ financial information. We also work together with clients’ tax and legal counsel to integrate all of the pieces into a clear plan. We aim to be a long-term financial partner for families, businesses, and non-profits.",
+  "processKicker": "Our financial planning process",
+  "processHeading": "Comprehensive, concrete, coordinated and connected.",
+  "processIntro": "Select a step to read how it works.",
+  "steps": [
+    {
+      "name": "Comprehensive",
+      "lead": "We provide comprehensive, unbiased advice to clients on a broad spectrum of financial issues.",
+      "points": [
+        "We help clients see both the bigger picture and the details of their financial lives in context."
+      ]
+    },
+    {
+      "name": "Concrete",
+      "lead": "We help clients move from concept to concrete action with their financial plans.",
+      "points": [
+        "We work to identify items that require attention, suggest solutions, and monitor results."
+      ]
+    },
+    {
+      "name": "Coordinated",
+      "lead": "We work with legal, tax, and other advisors to make sure clients’ plans are coordinated.",
+      "points": [
+        "We become part of the decision-making process with families, business owners, and institutions.",
+        "We often help mediate and orchestrate the interplay of all parties involved in financial matters."
+      ]
+    },
+    {
+      "name": "Connected",
+      "lead": "We provide long-term continuity for spouses, beneficiaries, and future generations of families.",
+      "points": [
+        "We also help with the management of trusts, custodial accounts, business retirement plans, and non-profit boards when fiduciaries change over time.",
+        "We become a repository of history and knowledge specific to the client that can be transitioned to successors."
+      ]
+    }
+  ],
+  "areasKicker": "Planning areas",
+  "areasHeading": "Typical planning areas include:",
+  "areas": [
+    "Retirement",
+    "Tax issues",
+    "Insurance",
+    "Education",
+    "Estate and trust",
+    "Charitable giving",
+    "Family partnerships and business succession"
+  ],
+  "ctaKicker": "Next steps",
+  "ctaHeading": "Bring the pieces together.",
+  "ctaBody": "Contact an advisor to discuss the services we can provide you.",
+  "ctaButton": "Contact us"
+}

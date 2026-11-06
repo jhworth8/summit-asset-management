@@ -1,30 +1,18 @@
 ---
-import { serviceOverview } from '../data/services';
+import content from '../content/pages/services.json';
 import { p } from '../utils/paths';
 
 const services = [
-  {
-    ...serviceOverview.investment,
-    href: p(serviceOverview.investment.href),
-    number: '01',
-    image: p('/img/SAM_MG_8429_enhanced.webp'),
-    imageAlt: 'A Summit advisor reviewing portfolio information with a client',
-  },
-  {
-    ...serviceOverview.planning,
-    href: p(serviceOverview.planning.href),
-    number: '02',
-    image: p('/img/SAM_MG_8222_enhanced.webp'),
-    imageAlt: 'A planning conversation at Summit',
-  },
+  { ...content.investment, href: p('/services/investment-management'), number: '01', image: p(content.investment.image) },
+  { ...content.planning, href: p('/services/financial-planning'), number: '02', image: p(content.planning.image) },
 ];
 ---
 
 <section class="services-editorial" data-services-editorial aria-labelledby="services-editorial-title">
   <header class="editorial-intro">
-    <p>How Summit serves clients</p>
-    <h2 id="services-editorial-title">Two disciplines. One ongoing conversation.</h2>
-    <div>Investment management and financial planning are distinct areas of work. At Summit, each is informed by the other.</div>
+    <p>{content.editorialKicker}</p>
+    <h2 id="services-editorial-title">{content.editorialHeading}</h2>
+    <div>{content.editorialIntro}</div>
   </header>
 
   <div class="service-pair">
@@ -46,13 +34,11 @@ const services = [
   </div>
 
   <div class="shared-principle" data-shared-principle>
-    <p>The relationship between the two</p>
-    <h3>The plan gives the portfolio context. The portfolio gives the plan resources.</h3>
+    <p>{content.sharedKicker}</p>
+    <h3>{content.sharedHeading}</h3>
     <div class="shared-line" aria-hidden="true"><span></span></div>
     <ul>
-      <li><span>01</span>One view of the client</li>
-      <li><span>02</span>Decisions coordinated over time</li>
-      <li><span>03</span>Continuity across people and generations</li>
+      {content.sharedPoints.map((point, index) => <li><span>{String(index + 1).padStart(2, '0')}</span>{point}</li>)}
     </ul>
   </div>
 </section>

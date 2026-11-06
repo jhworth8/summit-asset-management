@@ -1,0 +1,595 @@
+# Summit website editor (Sveltia CMS). Every field below maps to a file in
+# redesign/src/content/. Saving creates a draft; publishing merges it into the
+# site, and GitHub rebuilds and republishes the site within a few minutes.
+# How to use it: EDITING.md at the root of the repository.
+
+backend:
+  name: github
+  repo: jhworth8/summit-asset-management
+  branch: main
+  commit_messages:
+    create: 'Add {{collection}} "{{slug}}" (site editor)'
+    update: 'Update {{collection}} "{{slug}}" (site editor)'
+    delete: 'Remove {{collection}} "{{slug}}" (site editor)'
+    uploadMedia: 'Upload "{{path}}" (site editor)'
+    deleteMedia: 'Delete "{{path}}" (site editor)'
+
+# Changes are saved as drafts and only go live when someone clicks Publish,
+# so wording can be reviewed (e.g. by the CCO) before it is public.
+publish_mode: editorial_workflow
+
+# Change both when the site moves to www.summitassetmanagement.com.
+site_url: https://jhworth8.github.io/summit-asset-management
+display_url: https://jhworth8.github.io/summit-asset-management
+
+media_folder: /redesign/public/img
+public_folder: /img
+
+collections:
+  # ------------------------------------------------------------------ Letters
+  - name: letters
+    label: Quarterly Letters
+    label_singular: Letter
+    description: >-
+      Commentary letters listed on the Views & News page and on the homepage.
+      To add a new quarterly letter, click "New Letter", upload the PDF and
+      fill in the title and date. The newest letter appears on the homepage
+      automatically.
+    folder: /redesign/src/content/letters
+    extension: json
+    format: json
+    create: true
+    delete: true
+    slug: '{{fields.date}}'
+    identifier_field: title
+    summary: '{{date}} · {{title}}'
+    sortable_fields: [date, title]
+    preview_path: news
+    fields:
+      - name: title
+        label: Title
+        widget: string
+        hint: 'The title printed on the letter, for example: GOOOOAAAALLLL! maybe.'
+      - name: date
+        label: Letter date
+        widget: datetime
+        time_format: false
+        format: YYYY-MM-DD
+        hint: The date on the letter. Letters are listed newest first.
+      - name: kind
+        label: Type of letter
+        widget: select
+        default: Quarterly commentary letter
+        options:
+          - Quarterly commentary letter
+          - Special commentary letter
+          - Proxy voting letter
+      - name: file
+        label: PDF
+        widget: file
+        media_folder: /redesign/public/letters
+        public_folder: /letters
+        hint: Upload the letter as a PDF.
+
+  # --------------------------------------------------------------------- Team
+  - name: team
+    label: Team Bios
+    label_singular: Team Member
+    description: >-
+      One entry per person. "Order" controls the order on the website (1 is
+      first). To take someone off the site without deleting their bio, turn on
+      "Hide from website".
+    folder: /redesign/src/content/team
+    extension: md
+    format: frontmatter
+    create: true
+    delete: true
+    slug: '{{fields.name}}'
+    identifier_field: name
+    summary: '{{order}}. {{name}} · {{title}}'
+    sortable_fields: [order, name]
+    fields:
+      - { name: name, label: Name, widget: string }
+      - name: credentials
+        label: Credentials
+        widget: string
+        required: false
+        hint: 'Shown after the name, for example: CFP® or CLU, ChFC. Leave blank for none.'
+      - name: title
+        label: Title (bio page)
+        widget: string
+        hint: 'Full title, for example: Chief Investment Officer, Principal, Advisor'
+      - name: shortRole
+        label: Short role (homepage)
+        widget: string
+        hint: 'Kept short so it fits under the homepage photo, for example: Principal, Advisor'
+      - name: group
+        label: Group
+        widget: select
+        options:
+          - { label: Chairman, value: chairman }
+          - { label: Principals, value: principals }
+          - { label: Advisors, value: advisors }
+          - { label: Associates, value: associates }
+        hint: Used for the filters on the Our Team page and in the web address.
+      - { name: order, label: Order, widget: number, value_type: int, min: 1 }
+      - { name: email, label: Email, widget: string }
+      - name: photo
+        label: Portrait (180 × 220)
+        widget: image
+        media_folder: /redesign/public/img
+        public_folder: /img
+      - name: editorialPhoto
+        label: Large photo on bio page
+        widget: image
+        required: false
+        media_folder: /redesign/public/img
+        public_folder: /img
+      - name: hidden
+        label: Hide from website
+        widget: boolean
+        default: false
+        required: false
+      - name: body
+        label: Biography
+        widget: markdown
+        buttons: [bold, italic, link]
+        editor_components: []
+        hint: The first paragraph is shown larger, as an introduction.
+
+  # -------------------------------------------------------------------- Pages
+  - name: pages
+    label: Website Pages
+    label_singular: Page
+    description: The wording on each page of the website.
+    files:
+      - name: home
+        label: Homepage
+        file: /redesign/src/content/pages/home.json
+        fields:
+          - &seoTitle { name: seoTitle, label: Browser tab title, widget: string, hint: Shown in the browser tab and search results. }
+          - &seoDescription { name: seoDescription, label: Search description, widget: text, hint: The short summary search engines show under the title. }
+          - name: hero
+            label: Top of page
+            widget: object
+            fields:
+              - { name: kicker, label: Small heading, widget: string }
+              - { name: headline, label: Headline, widget: text }
+              - { name: intro, label: Introduction, widget: text }
+              - { name: primaryButton, label: Contact button text, widget: string }
+              - { name: secondaryButton, label: Services link text, widget: string }
+          - name: facts
+            label: Fact strip (below the headline)
+            widget: list
+            summary: '{{value}} · {{label}}'
+            fields:
+              - { name: value, label: Large text, widget: string }
+              - { name: label, label: Small text, widget: string }
+          - name: services
+            label: What we do
+            widget: object
+            fields:
+              - { name: kicker, label: Small heading, widget: string }
+              - { name: heading, label: Heading, widget: string }
+              - { name: intro, label: Introduction, widget: text }
+              - name: investment
+                label: Investment Management card
+                widget: object
+                fields:
+                  - { name: title, label: Title, widget: string }
+                  - { name: body, label: Text, widget: text }
+                  - { name: points, label: Bullet points, widget: list, field: { name: point, label: Point, widget: string } }
+              - name: planning
+                label: Financial Planning card
+                widget: object
+                fields:
+                  - { name: title, label: Title, widget: string }
+                  - { name: body, label: Text, widget: text }
+                  - { name: points, label: Bullet points, widget: list, field: { name: point, label: Point, widget: string } }
+          - name: audiences
+            label: Who we serve
+            widget: object
+            fields:
+              - { name: kicker, label: Small heading, widget: string }
+              - { name: heading, label: Heading, widget: string }
+              - name: items
+                label: Groups
+                widget: list
+                summary: '{{title}}'
+                fields:
+                  - { name: title, label: Title, widget: string }
+                  - { name: body, label: Text, widget: text }
+                  - { name: link, label: Link (optional), widget: string, required: false, hint: 'A page address such as /client-access, or leave blank.' }
+          - name: principles
+            label: Principles (rotating panel)
+            widget: object
+            fields:
+              - { name: kicker, label: Small heading, widget: string }
+              - { name: heading, label: Heading, widget: string }
+              - name: items
+                label: Principles
+                widget: list
+                summary: '{{keyword}} · {{headline}}'
+                fields:
+                  - { name: keyword, label: Keyword, widget: string }
+                  - { name: headline, label: Headline, widget: string }
+                  - { name: caption, label: Text, widget: text }
+                  - { name: image, label: Photo, widget: image }
+                  - { name: alt, label: Photo description (for screen readers), widget: string }
+                  - { name: link, label: Link address, widget: string, hint: 'For example: /our-team' }
+                  - { name: linkLabel, label: Link text, widget: string }
+          - name: whySummit
+            label: Why Summit
+            widget: object
+            fields:
+              - { name: kicker, label: Small heading, widget: string }
+              - { name: heading, label: Heading, widget: string }
+              - { name: intro, label: Introduction, widget: text }
+              - { name: image, label: Photo, widget: image }
+              - { name: imageAlt, label: Photo description (for screen readers), widget: string }
+              - { name: imageLabel, label: Photo caption label, widget: string }
+              - { name: imageCaption, label: Photo caption, widget: string }
+              - name: points
+                label: Points
+                widget: list
+                summary: '{{title}}'
+                fields:
+                  - { name: title, label: Title, widget: string }
+                  - { name: body, label: Text, widget: text }
+              - name: links
+                label: Links
+                widget: list
+                summary: '{{label}}'
+                fields:
+                  - { name: label, label: Label, widget: string }
+                  - { name: text, label: Text, widget: string }
+                  - { name: href, label: Link address, widget: string }
+          - name: team
+            label: Our people
+            widget: object
+            fields:
+              - { name: kicker, label: Small heading, widget: string }
+              - { name: heading, label: Heading, widget: string }
+              - { name: intro, label: Introduction, widget: text }
+          - name: closing
+            label: Bottom of page
+            widget: object
+            fields:
+              - { name: kicker, label: Small heading, widget: string }
+              - { name: heading, label: Heading, widget: string }
+              - { name: body, label: Text, widget: text }
+              - { name: emailButton, label: Email button text, widget: string }
+              - { name: letterKicker, label: Latest letter heading, widget: string }
+              - { name: letterBody, label: Latest letter text, widget: text }
+
+      - name: firm
+        label: Our Firm
+        file: /redesign/src/content/pages/firm.json
+        preview_path: our-firm
+        fields:
+          - *seoTitle
+          - *seoDescription
+          - &heading { name: heading, label: Page heading, widget: string }
+          - &intro { name: intro, label: Introduction, widget: text }
+          - &image { name: image, label: Page photo, widget: image }
+          - &imageAlt { name: imageAlt, label: Photo description (for screen readers), widget: string }
+          - { name: kicker, label: Small heading, widget: string }
+          - { name: sectionHeading, label: Section heading, widget: string }
+          - &paragraphs { name: paragraphs, label: Paragraphs, widget: list, field: { name: paragraph, label: Paragraph, widget: text } }
+          - { name: attributesLink, label: Firm attributes link text, widget: text }
+          - { name: historyLink, label: Our history link text, widget: text }
+
+      - name: attributes
+        label: Firm Attributes
+        file: /redesign/src/content/pages/attributes.json
+        preview_path: our-firm/attributes
+        fields:
+          - *seoTitle
+          - *seoDescription
+          - *heading
+          - *intro
+          - name: items
+            label: Attributes
+            widget: list
+            summary: '{{title}}'
+            fields:
+              - { name: title, label: Title, widget: string }
+              - { name: body, label: Text, widget: text }
+          - { name: brochureHeading, label: Brochure box heading, widget: string }
+          - { name: brochureBody, label: Brochure box text, widget: text }
+          - { name: brochureLink, label: Brochure link text, widget: string }
+
+      - name: history
+        label: Our History
+        file: /redesign/src/content/pages/history.json
+        preview_path: our-firm/history
+        fields:
+          - *seoTitle
+          - *seoDescription
+          - *heading
+          - *intro
+          - *image
+          - *imageAlt
+          - { name: storyHeading, label: Story heading, widget: string }
+          - *paragraphs
+          - name: milestones
+            label: Timeline
+            widget: list
+            summary: '{{year}} · {{text}}'
+            fields:
+              - { name: year, label: Year, widget: string }
+              - { name: text, label: Text, widget: text }
+
+      - name: team
+        label: Our Team (page text)
+        file: /redesign/src/content/pages/team.json
+        preview_path: our-team
+        fields:
+          - *seoTitle
+          - *seoDescription
+          - *heading
+          - *intro
+          - { name: sectionHeading, label: Section heading, widget: string }
+          - { name: body, label: Text, widget: text }
+
+      - name: services
+        label: Services Overview
+        file: /redesign/src/content/pages/services.json
+        preview_path: services
+        fields:
+          - *seoTitle
+          - *seoDescription
+          - *heading
+          - *intro
+          - { name: editorialKicker, label: Section small heading, widget: string }
+          - { name: editorialHeading, label: Section heading, widget: string }
+          - { name: editorialIntro, label: Section introduction, widget: text }
+          - name: investment
+            label: Investment management panel
+            widget: object
+            fields:
+              - { name: label, label: Small heading, widget: string }
+              - { name: title, label: Title, widget: string }
+              - { name: body, label: Text, widget: text }
+              - { name: points, label: Points, widget: list, field: { name: point, label: Point, widget: string } }
+              - { name: image, label: Photo, widget: image }
+              - { name: imageAlt, label: Photo description (for screen readers), widget: string }
+          - name: planning
+            label: Financial planning panel
+            widget: object
+            fields:
+              - { name: label, label: Small heading, widget: string }
+              - { name: title, label: Title, widget: string }
+              - { name: body, label: Text, widget: text }
+              - { name: points, label: Points, widget: list, field: { name: point, label: Point, widget: string } }
+              - { name: image, label: Photo, widget: image }
+              - { name: imageAlt, label: Photo description (for screen readers), widget: string }
+          - { name: sharedKicker, label: Closing panel small heading, widget: string }
+          - { name: sharedHeading, label: Closing panel heading, widget: text }
+          - { name: sharedPoints, label: Closing panel points, widget: list, field: { name: point, label: Point, widget: string } }
+
+      - name: investment
+        label: Investment Management
+        file: /redesign/src/content/pages/investment.json
+        preview_path: services/investment-management
+        fields:
+          - *seoTitle
+          - *seoDescription
+          - *heading
+          - *intro
+          - *image
+          - *imageAlt
+          - &leadKicker { name: leadKicker, label: Approach small heading, widget: string }
+          - &leadHeading { name: leadHeading, label: Approach heading, widget: string }
+          - &leadEmphasis { name: leadEmphasis, label: Approach first paragraph, widget: text }
+          - &leadBody { name: leadBody, label: Approach second paragraph, widget: text }
+          - &processKicker { name: processKicker, label: Process small heading, widget: string }
+          - &processHeading { name: processHeading, label: Process heading, widget: string }
+          - &processIntro { name: processIntro, label: Process instructions, widget: string }
+          - name: steps
+            label: Process steps
+            widget: list
+            summary: '{{name}}'
+            fields:
+              - { name: name, label: Step name, widget: string }
+              - { name: lead, label: Main sentence, widget: text }
+              - { name: points, label: Supporting points, widget: list, field: { name: point, label: Point, widget: text } }
+              - { name: listLabel, label: Side panel heading (optional), widget: string, required: false }
+              - { name: list, label: Side panel items (optional), widget: list, required: false, field: { name: item, label: Item, widget: string } }
+          - { name: vehiclesKicker, label: Investments small heading, widget: string }
+          - { name: vehiclesHeading, label: Investments heading, widget: string }
+          - { name: vehiclesIntro, label: Investments introduction, widget: text }
+          - name: vehicles
+            label: Investments
+            widget: list
+            summary: '{{name}}'
+            fields:
+              - { name: name, label: Name, widget: string }
+              - { name: items, label: Examples, widget: list, required: false, field: { name: item, label: Example, widget: string } }
+          - { name: vehiclesNote, label: Investments footnote, widget: text, required: false }
+          - name: commitments
+            label: Attribute strip
+            widget: list
+            summary: '{{title}}'
+            fields:
+              - { name: title, label: Title, widget: string }
+              - { name: body, label: Text, widget: text }
+          - &ctaKicker { name: ctaKicker, label: Contact panel small heading, widget: string }
+          - &ctaHeading { name: ctaHeading, label: Contact panel heading, widget: string }
+          - &ctaBody { name: ctaBody, label: Contact panel text, widget: text }
+          - &ctaButton { name: ctaButton, label: Contact panel button text, widget: string }
+
+      - name: planning
+        label: Financial Planning
+        file: /redesign/src/content/pages/planning.json
+        preview_path: services/financial-planning
+        fields:
+          - *seoTitle
+          - *seoDescription
+          - *heading
+          - *intro
+          - *image
+          - *imageAlt
+          - *leadKicker
+          - *leadHeading
+          - *leadEmphasis
+          - *leadBody
+          - *processKicker
+          - *processHeading
+          - *processIntro
+          - name: steps
+            label: Process steps
+            widget: list
+            summary: '{{name}}'
+            fields:
+              - { name: name, label: Step name, widget: string }
+              - { name: lead, label: Main sentence, widget: text }
+              - { name: points, label: Supporting points, widget: list, field: { name: point, label: Point, widget: text } }
+          - { name: areasKicker, label: Planning areas small heading, widget: string }
+          - { name: areasHeading, label: Planning areas heading, widget: string }
+          - { name: areas, label: Planning areas, widget: list, field: { name: area, label: Area, widget: string } }
+          - *ctaKicker
+          - *ctaHeading
+          - *ctaBody
+          - *ctaButton
+
+      - name: news
+        label: Views & News (page text)
+        file: /redesign/src/content/pages/news.json
+        preview_path: news
+        fields:
+          - *seoTitle
+          - *seoDescription
+          - *heading
+          - *intro
+          - *image
+          - *imageAlt
+          - { name: archiveHeading, label: Archive heading, widget: string }
+          - { name: archiveNote, label: Archive note, widget: text }
+
+      - name: contact
+        label: Contact
+        file: /redesign/src/content/pages/contact.json
+        preview_path: contact
+        fields:
+          - *seoTitle
+          - *seoDescription
+          - *heading
+          - *intro
+          - *image
+          - *imageAlt
+          - { name: emailNote, label: Note under email address, widget: string }
+          - { name: directionsHeading, label: Directions heading, widget: string }
+          - { name: directions, label: Directions, widget: text }
+
+      - name: client-access
+        label: Client Access
+        file: /redesign/src/content/pages/client-access.json
+        preview_path: client-access
+        fields:
+          - *seoTitle
+          - *seoDescription
+          - *heading
+          - *intro
+          - name: portal
+            label: Summit Client Portal
+            widget: object
+            fields:
+              - { name: kicker, label: Small heading, widget: string }
+              - { name: heading, label: Heading, widget: string }
+              - *paragraphs
+              - { name: linkLabel, label: Button text, widget: string }
+              - { name: url, label: Button link (full web address), widget: string }
+          - name: schwab
+            label: Charles Schwab
+            widget: object
+            fields:
+              - { name: kicker, label: Small heading, widget: string }
+              - { name: heading, label: Heading, widget: string }
+              - *paragraphs
+              - { name: linkLabel, label: Button text, widget: string }
+              - { name: url, label: Button link (full web address), widget: string }
+          - { name: disclaimer, label: Schwab disclaimer, widget: text }
+
+      - name: legal
+        label: Disclosures & Legal Pages
+        file: /redesign/src/content/pages/legal.json
+        preview_path: disclosure
+        fields:
+          - name: disclosures
+            label: Disclosures page
+            widget: object
+            fields:
+              - *heading
+              - *intro
+              - name: sections
+                label: Sections
+                widget: list
+                summary: '{{heading}}'
+                fields:
+                  - { name: heading, label: Heading, widget: string }
+                  - { name: body, label: Text, widget: text }
+              - { name: documentsHeading, label: Documents heading, widget: string }
+              - { name: registrationNote, label: Registration note, widget: text }
+          - name: terms
+            label: Terms of Service page
+            widget: object
+            fields:
+              - *heading
+              - *intro
+              - *paragraphs
+          - name: privacy
+            label: Privacy Notice page
+            widget: object
+            fields: [*heading, *intro]
+          - name: crs
+            label: Client Relationship Summary page
+            widget: object
+            fields: [*heading, *intro]
+
+  # ----------------------------------------------------------------- Settings
+  - name: settings
+    label: Firm Details & Documents
+    label_singular: Settings
+    files:
+      - name: site
+        label: Firm details, contact information and regulatory documents
+        file: /redesign/src/content/site.json
+        fields:
+          - { name: name, label: Firm name, widget: string }
+          - { name: legalName, label: Legal name, widget: string }
+          - { name: building, label: Building, widget: string }
+          - { name: street, label: Street address, widget: string }
+          - { name: city, label: City, widget: string }
+          - { name: state, label: State, widget: string }
+          - { name: zip, label: ZIP code, widget: string }
+          - { name: phone, label: Phone, widget: string, hint: 'Written as 901.729.8100' }
+          - { name: fax, label: Fax, widget: string }
+          - { name: email, label: General email, widget: string }
+          - { name: footerTagline, label: Footer tagline, widget: string }
+          - name: documents
+            label: Regulatory documents
+            widget: object
+            hint: When the firm files a new Form ADV or updates Form CRS or the privacy notice, upload the new PDF here and update the date.
+            fields:
+              - name: brochure
+                label: Form ADV Part 2 (firm brochure)
+                widget: object
+                fields:
+                  - { name: title, label: Title, widget: string }
+                  - { name: date, label: Date shown, widget: string, hint: 'For example: March 2026' }
+                  - { name: file, label: PDF, widget: file, media_folder: /redesign/public/letters, public_folder: /letters }
+              - name: crs
+                label: Client Relationship Summary (Form CRS)
+                widget: object
+                fields:
+                  - { name: title, label: Title, widget: string }
+                  - { name: date, label: Date shown, widget: string, hint: 'For example: March 2026' }
+                  - { name: file, label: PDF, widget: file, media_folder: /redesign/public/letters, public_folder: /letters }
+              - name: privacy
+                label: Privacy Notice
+                widget: object
+                fields:
+                  - { name: title, label: Title, widget: string }
+                  - { name: date, label: Date shown, widget: string, hint: 'For example: May 2024' }
+                  - { name: file, label: PDF, widget: file, media_folder: /redesign/public/letters, public_folder: /letters }

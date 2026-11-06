@@ -1,0 +1,180 @@
+{
+  "seoTitle": "Summit Asset Management | Investment Management & Planning",
+  "seoDescription": "Fee-only investment management and financial planning for individuals, families, businesses and non-profits. 100% employee-owned in Memphis since 1991.",
+  "hero": {
+    "kicker": "Memphis, Tennessee · Since 1991",
+    "headline": "Investment management and financial planning, built on lasting relationships.",
+    "intro": "Summit Asset Management has provided investment services and financial advice to individuals, families, businesses and non-profits since 1991.",
+    "primaryButton": "Contact us",
+    "secondaryButton": "View our services"
+  },
+  "facts": [
+    {
+      "value": "1991",
+      "label": "Founded in Memphis"
+    },
+    {
+      "value": "Fee-only",
+      "label": "No sales commissions or loads"
+    },
+    {
+      "value": "100%",
+      "label": "Employee-owned"
+    },
+    {
+      "value": "20+ years",
+      "label": "Average client service of our advisors and firm"
+    }
+  ],
+  "services": {
+    "kicker": "What we do",
+    "heading": "Investing and planning, together.",
+    "intro": "We approach investment management in the context of each client’s entire financial picture.",
+    "investment": {
+      "title": "Investment Management",
+      "body": "Having a thorough understanding of our clients’ financial lives gives us a sound basis for creating their investment plans. The most fundamental decision in those plans is the asset allocation decision. We believe that a diversified portfolio’s asset allocation has a greater impact on future performance than any other factor. We work to identify appropriate asset allocation targets for our clients.",
+      "points": [
+        "Asset allocation",
+        "Continuing oversight"
+      ]
+    },
+    "planning": {
+      "title": "Financial Planning",
+      "body": "The advisors at Summit have years of experience assisting clients with a broad range of financial matters. We have worked with clients on family partnerships, business transitions, retirement and estate planning, charitable giving, and the creation of all manner of trusts. We walk with clients through everyday questions and complex issues to provide clarity and coherence.",
+      "points": [
+        "Retirement and estate planning",
+        "Charitable giving and trusts"
+      ]
+    }
+  },
+  "audiences": {
+    "kicker": "Who we serve",
+    "heading": "Select individuals, families, businesses and non-profits.",
+    "items": [
+      {
+        "title": "Individuals & families",
+        "body": "Long-term continuity for spouses, beneficiaries and future generations of families.",
+        "link": ""
+      },
+      {
+        "title": "Business owners",
+        "body": "Family partnerships, business transitions and business retirement plans.",
+        "link": ""
+      },
+      {
+        "title": "Non-profit organizations",
+        "body": "Continuity for non-profit boards as fiduciaries change over time.",
+        "link": ""
+      },
+      {
+        "title": "Current clients",
+        "body": "Online access to accounts, reports and documents.",
+        "link": "/client-access"
+      }
+    ]
+  },
+  "principles": {
+    "kicker": "Our principles",
+    "heading": "The principles behind our work.",
+    "items": [
+      {
+        "keyword": "Trust",
+        "headline": "Building lasting relationships.",
+        "caption": "We work to earn and keep the trust of our clients.",
+        "image": "/img/SAM_MG_8636_enhanced.webp",
+        "alt": "Two people walking through the lobby of Summit’s office building",
+        "link": "/our-team",
+        "linkLabel": "Meet our team"
+      },
+      {
+        "keyword": "Knowledge",
+        "headline": "Discerning what’s important.",
+        "caption": "We apply deep institutional knowledge to each client’s situation.",
+        "image": "/img/john-thumb938x406.jpg",
+        "alt": "John Laughlin reviewing documents at his desk",
+        "link": "/services",
+        "linkLabel": "Our services"
+      },
+      {
+        "keyword": "Strength",
+        "headline": "Being there when it matters.",
+        "caption": "We walk with clients through some of life’s most difficult moments.",
+        "image": "/img/SAM_MG_8429_enhanced.webp",
+        "alt": "Two people reviewing papers together at a desk",
+        "link": "/services/financial-planning",
+        "linkLabel": "Financial planning"
+      },
+      {
+        "keyword": "Experience",
+        "headline": "Having real-life perspective.",
+        "caption": "We have served individuals, families, businesses and non-profits since 1991.",
+        "image": "/img/clark-centre-exterior-wide.webp",
+        "alt": "Clark Centre in Memphis, home of Summit’s office, with the fountain in front",
+        "link": "/our-firm/history",
+        "linkLabel": "Our history"
+      },
+      {
+        "keyword": "Professional",
+        "headline": "Serving with integrity and expertise.",
+        "caption": "We hold ourselves to high standards in all that we do.",
+        "image": "/img/SAM_MG_8222_enhanced.webp",
+        "alt": "Clasped hands resting on a conference table",
+        "link": "/our-firm/attributes",
+        "linkLabel": "Firm attributes"
+      }
+    ]
+  },
+  "whySummit": {
+    "kicker": "Why Summit",
+    "heading": "Independent by structure. Personal by practice.",
+    "intro": "We have built Summit around the core principle of putting our clients first.",
+    "image": "/img/_MG_9114b_1-thumb620x260.jpg",
+    "imageAlt": "Three people reviewing documents together in Summit’s office",
+    "imageLabel": "A team approach",
+    "imageCaption": "Collective knowledge, with a primary advisor for each client.",
+    "points": [
+      {
+        "title": "Fee-only",
+        "body": "We are only compensated by a fee based on the amount of investments managed. We do not charge transaction fees, sales commissions, or loads."
+      },
+      {
+        "title": "Employee-owned",
+        "body": "Summit is 100% employee owned. There’s no pressure from outside owners that might conflict with clients’ interests."
+      },
+      {
+        "title": "Team-based",
+        "body": "Each client has a primary relationship with an advisor and the benefit of our collective knowledge."
+      }
+    ],
+    "links": [
+      {
+        "label": "Firm attributes",
+        "text": "Founded 1991, independent and fee-only",
+        "href": "/our-firm/attributes"
+      },
+      {
+        "label": "Our history",
+        "text": "From Frank A. Jones’s founding to today",
+        "href": "/our-firm/history"
+      },
+      {
+        "label": "Our people",
+        "text": "Meet our advisors and staff",
+        "href": "/our-team"
+      }
+    ]
+  },
+  "team": {
+    "kicker": "Our people",
+    "heading": "Meet the team.",
+    "intro": "Our seasoned advisors and service professionals have deep and diverse experience."
+  },
+  "closing": {
+    "kicker": "Begin a conversation",
+    "heading": "Tell us what you are working toward.",
+    "body": "Contact an advisor to discuss the services we can provide you.",
+    "emailButton": "Email our team",
+    "letterKicker": "Latest commentary letter",
+    "letterBody": "Our latest views on investments, the economy and personal financial issues that may be of interest to clients."
+  }
+}

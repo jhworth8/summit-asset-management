@@ -1,4 +1,12 @@
-# Summit Asset Management — full site mirror
+# Summit Asset Management
+
+- **New website** (Astro, in `redesign/`): see [EDITING.md](EDITING.md) to change
+  wording or add quarterly letters, [PUBLISHING.md](PUBLISHING.md) to move it to
+  the official domain, and [CONTENT-REVIEW.md](CONTENT-REVIEW.md) for the
+  compliance review of its wording.
+- **Old website mirror** (`site/`): described below.
+
+## Full site mirror
 
 A complete, byte-for-byte local copy of **https://www.summitassetmanagement.com/**,
 captured 2026-08-12.

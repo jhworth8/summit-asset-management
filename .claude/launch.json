@@ -6,6 +6,12 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "8123", "--directory", "C:\\Users\\jesse\\SummitAssetManagement\\site"],
       "port": 8123
+    },
+    {
+      "name": "summit-v2",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "C:\\Users\\jesse\\SummitAssetManagement\\redesign", "run", "dev"],
+      "port": 4321
     }
   ]
 }

@@ -1,6 +1,9 @@
 ---
 import Page from '../../layouts/Page.astro';
-import PlanningDiagram from '../../components/PlanningDiagram.astro';
+import ProcessStepper from '../../components/ProcessStepper.astro';
+import content from '../../content/pages/planning.json';
+import { firm } from '../../data/site';
+import { p } from '../../utils/paths';
 
 const subnav = [
   { label: 'Overview', href: '/services' },
@@ -10,89 +13,68 @@ const subnav = [
 ---
 
 <Page
-  title="Financial Planning | Summit Asset Management"
-  description="Comprehensive, concrete, and coordinated fee-only financial planning for individuals, families, businesses and nonprofits in Memphis."
+  title={content.seoTitle}
+  description={content.seoDescription}
   section="Services"
-  heading="Clarity for everyday questions and complex milestones."
-  intro="Summit takes a comprehensive view, outlines concrete actions, coordinates with other professionals and keeps the plan connected over time."
-  image="/img/SAM_MG_8222_enhanced.webp"
-  imageAlt="A client conversation and financial planning session at Summit Asset Management"
+  heading={content.heading}
+  intro={content.intro}
+  image={content.image}
+  imageAlt={content.imageAlt}
   subnav={subnav}
 >
-  <!-- Philosophy & Lead Editorial -->
   <section class="service-editorial-lead">
     <div class="lead-header">
-      <p class="section-kicker">Planning Philosophy</p>
-      <h2>Unbiased direction across the whole financial life.</h2>
+      <p class="section-kicker">{content.leadKicker}</p>
+      <h2>{content.leadHeading}</h2>
     </div>
     <div class="lead-prose">
-      <p class="lead-emphasis">
-        Whether it is a decision to sell a business or a question about how much is enough insurance, our advisors and professionals provide unbiased advice and helpful direction.
-      </p>
-      <p>
-        We suggest specific solutions as we analyze and organize our clients’ financial information, working together with tax and legal counsel to integrate all of the pieces into one clear, connected plan.
-      </p>
+      <p class="lead-emphasis">{content.leadEmphasis}</p>
+      <p>{content.leadBody}</p>
     </div>
   </section>
 
-  <!-- Interactive Figures: 4-C Disciplines & Practice Matrix -->
-  <PlanningDiagram />
+  <ProcessStepper
+    id="planning-process"
+    kicker={content.processKicker}
+    heading={content.processHeading}
+    intro={content.processIntro}
+    steps={content.steps}
+  />
 
-  <!-- Multi-Disciplinary Coordination -->
-  <section class="coordination-strip">
-    <div class="coordination-header">
-      <p class="section-kicker">Collaborative Advisory</p>
-      <h2>Orchestrating your entire financial team.</h2>
-    </div>
-    <div class="coordination-grid">
-      <div class="coord-item">
-        <span class="coord-tag">Tax Strategy</span>
-        <h3>CPAs & Tax Counsel</h3>
-        <p>Annual tax-loss harvesting, timing of deductions, asset location, and Roth conversion planning.</p>
-      </div>
-      <div class="coord-item">
-        <span class="coord-tag">Legacy Structure</span>
-        <h3>Estate & Trust Attorneys</h3>
-        <p>Aligning asset titling, powers of attorney, and beneficiary designations with trust documents.</p>
-      </div>
-      <div class="coord-item">
-        <span class="coord-tag">Stewardship</span>
-        <h3>Successor Fiduciaries</h3>
-        <p>Serving as an institutional repository of family history, values, and multi-generational wisdom.</p>
-      </div>
-    </div>
+  <section class="areas-section" aria-labelledby="areas-heading">
+    <p class="section-kicker">{content.areasKicker}</p>
+    <h2 id="areas-heading">{content.areasHeading}</h2>
+    <ul class="areas-list">
+      {content.areas.map((area, index) => (
+        <li><span>{String(index + 1).padStart(2, '0')}</span>{area}</li>
+      ))}
+    </ul>
   </section>
 
-  <!-- Action Callout Banner -->
   <div class="service-action-banner">
     <div class="action-copy">
-      <p class="action-kicker">Next Steps</p>
-      <h2>Bring the pieces together.</h2>
-      <p>
-        Ready to develop a unified roadmap for your family or organization? Contact our Memphis office to start a thoughtful, confidential conversation.
-      </p>
+      <p class="action-kicker">{content.ctaKicker}</p>
+      <h2>{content.ctaHeading}</h2>
+      <p>{content.ctaBody}</p>
     </div>
     <div class="action-links">
-      <a href="/contact" class="solid-button" target="_blank" rel="noopener noreferrer">Talk with an advisor</a>
-      <a href="tel:9017298100" class="phone-link">
-        <span>Direct line to Memphis office:</span>
-        <strong>901.729.8100</strong>
+      <a href={p('/contact')} class="solid-button">{content.ctaButton}</a>
+      <a href={firm.phoneHref} class="phone-link">
+        <span>Call our office</span>
+        <strong>{firm.phone}</strong>
       </a>
-      <a href="/services/investment-management" class="sibling-link">
-        Explore Investment Management →
-      </a>
+      <a href={p('/services/investment-management')} class="sibling-link">Explore investment management →</a>
     </div>
   </div>
 
-  <!-- Bottom Page Navigation -->
   <nav class="service-pager" aria-label="Services navigation">
-    <a href="/services/investment-management" class="pager-prev">
+    <a href={p('/services/investment-management')} class="pager-prev">
       <span>Previous</span>
-      <strong>← Investment Management</strong>
+      <strong>← Investment management</strong>
     </a>
-    <a href="/services" class="pager-next">
+    <a href={p('/services')} class="pager-next">
       <span>Overview</span>
-      <strong>Services Overview →</strong>
+      <strong>Services overview →</strong>
     </a>
   </nav>
 
@@ -340,6 +322,59 @@ const subnav = [
     .service-pager .pager-next {
       text-align: right;
       margin-left: auto;
+    }
+
+    /* Planning areas */
+    .areas-section {
+      padding-top: 1rem;
+    }
+
+    .areas-section h2 {
+      margin: 0 0 1.5rem;
+      color: var(--color-board);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      line-height: 1.1;
+    }
+
+    .areas-list {
+      display: grid;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid var(--color-ink);
+    }
+
+    .areas-list li {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--color-rule);
+      color: var(--color-board);
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      line-height: 1.3;
+    }
+
+    .areas-list span {
+      flex-shrink: 0;
+      color: var(--color-crimson-deep);
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+
+    @media (min-width: 48rem) {
+      .areas-list {
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 3rem;
+      }
+    }
+
+    @media (min-width: 72rem) {
+      .areas-list {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
   </style>
 </Page>

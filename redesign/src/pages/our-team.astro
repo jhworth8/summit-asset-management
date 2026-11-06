@@ -1,37 +1,37 @@
 ---
 import Page from '../layouts/Page.astro';
-import { teamProfiles } from '../data/profiles';
-import { p } from '../utils/paths';
+import content from '../content/pages/team.json';
+import { getTeam } from '../data/site';
 
+const team = await getTeam();
 const filters = [
   ['all', 'All'],
   ['chairman', 'Chairman'],
   ['principals', 'Principals'],
   ['advisors', 'Advisors'],
   ['associates', 'Associates'],
-];
+].filter(([value]) => value === 'all' || team.some((person) => person.group === value));
 ---
 
-<Page title="Our Team | Summit Asset Management" description="Meet Summit Asset Management's experienced, collaborative team of advisors and professionals in Memphis." section="Our Team" heading="Experienced people. Collective perspective." intro="Clients have a primary advisor and the benefit of a collaborative firm with deep and diverse experience.">
+<Page title={content.seoTitle} description={content.seoDescription} section="Our Team" heading={content.heading} intro={content.intro}>
   <div class="team-intro">
-    <h2>A personal relationship, supported by a team.</h2>
-    <p>Summit’s culture ensures that each client benefits from the firm’s collective knowledge without losing the personal touch of a primary advisor who knows the relationship in depth.</p>
+    <h2>{content.sectionHeading}</h2>
+    <p>{content.body}</p>
   </div>
 
   <div class="team-filters" role="group" aria-label="Filter team by role" data-team-filters>
     {filters.map(([value, label], index) => (
       <button type="button" data-team-filter={value} aria-pressed={index === 0 ? 'true' : 'false'}>
-        {label}<span>{value === 'all' ? teamProfiles.length : teamProfiles.filter((person) => person.group === value).length}</span>
+        {label}<span>{value === 'all' ? team.length : team.filter((person) => person.group === value).length}</span>
       </button>
     ))}
   </div>
 
   <ul class="team-grid" data-team-grid>
-    {teamProfiles.map((person) => (
+    {team.map((person) => (
       <li data-team-member data-team-group={person.group}>
-        <a href={p(`/our-team/${person.slug}`)}>
+        <a href={person.href}>
           <img src={person.photo} alt={person.name} width="600" height="720" loading="lazy" />
-          {person.note && <span class="profile-note">{person.note}</span>}
           <h2>{person.name}{person.credentials && <small>, {person.credentials}</small>}</h2>
           <p>{person.title}</p>
           <span class="profile-link">Read biography →</span>
@@ -61,10 +61,8 @@ const filters = [
           applyFilter(filter);
         }));
 
-        // Check if there is a URL query param ?filter=
-        const urlParams = new URLSearchParams(window.location.search);
-        const initialFilter = urlParams.get('filter');
-        if (initialFilter) {
+        const initialFilter = new URLSearchParams(window.location.search).get('filter');
+        if (initialFilter && buttons.some((button) => button.dataset.teamFilter === initialFilter)) {
           applyFilter(initialFilter);
         }
       });

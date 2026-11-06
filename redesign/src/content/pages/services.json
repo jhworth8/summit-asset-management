@@ -1,0 +1,42 @@
+{
+  "seoTitle": "Services | Summit Asset Management",
+  "seoDescription": "Investment management and financial planning for individuals, families, businesses and non-profits from Summit Asset Management in Memphis.",
+  "heading": "The plan and the portfolio belong together.",
+  "intro": "We approach investment management in the context of each client’s entire financial picture.",
+  "editorialKicker": "How Summit serves clients",
+  "editorialHeading": "Two disciplines, one view of the client.",
+  "editorialIntro": "As we analyze and organize financial matters, we gain a better understanding of how clients’ assets should be invested.",
+  "investment": {
+    "label": "Investment management",
+    "title": "Built on knowing our clients’ goals.",
+    "body": "Our investments are built on knowing our clients’ goals, collaborative research, creating personalized portfolios, and continuing oversight. We bring all of those elements together to fit investment portfolios to each client.",
+    "points": [
+      "Client goals",
+      "Collaboration",
+      "Creation",
+      "Continuity"
+    ],
+    "image": "/img/SAM_MG_8429_enhanced.webp",
+    "imageAlt": "Two people reviewing papers together at a desk"
+  },
+  "planning": {
+    "label": "Financial planning",
+    "title": "A comprehensive view of each client’s financial life.",
+    "body": "In our financial planning process we take a comprehensive view of each client’s financial life, outline concrete actions, coordinate plans with CPAs and attorneys, and keep it all connected over the course of time.",
+    "points": [
+      "Comprehensive",
+      "Concrete",
+      "Coordinated",
+      "Connected"
+    ],
+    "image": "/img/SAM_MG_8222_enhanced.webp",
+    "imageAlt": "Clasped hands resting on a conference table"
+  },
+  "sharedKicker": "How the two connect",
+  "sharedHeading": "Understanding a client’s financial life gives us a sound basis for their investment plan.",
+  "sharedPoints": [
+    "Investment plans grounded in each client’s goals",
+    "Plans coordinated with CPAs and attorneys",
+    "Long-term continuity for families and successors"
+  ]
+}

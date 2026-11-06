@@ -1,6 +1,9 @@
 ---
 import Page from '../../layouts/Page.astro';
-import InvestmentDiagram from '../../components/InvestmentDiagram.astro';
+import ProcessStepper from '../../components/ProcessStepper.astro';
+import content from '../../content/pages/investment.json';
+import { firm } from '../../data/site';
+import { p } from '../../utils/paths';
 
 const subnav = [
   { label: 'Overview', href: '/services' },
@@ -10,83 +13,84 @@ const subnav = [
 ---
 
 <Page
-  title="Investment Management | Summit Asset Management"
-  description="Fee-only, collaborative investment management customized for individuals, families, businesses and endowments in Memphis and nationwide."
+  title={content.seoTitle}
+  description={content.seoDescription}
   section="Services"
-  heading="Investment decisions begin with the client."
-  intro="A thorough understanding of each client’s financial life gives us the foundation for a sound, customized investment plan."
-  image="/img/SAM_MG_8429_enhanced.webp"
-  imageAlt="A Summit advisor reviewing portfolio information with a client in Memphis"
+  heading={content.heading}
+  intro={content.intro}
+  image={content.image}
+  imageAlt={content.imageAlt}
   subnav={subnav}
 >
-  <!-- Philosophy & Lead Editorial -->
   <section class="service-editorial-lead">
     <div class="lead-header">
-      <p class="section-kicker">Core Philosophy</p>
-      <h2>A disciplined process, personalized in practice.</h2>
+      <p class="section-kicker">{content.leadKicker}</p>
+      <h2>{content.leadHeading}</h2>
     </div>
     <div class="lead-prose">
-      <p class="lead-emphasis">
-        For each client we begin the investment process by identifying an appropriate asset allocation. As a first step, we assess goals and objectives. We then work together to craft a custom plan.
-      </p>
-      <p>
-        This includes designing portfolios that are specific to each client but are directed by the firm’s coordinated investment strategies. In addition, we apply changes to the asset mix as needed over time.
-      </p>
+      <p class="lead-emphasis">{content.leadEmphasis}</p>
+      <p>{content.leadBody}</p>
     </div>
   </section>
 
-  <!-- Interactive Figures: 4-Stage Framework & Asset Sleeves -->
-  <InvestmentDiagram />
+  <ProcessStepper
+    id="investment-process"
+    kicker={content.processKicker}
+    heading={content.processHeading}
+    intro={content.processIntro}
+    steps={content.steps}
+  />
 
-  <!-- The 3 Fiduciary Commitments -->
-  <section class="commitments-strip">
-    <div class="commitment-item">
-      <span class="commitment-tag">Fiduciary</span>
-      <h3>Fee-Only Standard</h3>
-      <p>Compensated solely by client fees. No commissions, no proprietary products, no sales quotas.</p>
+  <section class="schedule-section" aria-labelledby="vehicles-heading">
+    <div class="schedule-header">
+      <p class="section-kicker">{content.vehiclesKicker}</p>
+      <h2 id="vehicles-heading">{content.vehiclesHeading}</h2>
+      <p>{content.vehiclesIntro}</p>
     </div>
-    <div class="commitment-item">
-      <span class="commitment-tag">Governance</span>
-      <h3>Committee Direction</h3>
-      <p>Firm-wide Investment Committee sets macroeconomic research and disciplined asset allocation targets.</p>
-    </div>
-    <div class="commitment-item">
-      <span class="commitment-tag">Execution</span>
-      <h3>Tax-Aware Discipline</h3>
-      <p>Continuous attention to asset location, tax-loss harvesting, and transaction cost efficiency.</p>
-    </div>
+    <ul class="schedule-grid">
+      {content.vehicles.map((group) => (
+        <li>
+          <h3>{group.name}</h3>
+          {group.items.length > 0 && <ul>{group.items.map((item) => <li>{item}</li>)}</ul>}
+        </li>
+      ))}
+    </ul>
+    {content.vehiclesNote && <p class="schedule-note">{content.vehiclesNote}</p>}
   </section>
 
-  <!-- Action Callout Banner -->
+  <section class="commitments-strip" aria-label="Firm attributes">
+    {content.commitments.map((item) => (
+      <div class="commitment-item">
+        <h3>{item.title}</h3>
+        <p>{item.body}</p>
+      </div>
+    ))}
+  </section>
+
   <div class="service-action-banner">
     <div class="action-copy">
-      <p class="action-kicker">Next Steps</p>
-      <h2>See how this applies to your situation.</h2>
-      <p>
-        Whether you are evaluating your current portfolio, planning a transition, or seeking a second opinion, our Memphis advisors are ready to discuss your goals.
-      </p>
+      <p class="action-kicker">{content.ctaKicker}</p>
+      <h2>{content.ctaHeading}</h2>
+      <p>{content.ctaBody}</p>
     </div>
     <div class="action-links">
-      <a href="/contact" class="solid-button" target="_blank" rel="noopener noreferrer">Schedule a conversation</a>
-      <a href="tel:9017298100" class="phone-link">
-        <span>Direct line to Memphis office:</span>
-        <strong>901.729.8100</strong>
+      <a href={p('/contact')} class="solid-button">{content.ctaButton}</a>
+      <a href={firm.phoneHref} class="phone-link">
+        <span>Call our office</span>
+        <strong>{firm.phone}</strong>
       </a>
-      <a href="/services/financial-planning" class="sibling-link">
-        Explore Financial Planning →
-      </a>
+      <a href={p('/services/financial-planning')} class="sibling-link">Explore financial planning →</a>
     </div>
   </div>
 
-  <!-- Bottom Page Navigation -->
   <nav class="service-pager" aria-label="Services navigation">
-    <a href="/services" class="pager-prev">
+    <a href={p('/services')} class="pager-prev">
       <span>Previous</span>
-      <strong>← Services Overview</strong>
+      <strong>← Services overview</strong>
     </a>
-    <a href="/services/financial-planning" class="pager-next">
+    <a href={p('/services/financial-planning')} class="pager-next">
       <span>Next</span>
-      <strong>Financial Planning →</strong>
+      <strong>Financial planning →</strong>
     </a>
   </nav>
 
@@ -322,6 +326,87 @@ const subnav = [
     .service-pager .pager-next {
       text-align: right;
       margin-left: auto;
+    }
+
+    /* Schedule of investments */
+    .schedule-section {
+      padding-top: 1rem;
+    }
+
+    .schedule-header h2 {
+      margin: 0 0 0.6rem;
+      color: var(--color-board);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      line-height: 1.1;
+    }
+
+    .schedule-header > p:last-child {
+      max-width: 44rem;
+      margin: 0 0 1.75rem;
+      color: var(--color-ink-2);
+      line-height: 1.6;
+    }
+
+    .schedule-grid {
+      display: grid;
+      gap: 0;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid var(--color-ink);
+    }
+
+    .schedule-grid > li {
+      padding: 1.2rem 0;
+      border-bottom: 1px solid var(--color-rule);
+    }
+
+    .schedule-grid h3 {
+      margin: 0;
+      color: var(--color-board);
+      font-size: 1.3rem;
+    }
+
+    .schedule-grid ul {
+      margin: 0.5rem 0 0;
+      padding: 0;
+      list-style: none;
+      color: var(--color-ink-2);
+      font-size: 0.92rem;
+      line-height: 1.7;
+    }
+
+    .schedule-grid ul li::before {
+      content: '— ';
+      color: var(--color-crimson);
+    }
+
+    .schedule-note {
+      max-width: 44rem;
+      margin: 1.25rem 0 0;
+      color: var(--color-ink-3);
+      font-size: 0.85rem;
+      line-height: 1.55;
+    }
+
+    @media (min-width: 54rem) {
+      .schedule-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .schedule-grid > li {
+        padding: 1.4rem 1.5rem;
+        border-right: 1px solid var(--color-rule);
+        border-bottom: 0;
+      }
+
+      .schedule-grid > li:first-child {
+        padding-left: 0;
+      }
+
+      .schedule-grid > li:last-child {
+        border-right: 0;
+      }
     }
   </style>
 </Page>

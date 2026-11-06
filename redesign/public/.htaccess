@@ -1,0 +1,15 @@
+# Used only if the built site is uploaded to an Apache server (such as the
+# current summitassetmanagement.com host). GitHub Pages ignores this file and
+# relies on the redirect pages and 404 forwarding built into the site instead.
+
+ErrorDocument 404 /404.html
+
+# Letters and documents linked from the old site
+RedirectMatch 301 ^/sites/400/uploaded/files/(.+\.pdf)$ /letters/$1
+
+# Old page addresses
+Redirect 301 /client-relationship-summary.html /client-relationship-summary/
+RedirectMatch 301 ^/our-team/advisors/?$ /our-team/?filter=advisors
+RedirectMatch 301 ^/our-team/principals/?$ /our-team/?filter=principals
+RedirectMatch 301 ^/our-team/chairmen/?$ /our-team/?filter=chairman
+RedirectMatch 301 ^/our-team/associates/?$ /our-team/?filter=associates

@@ -25,8 +25,8 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
     </nav>
 
     <div class="desktop-actions">
-      <a href={p('/client-access')} class="client-access" target="_blank" rel="noopener noreferrer">Client access</a>
-      <a href={contactHref} class="contact-button" target="_blank" rel="noopener noreferrer">Contact us</a>
+      <a href={p('/client-access')} class="client-access">Client access</a>
+      <a href={contactHref} class="contact-button">Contact us</a>
     </div>
 
     <button type="button" id="menu-toggle" class="menu-button" aria-expanded="false" aria-controls="mobile-navigation">
@@ -38,8 +38,8 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
   <div id="mobile-navigation" class="mobile-navigation" hidden>
     <nav aria-label="Mobile navigation">
       {items.map((item) => <a href={item.href}>{item.label}<span aria-hidden="true">→</span></a>)}
-      <a href={p('/client-access')} target="_blank" rel="noopener noreferrer">Client access<span aria-hidden="true">→</span></a>
-      <a href={contactHref} class="mobile-contact" target="_blank" rel="noopener noreferrer">Contact us<span aria-hidden="true">→</span></a>
+      <a href={p('/client-access')}>Client access<span aria-hidden="true">→</span></a>
+      <a href={contactHref} class="mobile-contact">Contact us<span aria-hidden="true">→</span></a>
     </nav>
   </div>
   <div class="scroll-progress" aria-hidden="true"><span id="scroll-progress-bar"></span></div>

@@ -1,0 +1,39 @@
+{
+  "disclosures": {
+    "heading": "Disclosures",
+    "intro": "Regulatory information and documents for Summit Asset Management LLC.",
+    "sections": [
+      {
+        "heading": "Suitability",
+        "body": "Summit Asset Management LLC is a Registered Investment Adviser regulated by the United States Securities & Exchange Commission as well as state regulators. Although our website is available to anyone, we may not be able to serve all viewers of our site. Contact an advisor to discuss the services we can provide you."
+      },
+      {
+        "heading": "Confidentiality",
+        "body": "Privacy is very important to Summit clients. Accordingly, Summit maintains safeguards and policies designed to protect our clients’ personal information."
+      },
+      {
+        "heading": "Safety",
+        "body": "Charles Schwab & Co., Inc. serves as the custodian for most Summit clients. Through a limited power of attorney, clients authorize Summit to select investments within their accounts and make authorized transfers. Schwab enforces strict controls to make certain that only clients can authorize money moved from the account. Checks and tenderable securities certificates are always made or endorsed to Charles Schwab & Co., Inc."
+      }
+    ],
+    "documentsHeading": "Disclosure documents",
+    "registrationNote": "Registration as an investment adviser does not imply a certain level of skill or training."
+  },
+  "terms": {
+    "heading": "Terms of Service",
+    "intro": "Terms for use of this website.",
+    "paragraphs": [
+      "Summit Asset Management LLC does not allow anyone or any entity to duplicate, distribute or edit in any form any material presented on this website, without the express written authorization from the firm.",
+      "Summit Asset Management LLC is a Registered Investment Adviser regulated by the United States Securities & Exchange Commission as well as state regulators. Although our website is available to anyone, we may not be able to serve all viewers of our site. Our website is not intended to be used by anyone covered under the GDPR. Contact an advisor to discuss the services we can provide you.",
+      "Please see the Disclosures page for additional information."
+    ]
+  },
+  "privacy": {
+    "heading": "Privacy Notice",
+    "intro": "Privacy is very important to Summit clients. Accordingly, Summit maintains safeguards and policies designed to protect our clients’ personal information."
+  },
+  "crs": {
+    "heading": "Client Relationship Summary",
+    "intro": "Form CRS summarizes our services, fees, conflicts of interest and other information to consider when choosing an investment professional."
+  }
+}

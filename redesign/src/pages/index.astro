@@ -1,44 +1,20 @@
 ---
 import Base from '../layouts/Base.astro';
 import PillarShowcase from '../components/PillarShowcase.astro';
-import { team, letters, firm } from '../data/site';
+import home from '../content/pages/home.json';
+import { firm, getLetters, getTeam } from '../data/site';
 import { p } from '../utils/paths';
 
+const team = await getTeam();
+const [latestLetter] = await getLetters();
+
 const services = [
-  {
-    number: '01',
-    title: 'Investment Management',
-    body: 'Having a thorough understanding of our clients’ financial lives gives us a sound basis for creating their investment plans. The most fundamental decision in those plans is the asset allocation decision. We believe that a diversified portfolio’s asset allocation has a greater impact on future performance than any other factor. We work to identify appropriate asset allocation targets for our clients.',
-    details: ['Portfolio design', 'Ongoing oversight'],
-    href: p('/services/investment-management'),
-  },
-  {
-    number: '02',
-    title: 'Financial Planning',
-    body: 'The advisors at Summit have years of experience assisting clients with a broad range of financial matters. We have worked with clients on family partnerships, business transitions, retirement and estate planning, charitable giving, and the creation of all manner of trusts. We walk with clients through everyday questions and complex issues to provide clarity and coherence.',
-    details: ['Retirement planning', 'Estate, tax and giving'],
-    href: p('/services/financial-planning'),
-  },
-];
-
-const audiences = [
-  ['Individuals & families', 'Long-term guidance for the decisions that affect the people you care about.'],
-  ['Business owners', 'Planning for transitions, family partnerships and concentrated wealth.'],
-  ['Nonprofit organizations', 'Investment oversight designed to support an organization’s mission.'],
-  ['Current clients', 'Secure access to accounts and documents.', p('/client-access')],
-];
-
-const distinctions = [
-  ['Fee-only', 'Summit is compensated by its clients, not by commissions or product sales.'],
-  ['Employee-owned', 'The people serving clients own the firm. There is no outside owner directing recommendations.'],
-  ['Team-based', 'Clients benefit from the experience and perspective of the firm—not only one individual.'],
+  { ...home.services.investment, number: '01', href: p('/services/investment-management') },
+  { ...home.services.planning, number: '02', href: p('/services/financial-planning') },
 ];
 ---
 
-<Base
-  title="Summit Asset Management | Investment Management & Financial Planning"
-  description="Fee-only investment management and financial planning for individuals, families, businesses and nonprofits from an employee-owned Memphis firm."
->
+<Base title={home.seoTitle} description={home.seoDescription}>
   <section class="institutional-hero video-hero">
     <div class="hero-media" aria-hidden="true">
       <video
@@ -55,24 +31,18 @@ const distinctions = [
 
     <div class="institutional-shell hero-columns video-hero-content">
       <div class="hero-message">
-        <p class="kicker" data-reveal>Independent financial guidance · Memphis, Tennessee</p>
-        <h1 data-reveal data-delay="0.03">Investment management and financial planning for the whole of your financial life.</h1>
-        <p class="hero-intro" data-reveal data-delay="0.06">
-          Summit serves individuals, families, businesses and nonprofit organizations with experienced, fee-only advice.
-        </p>
+        <p class="kicker" data-reveal>{home.hero.kicker}</p>
+        <h1 data-reveal data-delay="0.03">{home.hero.headline}</h1>
+        <p class="hero-intro" data-reveal data-delay="0.06">{home.hero.intro}</p>
         <div class="hero-actions" data-reveal data-delay="0.09">
-          <a href={p('/contact')} class="solid-button" target="_blank" rel="noopener noreferrer">Talk with an advisor</a>
-          <a href={p('/services')} class="plain-link">View our services <span aria-hidden="true">→</span></a>
+          <a href={p('/contact')} class="solid-button">{home.hero.primaryButton}</a>
+          <a href={p('/services')} class="plain-link">{home.hero.secondaryButton} <span aria-hidden="true">→</span></a>
         </div>
       </div>
-
     </div>
 
     <div class="institutional-shell trust-strip" aria-label="About Summit">
-      <div><strong>1991</strong><span>Founded in Memphis</span></div>
-      <div><strong>Fee-only</strong><span>No commissions or loads</span></div>
-      <div><strong>100%</strong><span>Employee-owned</span></div>
-      <div><strong>20+ years</strong><span>Average client-service experience</span></div>
+      {home.facts.map((fact) => <div><strong>{fact.value}</strong><span>{fact.label}</span></div>)}
     </div>
   </section>
 
@@ -97,7 +67,6 @@ const distinctions = [
           return;
         }
 
-        const bounds = hero.getBoundingClientRect();
         const headerHeight = (document.querySelector('.site-header') as HTMLElement | null)?.offsetHeight ?? 0;
         const heroCover = document.querySelector('.hero-cover') as HTMLElement | null;
         const coverTop = heroCover ? heroCover.getBoundingClientRect().top : window.innerHeight;
@@ -121,9 +90,19 @@ const distinctions = [
         }
       };
 
+      // The hero is pinned while the page slides over it. If its content
+      // (headline plus fact strip) is taller than the screen, pinning would
+      // hide the bottom of it for good, so let it scroll normally instead.
+      const updatePinning = () => {
+        hero.classList.remove('is-unpinned');
+        hero.classList.toggle('is-unpinned', hero.scrollHeight > hero.clientHeight + 1);
+      };
+
+      updatePinning();
+      document.fonts?.ready.then(updatePinning);
       applyParallax();
       window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', onScroll, { passive: true });
+      window.addEventListener('resize', () => { updatePinning(); onScroll(); }, { passive: true });
       prefersReducedMotion.addEventListener('change', onScroll);
     };
 
@@ -135,9 +114,9 @@ const distinctions = [
   <section id="services" class="institutional-section expertise-section">
     <div class="institutional-shell">
       <div class="institutional-heading" data-reveal>
-        <p class="kicker">What we do</p>
-        <h2>Investing and planning, together.</h2>
-        <p>One coordinated view of your portfolio and financial life.</p>
+        <p class="kicker">{home.services.kicker}</p>
+        <h2>{home.services.heading}</h2>
+        <p>{home.services.intro}</p>
       </div>
 
       <div class="expertise-grid">
@@ -148,7 +127,7 @@ const distinctions = [
               <h3>{service.title}</h3>
               <p>{service.body}</p>
               <ul>
-                {service.details.map((detail) => <li>{detail}</li>)}
+                {service.points.map((detail) => <li>{detail}</li>)}
               </ul>
               <a href={service.href}>Explore {service.title.toLowerCase()} <span aria-hidden="true">→</span></a>
             </article>
@@ -158,14 +137,18 @@ const distinctions = [
 
       <div id="who-we-help" class="audience-panel" data-reveal>
         <div class="audience-title">
-          <p class="kicker">Who we serve</p>
-          <h2>Advice shaped to the client.</h2>
+          <p class="kicker">{home.audiences.kicker}</p>
+          <h2>{home.audiences.heading}</h2>
         </div>
         <ul>
           {
-            audiences.map(([title, body, href]) => (
+            home.audiences.items.map((item) => (
               <li>
-                {href ? <a href={href}><strong>{title}</strong><span>{body}</span></a> : <div><strong>{title}</strong><span>{body}</span></div>}
+                {item.link ? (
+                  <a href={p(item.link)}><strong>{item.title}</strong><span>{item.body}</span></a>
+                ) : (
+                  <div><strong>{item.title}</strong><span>{item.body}</span></div>
+                )}
               </li>
             ))
           }
@@ -174,60 +157,53 @@ const distinctions = [
     </div>
   </section>
 
-  <!-- Original Brand Phrases & Captions: Changing Cards Showcase -->
-  <PillarShowcase />
+  <PillarShowcase kicker={home.principles.kicker} heading={home.principles.heading} items={home.principles.items} />
 
   <section id="why-summit" class="institutional-section firm-section">
     <div class="institutional-shell firm-columns">
       <figure class="firm-editorial" data-reveal>
         <img
-          src={p('/img/_MG_9114b_1-thumb620x260.jpg')}
-          alt="Three Summit colleagues reviewing a document together in the office"
+          src={p(home.whySummit.image)}
+          alt={home.whySummit.imageAlt}
           width="620"
           height="260"
           loading="lazy"
           decoding="async"
         />
         <figcaption>
-          <span>Team-based by design</span>
-          <strong>More than one perspective, organized around one client.</strong>
+          <span>{home.whySummit.imageLabel}</span>
+          <strong>{home.whySummit.imageCaption}</strong>
         </figcaption>
       </figure>
 
       <div class="firm-copy">
         <div class="institutional-heading" data-reveal>
-          <p class="kicker">Why Summit</p>
-          <h2>Independent by structure. Personal by practice.</h2>
-          <p>Summit was built to serve clients through lasting relationships—not transactions.</p>
+          <p class="kicker">{home.whySummit.kicker}</p>
+          <h2>{home.whySummit.heading}</h2>
+          <p>{home.whySummit.intro}</p>
         </div>
 
         <dl class="distinction-list">
           {
-            distinctions.map(([title, body], index) => (
+            home.whySummit.points.map((point, index) => (
               <div data-reveal data-delay={index * 0.04}>
-                <dt>{title}</dt>
-                <dd>{body}</dd>
+                <dt>{point.title}</dt>
+                <dd>{point.body}</dd>
               </div>
             ))
           }
         </dl>
 
         <nav class="firm-pathways" aria-label="Explore Summit" data-reveal>
-          <a href={p('/our-firm/attributes')}>
-            <span>How we work</span>
-            <strong>See the principles behind the practice</strong>
-            <i aria-hidden="true">→</i>
-          </a>
-          <a href={p('/our-firm/history')}>
-            <span>Our history</span>
-            <strong>Memphis roots and employee ownership</strong>
-            <i aria-hidden="true">→</i>
-          </a>
-          <a href={p('/our-team')}>
-            <span>Our people</span>
-            <strong>Meet the team serving clients</strong>
-            <i aria-hidden="true">→</i>
-          </a>
+          {
+            home.whySummit.links.map((link) => (
+              <a href={p(link.href)}>
+                <span>{link.label}</span>
+                <strong>{link.text}</strong>
+                <i aria-hidden="true">→</i>
+              </a>
+            ))
+          }
         </nav>
       </div>
     </div>
@@ -237,10 +213,10 @@ const distinctions = [
     <div class="institutional-shell">
       <div class="team-heading" data-reveal>
         <div>
-          <p class="kicker">Our people</p>
-          <h2>The team clients actually work with.</h2>
+          <p class="kicker">{home.team.kicker}</p>
+          <h2>{home.team.heading}</h2>
         </div>
-        <p>Experienced professionals who know their clients, collaborate with one another and remain accessible over time.</p>
+        <p>{home.team.intro}</p>
       </div>
 
       <ul class="people-directory" aria-label="Summit team">
@@ -250,7 +226,7 @@ const distinctions = [
               <a href={person.href} aria-label={`View ${person.name}'s profile`}>
                 <img src={person.photo} alt="" width="180" height="220" loading="lazy" />
                 <strong>{person.name}</strong>
-                <span>{person.role}{person.credentials && ` · ${person.credentials}`}</span>
+                <span>{person.shortRole}{person.credentials && ` · ${person.credentials}`}</span>
               </a>
             </li>
           ))
@@ -262,22 +238,26 @@ const distinctions = [
   <section id="contact" class="institutional-section closing-section">
     <div class="institutional-shell closing-columns">
       <div class="closing-message" data-reveal>
-        <p class="kicker">Begin a conversation</p>
-        <h2>Tell us what you are working toward.</h2>
-        <p>A first meeting is a chance to ask questions, understand how Summit works and decide whether the relationship feels right.</p>
+        <p class="kicker">{home.closing.kicker}</p>
+        <h2>{home.closing.heading}</h2>
+        <p>{home.closing.body}</p>
         <div class="closing-actions">
-          <a href={`mailto:${firm.email}`} class="solid-button">Email our team</a>
+          <a href={`mailto:${firm.email}`} class="solid-button">{home.closing.emailButton}</a>
           <a href={firm.phoneHref} class="plain-link">Call {firm.phone}</a>
         </div>
       </div>
 
-      <aside class="letter-summary" data-reveal data-delay="0.04">
-        <p class="kicker">Latest client letter</p>
-        <h3>{letters[0].title.replace('Client Letter — ', '')}</h3>
-        <p>Summit’s current perspective on the markets, written for clients rather than headlines.</p>
-        <a href={letters[0].href} target="_blank" rel="noopener noreferrer">Read the latest letter <span aria-hidden="true">→</span></a>
-        <a href={p('/news')}>View the complete archive <span aria-hidden="true">→</span></a>
-      </aside>
+      {
+        latestLetter && (
+          <aside class="letter-summary" data-reveal data-delay="0.04">
+            <p class="kicker">{home.closing.letterKicker}</p>
+            <h3>{latestLetter.monthYear}: “{latestLetter.title}”</h3>
+            <p>{home.closing.letterBody}</p>
+            <a href={latestLetter.href} target="_blank" rel="noopener">Read the latest letter (PDF) <span aria-hidden="true">→</span></a>
+            <a href={p('/news')}>View all letters <span aria-hidden="true">→</span></a>
+          </aside>
+        )
+      }
     </div>
   </section>
   </div>

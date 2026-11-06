@@ -1,6 +1,7 @@
 ---
 import Page from '../layouts/Page.astro';
 import ServicesEditorial from '../components/ServicesEditorial.astro';
+import content from '../content/pages/services.json';
 
 const subnav = [
   { label: 'Overview', href: '/services' },
@@ -9,7 +10,7 @@ const subnav = [
 ];
 ---
 
-<Page title="Services | Summit Asset Management" description="Summit's coordinated investment management and financial planning services for individuals, families, businesses and nonprofits." section="Services" heading="The plan and the portfolio belong together." intro="Summit approaches investment management in the context of each client’s complete financial picture." subnav={subnav}>
+<Page title={content.seoTitle} description={content.seoDescription} section="Services" heading={content.heading} intro={content.intro} subnav={subnav}>
   <ServicesEditorial />
 </Page>
 

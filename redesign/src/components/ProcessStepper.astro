@@ -1,0 +1,421 @@
+---
+// The four-step process figure shared by the investment management and
+// financial planning pages. Every word comes from the page's content file.
+interface Step {
+  name: string;
+  lead: string;
+  points: string[];
+  listLabel?: string;
+  list?: string[];
+}
+
+interface Props {
+  id: string;
+  kicker: string;
+  heading: string;
+  intro?: string;
+  steps: Step[];
+}
+
+const { id, kicker, heading, intro, steps } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<section class="process-stepper" data-process-stepper aria-labelledby={`${id}-heading`}>
+  <header class="stepper-header">
+    <p class="stepper-kicker">{kicker}</p>
+    <h2 id={`${id}-heading`}>{heading}</h2>
+    {intro && <p>{intro}</p>}
+  </header>
+
+  <div class="pipeline-container">
+    <div class="pipeline-nav" role="tablist" aria-label={kicker}>
+      {steps.map((step, idx) => (
+        <button
+          type="button"
+          role="tab"
+          id={`${id}-tab-${idx}`}
+          aria-controls={`${id}-panel-${idx}`}
+          aria-selected={idx === 0 ? 'true' : 'false'}
+          tabindex={idx === 0 ? 0 : -1}
+          data-step-tab={idx}
+          class:list={['pipeline-node', { 'is-active': idx === 0 }]}
+        >
+          <span class="node-indicator"><span class="node-num">{pad(idx + 1)}</span></span>
+          <span class="node-text">
+            <span class="node-kicker">Step {idx + 1}</span>
+            <strong class="node-title">{step.name}</strong>
+          </span>
+        </button>
+      ))}
+    </div>
+
+    <div class="stage-console">
+      {steps.map((step, idx) => {
+        const hasList = Boolean(step.list && step.list.length);
+        return (
+          <div
+            id={`${id}-panel-${idx}`}
+            role="tabpanel"
+            aria-labelledby={`${id}-tab-${idx}`}
+            data-step-panel={idx}
+            class:list={['console-panel', { 'is-active': idx === 0, 'has-aside': hasList }]}
+            hidden={idx === 0 ? undefined : true}
+          >
+            <div class="console-main">
+              <p class="console-badge">Step {pad(idx + 1)} of {pad(steps.length)}</p>
+              <h3>{step.name}</h3>
+              <p class="console-tagline">{step.lead}</p>
+              {step.points.length > 0 && (
+                <ul class="point-list">
+                  {step.points.map((point) => <li>{point}</li>)}
+                </ul>
+              )}
+            </div>
+            {hasList && (
+              <div class="console-aside">
+                {step.listLabel && <p class="aside-label">{step.listLabel}</p>}
+                <ul>
+                  {step.list!.map((item) => <li>{item}</li>)}
+                </ul>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<script>
+  const setupSteppers = () => {
+    document.querySelectorAll<HTMLElement>('[data-process-stepper]').forEach((root) => {
+      if (root.dataset.ready === 'true') return;
+      root.dataset.ready = 'true';
+
+      const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-step-tab]'));
+      const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-step-panel]'));
+
+      const show = (index: number, moveFocus = false) => {
+        const active = (index + tabs.length) % tabs.length;
+        tabs.forEach((tab, i) => {
+          const on = i === active;
+          tab.classList.toggle('is-active', on);
+          tab.setAttribute('aria-selected', String(on));
+          tab.tabIndex = on ? 0 : -1;
+        });
+        panels.forEach((panel, i) => {
+          const on = i === active;
+          panel.classList.toggle('is-active', on);
+          panel.hidden = !on;
+        });
+        if (moveFocus) tabs[active].focus();
+      };
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => show(index));
+        tab.addEventListener('keydown', (event) => {
+          const keys: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+          const current = tabs.indexOf(tab);
+          if (event.key in keys) {
+            event.preventDefault();
+            show(current + keys[event.key], true);
+          } else if (event.key === 'Home' || event.key === 'End') {
+            event.preventDefault();
+            show(event.key === 'Home' ? 0 : tabs.length - 1, true);
+          }
+        });
+      });
+    });
+  };
+
+  setupSteppers();
+  document.addEventListener('astro:page-load', setupSteppers);
+</script>
+
+<style>
+  .process-stepper {
+    margin-block: 3.5rem;
+  }
+
+  .stepper-header {
+    margin-bottom: 2rem;
+  }
+
+  .stepper-kicker {
+    margin: 0 0 0.6rem;
+    color: var(--color-crimson-deep);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .stepper-header h2 {
+    margin: 0 0 0.5rem;
+    max-width: 24ch;
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    color: var(--color-board);
+    line-height: 1.1;
+  }
+
+  .stepper-header > p:last-child {
+    margin: 0;
+    color: var(--color-ink-2);
+    font-size: 1.02rem;
+  }
+
+  .pipeline-container {
+    background: #ffffff;
+    border: 1px solid rgba(23, 47, 64, 0.12);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px -10px rgba(23, 47, 64, 0.08);
+    overflow: hidden;
+  }
+
+  .pipeline-nav {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: #f8fafc;
+    border-bottom: 1px solid rgba(23, 47, 64, 0.1);
+  }
+
+  .pipeline-node {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: transparent;
+    border: none;
+    border-right: 1px solid rgba(23, 47, 64, 0.08);
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.25s ease;
+  }
+
+  .pipeline-node:last-child {
+    border-right: none;
+  }
+
+  .pipeline-node:hover,
+  .pipeline-node.is-active {
+    background: #ffffff;
+  }
+
+  .pipeline-node:focus-visible {
+    outline: 2px solid var(--color-crimson);
+    outline-offset: -2px;
+  }
+
+  .pipeline-node.is-active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--color-crimson);
+  }
+
+  .node-indicator {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: #ffffff;
+    border: 1.5px solid var(--color-rule);
+    border-radius: 50%;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+  }
+
+  .node-num {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-ink-3);
+  }
+
+  .pipeline-node.is-active .node-indicator {
+    border-color: var(--color-crimson);
+    background: var(--color-crimson);
+  }
+
+  .pipeline-node.is-active .node-num {
+    color: #ffffff;
+  }
+
+  .node-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .node-kicker {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-3);
+  }
+
+  .pipeline-node.is-active .node-kicker {
+    color: var(--color-crimson);
+  }
+
+  .node-title {
+    font-size: 0.88rem;
+    color: var(--color-board);
+    line-height: 1.25;
+  }
+
+  .stage-console {
+    padding: 2.75rem 2.5rem;
+  }
+
+  .console-panel.is-active {
+    display: grid;
+    gap: 2.5rem;
+    animation: stepFade 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .console-panel[hidden] {
+    display: none;
+  }
+
+  @keyframes stepFade {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .console-badge {
+    margin: 0 0 0.35rem;
+    color: var(--color-crimson);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .console-main h3 {
+    margin: 0 0 0.75rem;
+    font-size: clamp(2rem, 3.5vw, 2.5rem);
+    color: var(--color-board);
+    line-height: 1.1;
+  }
+
+  .console-tagline {
+    max-width: 42rem;
+    margin: 0 0 1.25rem;
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    line-height: 1.45;
+    color: var(--color-board);
+  }
+
+  .point-list {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 42rem;
+    margin: 0;
+    padding: 1.25rem 1.5rem;
+    list-style: none;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+  }
+
+  .point-list li {
+    position: relative;
+    padding-left: 1.1rem;
+    color: var(--color-ink-2);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .point-list li::before {
+    content: '';
+    position: absolute;
+    top: 0.62em;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    background: var(--color-crimson);
+  }
+
+  .console-aside {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem;
+    background: var(--color-board);
+    border-radius: 8px;
+    color: #ffffff;
+  }
+
+  .aside-label {
+    margin: 0 0 1.1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--color-crimson-light);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+
+  .console-aside ul {
+    display: grid;
+    gap: 0.85rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .console-aside li {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+  }
+
+  @media (min-width: 60rem) {
+    .console-panel.is-active.has-aside {
+      grid-template-columns: 1.25fr 0.75fr;
+      align-items: stretch;
+    }
+  }
+
+  @media (max-width: 52rem) {
+    .pipeline-nav {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .pipeline-node {
+      gap: 0.7rem;
+      padding: 1rem;
+      border-bottom: 1px solid rgba(23, 47, 64, 0.08);
+    }
+
+    .stage-console {
+      padding: 1.75rem 1.25rem;
+    }
+  }
+
+  /* On phones the step number already appears in "Step 1", so drop the
+     circle and give the step name the full width of its cell. */
+  @media (max-width: 30rem) {
+    .node-indicator {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .console-panel.is-active {
+      animation: none;
+    }
+  }
+</style>

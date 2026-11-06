@@ -1,0 +1,35 @@
+{
+  "seoTitle": "Firm Attributes | Summit Asset Management",
+  "seoDescription": "Founded 1991, mid-sized, independent, fee-only: the attributes of Summit Asset Management.",
+  "heading": "The attributes behind our work.",
+  "intro": "We have built Summit around the core principle of putting our clients first. This philosophy can be seen in the attributes that make Summit a strong partner.",
+  "items": [
+    {
+      "title": "Founded 1991",
+      "body": "Our advisors and firm average over 20 years of client service."
+    },
+    {
+      "title": "Mid-sized",
+      "body": "We have a deep bench of professionals but keep a personal touch."
+    },
+    {
+      "title": "Independent",
+      "body": "Summit is 100% employee owned. There’s no pressure from outside owners that might conflict with clients’ interests."
+    },
+    {
+      "title": "Clients",
+      "body": "We serve select individuals, families, businesses, and non-profits."
+    },
+    {
+      "title": "“Fee-only”",
+      "body": "We are only compensated by a fee based on the amount of investments managed. We do not charge transaction fees, sales commissions, or loads."
+    },
+    {
+      "title": "Service not Sales",
+      "body": "We do not sell products. We invest only in what we believe best fits the clients’ needs, given their investment strategy. No third parties pay Summit, only our clients."
+    }
+  ],
+  "brochureHeading": "Form ADV Part 2",
+  "brochureBody": "For more details about Summit please view our Form ADV Part 2. In its first few pages you can read more about our fee structure, assets under management, and client minimums.",
+  "brochureLink": "Read Form ADV Part 2 (PDF)"
+}

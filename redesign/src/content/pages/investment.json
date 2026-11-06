@@ -1,0 +1,117 @@
+{
+  "seoTitle": "Investment Management | Summit Asset Management",
+  "seoDescription": "Investment management from Summit Asset Management, a fee-only, employee-owned firm in Memphis, Tennessee.",
+  "heading": "Investment decisions begin with the client.",
+  "intro": "Having a thorough understanding of our clients’ financial lives gives us a sound basis for creating their investment plans.",
+  "image": "/img/SAM_MG_8429_enhanced.webp",
+  "imageAlt": "Two people reviewing papers together at a desk",
+  "leadKicker": "Our approach",
+  "leadHeading": "Asset allocation comes first.",
+  "leadEmphasis": "For each client we begin the investment process by identifying an appropriate asset allocation. As a first step, we assess goals and objectives. We then work together to craft a custom plan.",
+  "leadBody": "This includes designing portfolios that are specific to each client but are directed by the firm’s coordinated investment strategies. In addition, we apply changes to the asset mix as needed over time.",
+  "processKicker": "Our investment process",
+  "processHeading": "Client goals, collaboration, creation and continuity.",
+  "processIntro": "Select a step to read how it works.",
+  "steps": [
+    {
+      "name": "Client goals",
+      "lead": "We develop diversified investment portfolios based on our clients’ goals.",
+      "points": [
+        "Understanding our clients’ perspective is critical to our process.",
+        "We tailor each portfolio’s investment mix to fit the client’s unique objectives."
+      ],
+      "listLabel": "Each portfolio allocation is based on client-specific parameters such as:",
+      "list": [
+        "Time horizon",
+        "Risk tolerance",
+        "Taxes",
+        "Income",
+        "Life goals"
+      ]
+    },
+    {
+      "name": "Collaboration",
+      "lead": "We take a team approach to bring our investment ideas, collective knowledge, and service to all of our clients.",
+      "points": [
+        "Our investment committee provides oversight, discipline, and direction to all advisors.",
+        "Advisors tailor their clients’ accounts to the particular needs of each client.",
+        "Advisors work together across the firm on the investment and service mix for each client."
+      ],
+      "listLabel": "",
+      "list": []
+    },
+    {
+      "name": "Creation",
+      "lead": "We create client portfolios using a range of asset classes and investments.",
+      "points": [
+        "Portfolios are specific to each client but are directed by the firm’s coordinated investment strategies."
+      ],
+      "listLabel": "Investments may include:",
+      "list": [
+        "Mutual funds",
+        "Exchange traded funds",
+        "Individual securities",
+        "Alternatives"
+      ]
+    },
+    {
+      "name": "Continuity",
+      "lead": "We monitor investments, allocations, and targets, adjusting them over time as needed.",
+      "points": [
+        "We evaluate portfolios, positions, and allocations on an ongoing basis.",
+        "We keep transaction costs and taxes in mind when assessing portfolio changes.",
+        "We proactively modify discretionary accounts as we see possible opportunities."
+      ],
+      "listLabel": "",
+      "list": []
+    }
+  ],
+  "vehiclesKicker": "Asset classes and investments",
+  "vehiclesHeading": "What a portfolio may include.",
+  "vehiclesIntro": "We create client portfolios using a range of asset classes and investments that may include the following. We tailor each portfolio’s investment mix to fit the client’s unique objectives.",
+  "vehicles": [
+    {
+      "name": "Mutual funds",
+      "items": []
+    },
+    {
+      "name": "Exchange traded funds",
+      "items": []
+    },
+    {
+      "name": "Individual securities",
+      "items": [
+        "Stocks",
+        "Bonds",
+        "CDs"
+      ]
+    },
+    {
+      "name": "Alternatives",
+      "items": [
+        "Hedge funds of funds",
+        "Private partnerships",
+        "Options"
+      ]
+    }
+  ],
+  "vehiclesNote": "Where appropriate, we may also use alternative investments. Some alternative investments are available only to clients who meet SEC eligibility requirements.",
+  "commitments": [
+    {
+      "title": "Fee-only",
+      "body": "We are only compensated by a fee based on the amount of investments managed. We do not charge transaction fees, sales commissions, or loads."
+    },
+    {
+      "title": "Independent",
+      "body": "Summit is 100% employee owned. There’s no pressure from outside owners that might conflict with clients’ interests."
+    },
+    {
+      "title": "Service not sales",
+      "body": "We do not sell products. No third parties pay Summit, only our clients."
+    }
+  ],
+  "ctaKicker": "Next steps",
+  "ctaHeading": "See how this applies to your situation.",
+  "ctaBody": "Contact an advisor to discuss the services we can provide you.",
+  "ctaButton": "Contact us"
+}

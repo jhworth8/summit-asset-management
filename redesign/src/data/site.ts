@@ -1,18 +1,22 @@
-// Single source of truth for content that repeats across pages.
-// All copy here is taken verbatim from the existing summitassetmanagement.com
-// -- nothing about a registered investment advisor should be invented.
+// Shared site data. The wording itself lives in src/content/ (editable at
+// /admin); this module only shapes it for the pages.
+import { existsSync } from 'node:fs';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import siteContent from '../content/site.json';
 import { p } from '../utils/paths';
 
 export const firm = {
-  name: 'Summit Asset Management',
-  legalName: 'Summit Asset Management LLC',
-  address: { street: '5100 Wheelis Drive, Suite 107', city: 'Memphis', state: 'TN', zip: '38117' },
-  phone: '901.729.8100',
-  phoneHref: 'tel:+19017298100',
-  fax: '901.729.8101',
-  email: 'info@summitassetmanagement.com',
+  ...siteContent,
+  phoneHref: `tel:+1${siteContent.phone.replace(/\D/g, '')}`,
+  mapUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    `${siteContent.street}, ${siteContent.city}, ${siteContent.state} ${siteContent.zip}`,
+  )}`,
   founded: 1991,
 };
+
+export const documents = Object.fromEntries(
+  Object.entries(siteContent.documents).map(([key, doc]) => [key, { ...doc, href: p(doc.file) }]),
+) as Record<keyof typeof siteContent.documents, { title: string; date: string; file: string; href: string }>;
 
 export const nav = [
   { label: 'Our Firm', href: p('/our-firm') },
@@ -29,96 +33,55 @@ export const legalNav = [
   { label: 'Terms of Service', href: p('/terms-of-service') },
 ];
 
-export const attributes = [
-  { title: 'Founded 1991', body: 'Our advisors and firm average over 20 years of client service.' },
-  { title: 'Mid-sized', body: 'We have a deep bench of professionals but keep a personal touch.' },
-  {
-    title: 'Independent',
-    body: 'Summit is 100% employee owned. There’s no pressure from outside owners that might conflict with clients’ interests.',
-  },
-  { title: 'Clients', body: 'We serve select individuals, families, businesses, and non-profits.' },
-  {
-    title: '“Fee-only”',
-    body: 'We are only compensated by a fee based on the amount of investments managed. We do not charge transaction fees, sales commissions, or loads.',
-  },
-  {
-    title: 'Service not Sales',
-    body: 'We do not sell products. We invest only in what we believe best fits the clients’ needs. No third parties pay Summit, only our clients.',
-  },
-];
+const groupFolders = {
+  chairman: 'chairmen',
+  principals: 'principals',
+  advisors: 'advisors',
+  associates: 'associates',
+} as const;
 
-// `name` stays short so it does not wrap to three lines in a narrow column;
-// letters ride on the role line, which is how a directory sets them anyway.
-export const team = [
-  {
-    name: 'Alex Thompson',
-    credentials: 'CLU, ChFC',
-    role: 'Chairman, Advisor',
-    photo: p('/img/alex_revised_hair-thumb180x220.jpg'),
-    email: 'alex@summitassetmanagement.com',
-    href: p('/our-team/chairmen/alex-thompson-clu-chfc'),
-  },
-  {
-    name: 'John N. Laughlin',
-    credentials: 'CFP®',
-    role: 'Principal, Advisor',
-    photo: p('/img/John_180x220-thumb180x220.jpg'),
-    email: 'john@summitassetmanagement.com',
-    href: p('/our-team/principals/john-n-laughlin'),
-  },
-  {
-    name: 'Lance Hollingsworth',
-    credentials: 'CFP®',
-    role: 'Principal, Advisor',
-    photo: p('/img/Lance_180x220-thumb180x220.jpg'),
-    email: 'lance@summitassetmanagement.com',
-    href: p('/our-team/principals/lance-hollingsworth-cfp'),
-  },
-  {
-    name: 'Peggy K. Adler',
-    credentials: 'MBA',
-    role: 'Principal',
-    photo: p('/img/peggy-thumb180x220.jpg'),
-    email: 'peggy@summitassetmanagement.com',
-    href: p('/our-team/principals/peggy-k-adler'),
-  },
-  {
-    name: 'Galactic Peggy',
-    credentials: 'MBA',
-    role: 'Galactic Strategy',
-    photo: p('/img/galactic-peggy.jpg'),
-    email: 'peggy@summitassetmanagement.com',
-    href: p('/our-team/principals/galactic-peggy'),
-  },
-  {
-    name: 'Sarah Haizlip',
-    credentials: '',
-    role: 'Advisor',
-    photo: p('/img/Sarah-thumb180x220.jpg'),
-    email: 'sarah@summitassetmanagement.com',
-    href: p('/our-team/advisors/sarah-haizlip-ma'),
-  },
-  {
-    name: 'Leslie Drummond',
-    credentials: 'CFP®',
-    role: 'Advisor',
-    photo: p('/img/Leslie_180x220-thumb180x220.jpg'),
-    email: 'leslie@summitassetmanagement.com',
-    href: p('/our-team/advisors/leslie-drummond-cfp'),
-  },
-  {
-    name: 'Soleil Lum',
-    credentials: 'CFP®',
-    role: 'Associate',
-    photo: p('/img/Soleil_8_X_10_updated-thumb180x220.jpg'),
-    email: 'soleil@summitassetmanagement.com',
-    href: p('/our-team/associates/soleil-lum-cfp'),
-  },
-];
+export type TeamMember = CollectionEntry<'team'>['data'] & {
+  entry: CollectionEntry<'team'>;
+  slug: string;
+  href: string;
+};
 
-export const letters = [
-  { title: 'Client Letter — July 2026', href: p('/letters/2026_0715_Client_Letter.pdf') },
-  { title: 'Client Letter — April 2026', href: p('/letters/2026_0415_Client-Letter.pdf') },
-  { title: 'Client Letter — January 2026', href: p('/letters/2026_0115_Client_Letter.pdf') },
-  { title: 'Client Letter — October 2025', href: p('/letters/2025-1015_Client-Letter.pdf') },
-];
+export async function getTeam(): Promise<TeamMember[]> {
+  const entries = await getCollection('team', ({ data }) => !data.hidden);
+  return entries
+    .sort((a, b) => a.data.order - b.data.order)
+    .map((entry) => {
+      const slug = `${groupFolders[entry.data.group]}/${entry.id}`;
+      return {
+        ...entry.data,
+        photo: p(entry.data.photo),
+        editorialPhoto: entry.data.editorialPhoto ? p(entry.data.editorialPhoto) : '',
+        entry,
+        slug,
+        href: p(`/our-team/${slug}`),
+      };
+    });
+}
+
+const monthYear = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+export async function getLetters() {
+  const entries = await getCollection('letters');
+  return entries
+    .map(({ data }) => {
+      // A letter whose PDF is missing would publish a dead link; stop the
+      // build instead so the problem is caught before it goes live.
+      if (!/^https?:/.test(data.file) && !existsSync(`public${data.file}`)) {
+        throw new Error(`Letter "${data.title}" points to ${data.file}, but that file is not in public/. Upload the PDF or fix the path.`);
+      }
+      return {
+        ...data,
+        href: p(data.file),
+        year: data.date.getUTCFullYear(),
+        label: `${monthYear.format(data.date)} ${data.kind.replace(/ letter$/i, '').replace(/^Quarterly /i, '')} Letter`
+          .replace(/\b(\w)/g, (m) => m.toUpperCase()),
+        monthYear: monthYear.format(data.date),
+      };
+    })
+    .sort((a, b) => b.date.getTime() - a.date.getTime());
+}

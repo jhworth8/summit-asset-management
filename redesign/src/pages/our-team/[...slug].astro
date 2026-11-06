@@ -1,13 +1,16 @@
 ---
+import { render } from 'astro:content';
 import Page from '../../layouts/Page.astro';
-import { teamProfiles } from '../../data/profiles';
+import { getTeam, type TeamMember } from '../../data/site';
 import { p } from '../../utils/paths';
 
-export function getStaticPaths() {
-  return teamProfiles.map((profile) => ({ params: { slug: profile.slug }, props: { profile } }));
+export async function getStaticPaths() {
+  const team = await getTeam();
+  return team.map((profile) => ({ params: { slug: profile.slug }, props: { profile } }));
 }
 
-const { profile } = Astro.props;
+const { profile } = Astro.props as { profile: TeamMember };
+const { Content } = await render(profile.entry);
 const featurePhoto = profile.editorialPhoto || profile.photo;
 ---
 
@@ -33,14 +36,6 @@ const featurePhoto = profile.editorialPhoto || profile.photo;
               <div>
                 <dt>Credentials</dt>
                 <dd>{profile.credentials}</dd>
-              </div>
-            )
-          }
-          {
-            profile.note && (
-              <div>
-                <dt>Recognition</dt>
-                <dd class="highlight-note">{profile.note}</dd>
               </div>
             )
           }
@@ -106,11 +101,7 @@ const featurePhoto = profile.editorialPhoto || profile.photo;
         <p class="section-label">Biography</p>
 
         <div class="biography-flow">
-          {
-            profile.paragraphs.map((paragraph, index) => (
-              <p class={index === 0 ? 'lead-para' : 'body-para'}>{paragraph}</p>
-            ))
-          }
+          <Content />
         </div>
       </section>
 
@@ -181,11 +172,6 @@ const featurePhoto = profile.editorialPhoto || profile.photo;
       font-size: 0.94rem;
       font-weight: 600;
       line-height: 1.35;
-    }
-
-    .highlight-note {
-      color: var(--color-crimson);
-      font-size: 0.85rem;
     }
 
     .email-button {
@@ -360,23 +346,23 @@ const featurePhoto = profile.editorialPhoto || profile.photo;
       gap: 1.35rem;
     }
 
+    /* Body paragraphs come from the bio's Markdown file */
+    .biography-flow :global(p) {
+      margin: 0;
+      font-family: var(--font-sans);
+      font-size: 0.98rem;
+      line-height: 1.75;
+      color: #2e3c49;
+    }
+
     /* Lead Paragraph: Editorial Serif Styling */
-    .lead-para {
+    .biography-flow :global(p:first-child) {
       margin: 0;
       font-family: var(--font-serif);
       font-size: 1.32rem;
       line-height: 1.5;
       color: var(--color-board);
       font-weight: 400;
-    }
-
-    /* Body Paragraphs: Crisp High-Legibility Sans Typography */
-    .body-para {
-      margin: 0;
-      font-family: var(--font-sans);
-      font-size: 0.98rem;
-      line-height: 1.75;
-      color: #2e3c49;
     }
 
     /* Return & CTA Links */

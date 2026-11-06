@@ -1,5 +1,13 @@
 # Summit Asset Management — v2 redesign
 
+> **November 2026 update.** Parts of this file describe earlier passes and are
+> out of date: the allocation figure is gone, every page is built, and the copy
+> was audited against the live site and Form ADV (an earlier pass had added
+> unsupported claims despite the "verbatim" note below). Current docs:
+> [EDITING.md](EDITING.md) (site editor and quarterly letters),
+> [PUBLISHING.md](PUBLISHING.md) (moving to the official domain) and
+> [CONTENT-REVIEW.md](CONTENT-REVIEW.md) (sources for every statement).
+
 A ground-up rebuild of summitassetmanagement.com in **Astro + Tailwind CSS v4**,
 living in `redesign/`. It compiles to plain static HTML, so it deploys to the
 same Apache host the current site runs on — no Node runtime in production.

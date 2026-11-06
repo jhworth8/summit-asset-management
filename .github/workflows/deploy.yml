@@ -26,6 +26,12 @@ jobs:
       - name: Build with Astro
         run: npm run build
         working-directory: ./redesign
+        env:
+          # Set these as repository variables (Settings → Secrets and
+          # variables → Actions → Variables) when the site moves to
+          # www.summitassetmanagement.com. See PUBLISHING.md.
+          SITE_URL: ${{ vars.SITE_URL || 'https://jhworth8.github.io' }}
+          BASE_PATH: ${{ vars.BASE_PATH || '/summit-asset-management' }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

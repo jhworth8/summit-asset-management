@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import BackToTop from '../components/BackToTop.astro';
 import LogoTransition from '../components/LogoTransition.astro';
 
+import { firm } from '../data/site';
 import { p } from '../utils/paths';
 
 interface Props {
@@ -14,6 +15,36 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+// Keep the GitHub Pages preview out of search engines; only the official
+// domain should be indexed.
+const isOfficialDomain = Astro.site?.hostname.endsWith('summitassetmanagement.com') ?? false;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const shareImage = new URL(p('/img/og-image.jpg'), Astro.site);
+const isHome = Astro.url.pathname.replace(/\/$/, '') === p('/').replace(/\/$/, '');
+
+// Business details for search engines (name, address, phone), shown on the
+// homepage. Facts only, all from the editable firm details.
+const businessData = isHome && {
+  '@context': 'https://schema.org',
+  '@type': 'FinancialService',
+  name: firm.name,
+  legalName: firm.legalName,
+  url: new URL(p('/'), Astro.site).href,
+  logo: new URL(p('/img/logo@4x.png'), Astro.site).href,
+  image: shareImage.href,
+  telephone: `+1-${firm.phone.replace(/\./g, '-')}`,
+  faxNumber: `+1-${firm.fax.replace(/\./g, '-')}`,
+  email: firm.email,
+  foundingDate: String(firm.founded),
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: firm.street,
+    addressLocality: firm.city,
+    addressRegion: firm.state,
+    postalCode: firm.zip,
+    addressCountry: 'US',
+  },
+};
 ---
 
 <!doctype html>
@@ -23,10 +54,20 @@ const { title, description } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    {!isOfficialDomain && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href={p('/sitemap.xml')} />
+    <meta property="og:site_name" content={firm.name} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={shareImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The Summit Asset Management sign in the firm’s Memphis office" />
+    <meta name="twitter:card" content="summary_large_image" />
+    {businessData && <script type="application/ld+json" set:html={JSON.stringify(businessData)} />}
     <meta name="theme-color" content="#ffffff" />
     <link rel="icon" type="image/svg+xml" href={p('/favicon.svg')} />
     <link rel="icon" type="image/png" sizes="32x32" href={p('/favicon-32x32.png')} />
@@ -37,6 +78,24 @@ const { title, description } = Astro.props;
     <link rel="preload" href={p('/fonts/karla-latin-400.woff2')} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={p('/fonts/karla-latin-700.woff2')} as="font" type="font/woff2" crossorigin />
     <ClientRouter fallback="swap" />
+    <script is:inline define:vars={{ editorSrc: p('/editor/editor.js'), editorBase: import.meta.env.BASE_URL, adminUrl: p('/admin/') }}>
+      // On-page editor (public/editor/editor.js). Loaded only for someone who
+      // opened a page with ?edit or has signed in on this computer before;
+      // regular visitors never download it.
+      try {
+        var wantsEditor = /[?&](edit|review)\b/.test(location.search) || localStorage.getItem('summit-editor');
+        if (wantsEditor && !window.__summitEditorLoading) {
+          window.__summitEditorLoading = true;
+          window.SUMMIT_EDITOR = { base: editorBase, adminUrl: adminUrl };
+          var editorScript = document.createElement('script');
+          editorScript.src = editorSrc;
+          editorScript.defer = true;
+          document.head.appendChild(editorScript);
+        }
+      } catch (e) {
+        /* storage blocked: editing unavailable, site unaffected */
+      }
+    </script>
     <script is:inline>
       // Browsers restore scroll position on reload. On a page whose argument
       // lives at the top, refreshing into the middle reads as a bug. Reloads

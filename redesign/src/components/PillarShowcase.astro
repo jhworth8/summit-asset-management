@@ -1,86 +1,54 @@
 ---
 import { p } from '../utils/paths';
 
-export const pillars = [
-  {
-    index: '01',
-    keyword: 'Trust',
-    headline: 'Building lasting relationships.',
-    caption: 'We earn and keep the trust of our clients every day by placing their goals, needs and interests first.',
-    image: p('/img/SAM_MG_8636_enhanced.webp'),
-    alt: "Entrance to Summit Asset Management's Memphis office",
-    href: p('/our-team'),
-    linkLabel: 'Meet our advisors',
-  },
-  {
-    index: '02',
-    keyword: 'Knowledge',
-    headline: 'Discerning what’s important.',
-    caption: 'We apply deep institutional knowledge to each client’s situation, cutting through market noise to focus on enduring fundamentals.',
-    image: p('/img/john-thumb938x406.jpg'),
-    alt: 'Summit advisor reviewing portfolio strategies',
-    href: p('/services'),
-    linkLabel: 'Explore our approach',
-  },
-  {
-    index: '03',
-    keyword: 'Strength',
-    headline: 'Being there when it matters.',
-    caption: 'We walk with clients through some of life’s most difficult moments and volatile market cycles with calm, steady perspective.',
-    image: p('/img/SAM_MG_8429_enhanced.webp'),
-    alt: 'Advisory consultation room at Summit office',
-    href: p('/services/investment-management'),
-    linkLabel: 'Portfolio management',
-  },
-  {
-    index: '04',
-    keyword: 'Experience',
-    headline: 'Having real-life perspective.',
-    caption: 'We have served individuals, families, businesses and non-profits since 1991, navigating decades of economic transitions together.',
-    image: p('/img/SAM_MG_0059_FPO-thumb938x406.jpg'),
-    alt: 'Summit financial analysis workspace',
-    href: p('/our-firm/history'),
-    linkLabel: 'Firm history',
-  },
-  {
-    index: '05',
-    keyword: 'Professional',
-    headline: 'Serving with integrity and expertise.',
-    caption: 'We hold ourselves to the highest fiduciary standards of excellence in all that we do as an independent, employee-owned firm.',
-    image: p('/img/SAM_MG_8222_enhanced.webp'),
-    alt: 'Collaborative client service team at Summit',
-    href: p('/our-firm/attributes'),
-    linkLabel: 'Firm attributes',
-  },
-];
+interface Pillar {
+  keyword: string;
+  headline: string;
+  caption: string;
+  image: string;
+  alt: string;
+  link: string;
+  linkLabel: string;
+}
+
+interface Props {
+  kicker: string;
+  heading: string;
+  items: Pillar[];
+}
+
+const { kicker, heading, items } = Astro.props;
+const pillars = items.map((item, index) => ({ ...item, index: String(index + 1).padStart(2, '0') }));
+const total = String(pillars.length).padStart(2, '0');
 ---
 
-<section class="pillar-showcase" aria-label="Foundational principles of Summit" data-pillar-showcase>
+<section class="pillar-showcase" aria-label={heading} data-pillar-showcase>
   <div class="institutional-shell">
-    {/* Section Header with Controls */}
     <div class="pillar-header-row">
       <div class="pillar-header">
-        <p class="section-kicker">Guiding Principles</p>
-        <h2>What shapes every client relationship.</h2>
+        <p class="section-kicker">{kicker}</p>
+        <h2>{heading}</h2>
       </div>
 
-      <div class="pillar-nav-arrows" aria-label="Carousel navigation">
+      <div class="pillar-nav-arrows">
         <button type="button" class="arrow-btn prev-btn" data-pillar-prev aria-label="Previous principle">
           <span aria-hidden="true">←</span>
         </button>
-        <div class="counter-display" aria-live="polite">
+        <div class="counter-display">
           <strong data-current-index>01</strong>
           <span>/</span>
-          <span>05</span>
+          <span>{total}</span>
         </div>
         <button type="button" class="arrow-btn next-btn" data-pillar-next aria-label="Next principle">
           <span aria-hidden="true">→</span>
         </button>
+        <button type="button" class="arrow-btn toggle-btn" data-pillar-toggle aria-label="Pause automatic rotation" aria-pressed="false">
+          <span aria-hidden="true" class="toggle-icon"></span>
+        </button>
       </div>
     </div>
 
-    {/* Interactive Tab Navigation */}
-    <div class="pillar-tabs" role="tablist" aria-label="Pillar selector">
+    <div class="pillar-tabs" role="tablist" aria-label={kicker}>
       {
         pillars.map((item, index) => (
           <button
@@ -91,6 +59,7 @@ export const pillars = [
             aria-selected={index === 0 ? 'true' : 'false'}
             aria-controls={`pillar-panel-${index}`}
             id={`pillar-tab-${index}`}
+            tabindex={index === 0 ? 0 : -1}
           >
             <span class="tab-progress-bar" aria-hidden="true">
               <span class="tab-progress-track"></span>
@@ -102,7 +71,6 @@ export const pillars = [
       }
     </div>
 
-    {/* Animated Card Stack */}
     <div class="pillar-stage">
       {
         pillars.map((item, index) => (
@@ -113,6 +81,7 @@ export const pillars = [
             role="tabpanel"
             aria-labelledby={`pillar-tab-${index}`}
             aria-hidden={index === 0 ? 'false' : 'true'}
+            inert={index === 0 ? undefined : true}
           >
             <div class="pillar-copy">
               <div class="pillar-keyword-badge">
@@ -121,7 +90,7 @@ export const pillars = [
               </div>
               <h3 class="pillar-headline">{item.headline}</h3>
               <p class="pillar-caption">{item.caption}</p>
-              <a href={item.href} class="pillar-action-link">
+              <a href={p(item.link)} class="pillar-action-link">
                 <span>{item.linkLabel}</span>
                 <span aria-hidden="true" class="arrow">→</span>
               </a>
@@ -130,7 +99,7 @@ export const pillars = [
             <div class="pillar-media">
               <div class="image-wrapper">
                 <img
-                  src={item.image}
+                  src={p(item.image)}
                   alt={item.alt}
                   width="938"
                   height="406"
@@ -149,6 +118,11 @@ export const pillars = [
 </section>
 
 <script>
+  // Advancing is driven by the progress bar's own animation ending, so the
+  // bar and the slide change can never drift apart, and pausing the CSS
+  // animation (hover, focus, off-screen, the pause button) pauses rotation.
+  let teardown: (() => void) | null = null;
+
   const initPillars = () => {
     const showcase = document.querySelector<HTMLElement>('[data-pillar-showcase]');
     if (!showcase || showcase.dataset.ready === 'true') return;
@@ -158,122 +132,122 @@ export const pillars = [
     const slides = Array.from(showcase.querySelectorAll<HTMLElement>('[data-pillar-slide]'));
     const prevBtn = showcase.querySelector<HTMLButtonElement>('[data-pillar-prev]');
     const nextBtn = showcase.querySelector<HTMLButtonElement>('[data-pillar-next]');
+    const toggleBtn = showcase.querySelector<HTMLButtonElement>('[data-pillar-toggle]');
     const counterDisplay = showcase.querySelector<HTMLElement>('[data-current-index]');
 
+    const CYCLE_DURATION = 6500;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let currentIndex = 0;
-    let timer: any = null;
-    const CYCLE_DURATION = 5500; // 5.5s per slide
+    let stoppedByUser = reducedMotion;
+    let hovering = false;
+    let focusInside = false;
+    let offscreen = false;
 
-    const updateDisplay = (newIndex: number) => {
-      currentIndex = newIndex;
+    const syncPaused = () => {
+      // Also hold still while someone is editing the page's wording.
+      const editingPage = document.documentElement.hasAttribute('data-summit-editing');
+      const paused = stoppedByUser || hovering || focusInside || offscreen || editingPage;
+      showcase.classList.toggle('is-paused', paused);
+      toggleBtn?.setAttribute('aria-pressed', String(stoppedByUser));
+      toggleBtn?.setAttribute('aria-label', stoppedByUser ? 'Resume automatic rotation' : 'Pause automatic rotation');
+      toggleBtn?.classList.toggle('is-stopped', stoppedByUser);
+    };
 
-      // Update tabs
+    const restartProgress = () => {
       tabs.forEach((tab, i) => {
-        const isActive = i === newIndex;
-        tab.classList.toggle('is-active', isActive);
-        tab.setAttribute('aria-selected', String(isActive));
-        
-        // Reset progress animation
         const track = tab.querySelector<HTMLElement>('.tab-progress-track');
-        if (track) {
-          track.style.animation = 'none';
-          if (isActive) {
-            // Force reflow to restart CSS animation
-            void track.offsetWidth;
-            track.style.animation = `pillarTimer ${CYCLE_DURATION}ms linear forwards`;
-          }
+        if (!track) return;
+        track.style.animation = 'none';
+        if (i === currentIndex && !stoppedByUser) {
+          void track.offsetWidth;
+          track.style.animation = `pillarTimer ${CYCLE_DURATION}ms linear forwards`;
         }
       });
+    };
 
-      // Update slides
+    const show = (newIndex: number, moveFocus = false) => {
+      currentIndex = (newIndex + tabs.length) % tabs.length;
+      tabs.forEach((tab, i) => {
+        const isActive = i === currentIndex;
+        tab.classList.toggle('is-active', isActive);
+        tab.setAttribute('aria-selected', String(isActive));
+        tab.tabIndex = isActive ? 0 : -1;
+      });
       slides.forEach((slide, i) => {
-        const isActive = i === newIndex;
+        const isActive = i === currentIndex;
         slide.classList.toggle('is-active', isActive);
         slide.setAttribute('aria-hidden', String(!isActive));
+        slide.inert = !isActive;
       });
-
-      // Update counter
-      if (counterDisplay) {
-        counterDisplay.textContent = String(newIndex + 1).padStart(2, '0');
-      }
+      if (counterDisplay) counterDisplay.textContent = String(currentIndex + 1).padStart(2, '0');
+      if (moveFocus) tabs[currentIndex].focus();
+      restartProgress();
     };
 
-    const nextSlide = () => {
-      const next = (currentIndex + 1) % tabs.length;
-      updateDisplay(next);
-    };
-
-    const prevSlide = () => {
-      const prev = (currentIndex - 1 + tabs.length) % tabs.length;
-      updateDisplay(prev);
-    };
-
-    const startTimer = () => {
-      stopTimer();
-      timer = setInterval(nextSlide, CYCLE_DURATION);
-      // Trigger initial progress animation
-      const activeTab = tabs[currentIndex];
-      const track = activeTab?.querySelector<HTMLElement>('.tab-progress-track');
-      if (track) {
-        track.style.animation = 'none';
-        void track.offsetWidth;
-        track.style.animation = `pillarTimer ${CYCLE_DURATION}ms linear forwards`;
-      }
-    };
-
-    const stopTimer = () => {
-      if (timer) {
-        clearInterval(timer);
-        timer = null;
-      }
-    };
-
-    // User interactions
     tabs.forEach((tab, index) => {
-      tab.addEventListener('click', () => {
-        updateDisplay(index);
-        startTimer();
+      tab.addEventListener('click', () => show(index));
+      tab.querySelector('.tab-progress-track')?.addEventListener('animationend', () => {
+        if (index === currentIndex) show(currentIndex + 1);
+      });
+      tab.addEventListener('keydown', (event) => {
+        const keys: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+        if (event.key in keys) {
+          event.preventDefault();
+          show(currentIndex + keys[event.key], true);
+        } else if (event.key === 'Home' || event.key === 'End') {
+          event.preventDefault();
+          show(event.key === 'Home' ? 0 : tabs.length - 1, true);
+        }
       });
     });
 
-    if (prevBtn) {
-      prevBtn.addEventListener('click', () => {
-        prevSlide();
-        startTimer();
-      });
-    }
+    prevBtn?.addEventListener('click', () => show(currentIndex - 1));
+    nextBtn?.addEventListener('click', () => show(currentIndex + 1));
+    toggleBtn?.addEventListener('click', () => {
+      stoppedByUser = !stoppedByUser;
+      syncPaused();
+      restartProgress();
+    });
 
-    if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
-        nextSlide();
-        startTimer();
-      });
-    }
+    showcase.addEventListener('pointerenter', (event) => {
+      if (event.pointerType === 'mouse') { hovering = true; syncPaused(); }
+    });
+    showcase.addEventListener('pointerleave', () => { hovering = false; syncPaused(); });
+    showcase.addEventListener('focusin', () => { focusInside = true; syncPaused(); });
+    showcase.addEventListener('focusout', (event) => {
+      if (!showcase.contains(event.relatedTarget as Node | null)) { focusInside = false; syncPaused(); }
+    });
 
-    // Touch swipe support for mobile
+    const observer = new IntersectionObserver(([entry]) => {
+      offscreen = !entry.isIntersecting;
+      syncPaused();
+    });
+    observer.observe(showcase);
+
     let touchStartX = 0;
-    let touchEndX = 0;
-    showcase.addEventListener('touchstart', (e: TouchEvent) => {
-      touchStartX = e.changedTouches[0].screenX;
+    showcase.addEventListener('touchstart', (event: TouchEvent) => {
+      touchStartX = event.changedTouches[0].screenX;
+    }, { passive: true });
+    showcase.addEventListener('touchend', (event: TouchEvent) => {
+      const delta = event.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(delta) > 50) show(currentIndex + (delta < 0 ? 1 : -1));
     }, { passive: true });
 
-    showcase.addEventListener('touchend', (e: TouchEvent) => {
-      touchEndX = e.changedTouches[0].screenX;
-      if (touchStartX - touchEndX > 50) {
-        nextSlide();
-        startTimer();
-      } else if (touchEndX - touchStartX > 50) {
-        prevSlide();
-        startTimer();
-      }
-    }, { passive: true });
-
-    // Start auto cycling
-    startTimer();
+    document.addEventListener('summit:editing', syncPaused);
+    syncPaused();
+    show(0);
+    teardown = () => {
+      observer.disconnect();
+      document.removeEventListener('summit:editing', syncPaused);
+    };
   };
 
   initPillars();
   document.addEventListener('astro:page-load', initPillars);
+  document.addEventListener('astro:before-swap', () => {
+    teardown?.();
+    teardown = null;
+  });
 </script>
 
 <style>
@@ -485,7 +459,8 @@ export const pillars = [
     opacity: 0;
     visibility: hidden;
     transform: translateY(6px);
-    transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.55s;
+    /* Outgoing slide clears quickly so two slides' text never overlaps. */
+    transition: opacity 0.18s ease-out, transform 0.18s ease-out, visibility 0s linear 0.18s;
     pointer-events: none;
   }
 
@@ -494,6 +469,7 @@ export const pillars = [
     visibility: visible;
     transform: translateY(0);
     pointer-events: auto;
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.14s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.14s, visibility 0s;
   }
 
   @media (min-width: 56rem) {
@@ -617,5 +593,32 @@ export const pillars = [
     letter-spacing: 0.06em;
     text-transform: uppercase;
     border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .pillar-showcase.is-paused .tab-progress-track {
+    animation-play-state: paused !important;
+  }
+
+  .toggle-icon {
+    display: block;
+    width: 0.7rem;
+    height: 0.8rem;
+    border-inline: 3px solid currentColor;
+    box-sizing: border-box;
+  }
+
+  .toggle-btn.is-stopped .toggle-icon {
+    width: 0;
+    height: 0;
+    border-block: 0.42rem solid transparent;
+    border-inline: 0.7rem solid currentColor;
+    border-right-width: 0;
+    margin-left: 0.15rem;
+  }
+
+  .arrow-btn:focus-visible,
+  .pillar-tab:focus-visible {
+    outline: 2px solid var(--color-crimson);
+    outline-offset: 2px;
   }
 </style>
