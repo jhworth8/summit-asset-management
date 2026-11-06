@@ -25,21 +25,28 @@ the bottom-left corner of every page on your computer, and on no one else's.
    key, then click **Sign in**.
 2. Text you can change has a thin dotted red outline. **Click it and type.**
    Press Enter when you're done with that piece.
-3. Changed text turns **yellow**. You can move between pages and keep going;
-   your changes are kept.
-4. Click **Send for review**. The text turns **blue**: Jesse has it, and it is
-   **not on the public website yet**.
+3. Changed text turns **yellow** (not saved yet). You can move between pages
+   and keep going.
+4. Click **Save progress** whenever you like. The text turns **blue**: it's
+   saved online. Stop any time and pick up later, even on another computer;
+   your saved work is waiting on the page when you come back.
+5. When you're finished, click **Send for review**. Jesse gets an email. If
+   you send more changes later, he gets another one.
 
-- **See what I sent** shows your changes the way Jesse sees them. **Take back**
-  removes one.
-- **Undo** clears changes you haven't sent yet.
-- **Done** stops editing. The ✎ button brings it back.
+Nothing you save or send is on the public website until Jesse approves it.
+
+- **See my changes** shows your saved changes the way Jesse sees them.
+  **Take back** removes one.
+- **Undo** clears changes you haven't saved yet.
+- **Done** stops editing. The ✎ button brings it back, with a yellow dot if
+  you have saved work that hasn't been sent.
 
 ### Adding a quarterly letter
 
 Click **Add a letter**, type the title as printed on the letter, pick the date,
-choose the PDF, and click **Send letter for review**. Once approved, it appears
-at the top of Views & News and as the latest letter on the homepage.
+choose the PDF, and click **Add letter**. Then click **Send for review**. Once
+approved, it appears at the top of Views & News and as the latest letter on
+the homepage.
 
 ---
 
@@ -52,6 +59,8 @@ https://jhworth8.github.io/summit-asset-management/?review at any time.
 - Each change shows **On the website now** next to **Suggested**, grouped by page.
 - **Reject** removes a single change.
 - **Approve & publish** (click twice to confirm) puts the rest live.
+- If Dad has saved work he hasn't sent yet, the review screen says so, since
+  it may still be in progress.
 - **More → Reject all waiting changes** clears everything.
 
 As an approver you can also edit pages yourself and publish directly
@@ -78,6 +87,9 @@ GitHub; you set it up once.
    https://github.com/settings/tokens/new (a "classic" token):
    - Note: `Summit website editor`. Expiration: 1 year.
    - Tick **public_repo** only. Click **Generate token** and copy it.
+   - It has to be a classic token: GitHub's newer "fine-grained" keys can't
+     reach a project owned by someone else's account. If the project is ever
+     made private, tick **repo** instead of public_repo.
 4. On his computer, open his `?edit` link, enter his name, paste the key and
    click **Sign in**. Bookmark the link.
 

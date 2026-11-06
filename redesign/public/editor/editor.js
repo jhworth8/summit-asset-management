@@ -198,17 +198,22 @@
     return pr || null;
   }
 
-  async function ensurePullRequest() {
+  // The pull request body records which saved version was last sent, so any
+  // computer can tell whether there is saved progress that hasn't been sent.
+  const sentMarker = (sha) => `<!-- sent:${sha} -->`;
+  const sentShaOf = (pr) => pr?.body?.match(/<!-- sent:([0-9a-f]+) -->/)?.[1] || null;
+  const reviewUrl = () => `${location.origin}${BASE}/?review`;
+
+  async function ensurePullRequest(sha) {
     const existing = await findPullRequest();
     if (existing) return existing;
-    const reviewUrl = `${location.origin}${BASE}/?review`;
     return gh(`/repos/${repo}/pulls`, {
       method: 'POST',
       body: {
         title: `Website changes from ${session.name} for review`,
         head: DRAFT,
         base: MAIN,
-        body: `${session.name} changed wording on the website.\n\n**Review side by side:** ${reviewUrl}\n\nNothing is public until it is approved and published.`,
+        body: `${session.name} changed wording on the website.\n\n**Review side by side:** ${reviewUrl()}\n\nNothing is public until it is approved and published.\n\n${sentMarker(sha || '')}`,
       },
     });
   }
@@ -359,7 +364,10 @@
     }
     const filtered = items.filter((item) => !(item.type === 'asset' && letterPdfs.has(item.file)));
     const pr = await findPullRequest();
-    draft = { exists: filtered.length > 0, changed, items: filtered, pr };
+    const headSha = branch.commit?.sha || null;
+    // Saved progress that the approver hasn't been sent yet.
+    const unsent = filtered.length > 0 && (!pr || sentShaOf(pr) !== headSha);
+    draft = { exists: filtered.length > 0, changed, items: filtered, pr, headSha, unsent };
     // A draft branch with nothing left in it (already merged, or every change
     // rejected) is removed so the next edit starts from the live site.
     if (!filtered.length && !pr) {
@@ -613,10 +621,23 @@
     await reloadAll();
   }
 
-  // Editors: save and make sure the approver has been asked to review.
+  // Editors: save, then ask the approver to review. The first send opens the
+  // review request (GitHub emails the approver); later sends add a comment to
+  // it, which emails them again.
   async function sendForReview() {
     await saveDraft();
-    if (draft.exists) draft.pr = await ensurePullRequest();
+    if (!draft.exists || !draft.unsent) return;
+    if (!draft.pr) {
+      await ensurePullRequest(draft.headSha);
+    } else {
+      await gh(`/repos/${repo}/issues/${draft.pr.number}/comments`, {
+        method: 'POST',
+        body: { body: `${session.name} sent more changes for review.\n\n**Review side by side:** ${reviewUrl()}` },
+      });
+      const body = (draft.pr.body || '').replace(/<!-- sent:[0-9a-f]* -->/, '').trimEnd();
+      await gh(`/repos/${repo}/pulls/${draft.pr.number}`, { method: 'PATCH', body: { body: `${body}\n\n${sentMarker(draft.headSha)}` } });
+    }
+    await refreshDraft();
   }
 
   async function publish() {
@@ -683,7 +704,6 @@
     const entry = { title, date, kind, file: `/letters/${pdfName}` };
     await putFile(jsonPath, toB64(`${JSON.stringify(entry, null, 2)}\n`), existingJson?.sha, `Suggested: ${kind.toLowerCase()} "${title}" (by ${session.name})`);
     await refreshDraft();
-    if (!isApprover() && draft.exists) draft.pr = await ensurePullRequest();
   }
 
   async function signIn(form) {
@@ -724,7 +744,15 @@
   }
 
   async function start() {
-    if (!session || !editing) { renderUI(); return; }
+    if (!session) { renderUI(); return; }
+    if (!editing) {
+      // Signed in but not editing: check quietly for saved progress so the
+      // "Edit this page" button can show that something is waiting.
+      renderUI();
+      try { await loadConfig(); await refreshDraft(); } catch { /* offline: no reminder */ }
+      if (!editing) renderUI();
+      return;
+    }
     document.documentElement.toggleAttribute('data-summit-editing', true);
     document.dispatchEvent(new CustomEvent('summit:editing', { detail: true }));
     await run(async () => {
@@ -764,7 +792,7 @@
     if (!editing) {
       ui.append(el('button', { type: 'button', class: 'summit-pill', onclick: () => { setEditing(true); start(); } },
         '✎ Edit this page',
-        draft.exists ? el('span', { class: 'summit-dot', title: 'Changes are waiting for review' }) : null));
+        draft.exists ? el('span', { class: 'summit-dot', title: draft.unsent && !isApprover() ? 'You have saved changes that are not sent yet' : 'Changes are waiting for review' }) : null));
       if (message) ui.append(el('p', { class: 'summit-msg', role: 'status' }, message));
       document.body.append(ui);
       return;
@@ -775,8 +803,9 @@
     const waiting = draft.items.length;
     let status;
     if (busy) status = 'Working…';
-    else if (count) status = `${plural(count, 'change')} not sent yet`;
+    else if (count) status = `${plural(count, 'change')} not saved yet`;
     else if (waiting && approver) status = `${plural(waiting, 'change')} waiting for your review`;
+    else if (draft.unsent) status = `Progress saved. Not sent to ${settings.approverName} yet.`;
     else if (waiting) status = `Sent to ${settings.approverName} for review. Not on the live site yet.`;
     else status = 'Click any outlined text to change it.';
 
@@ -785,11 +814,10 @@
       el('span', { class: 'summit-status', role: 'status' }, status),
       el('div', { class: 'summit-actions' },
         count ? el('button', { type: 'button', class: 'summit-btn ghost', disabled: busy, onclick: undoUnsaved }, 'Undo') : null,
-        approver
-          ? el('button', { type: 'button', class: 'summit-btn', disabled: busy || !count, onclick: () => run(saveDraft, 'Saved. Open Review & publish when you are ready.') }, 'Save')
-          : el('button', { type: 'button', class: 'summit-btn primary', disabled: busy || !count, onclick: () => run(sendForReview, `Sent to ${settings.approverName}. Nothing is public until it is approved.`) }, 'Send for review'),
-        el('button', { type: 'button', class: `summit-btn ${approver ? 'primary' : ''}`, disabled: busy || (!waiting && !count), onclick: () => openReview() },
-          approver ? `Review & publish${waiting ? ` (${waiting})` : ''}` : `See what I sent${waiting ? ` (${waiting})` : ''}`),
+        el('button', { type: 'button', class: 'summit-btn', disabled: busy || !count, onclick: () => run(saveDraft, approver ? 'Saved. Open Review & publish when you are ready.' : 'Progress saved. You can stop and come back any time, on any computer.') }, approver ? 'Save' : 'Save progress'),
+        approver ? null : el('button', { type: 'button', class: 'summit-btn primary', disabled: busy || (!count && !draft.unsent), onclick: () => run(sendForReview, `Sent to ${settings.approverName}. Nothing is public until it is approved.`) }, 'Send for review'),
+        el('button', { type: 'button', class: `summit-btn ${approver ? 'primary' : 'ghost'}`, disabled: busy || (!waiting && !count), onclick: () => openReview() },
+          approver ? `Review & publish${waiting ? ` (${waiting})` : ''}` : `See my changes${waiting ? ` (${waiting})` : ''}`),
         el('button', { type: 'button', class: 'summit-btn ghost', disabled: busy, onclick: () => { panel = panel === 'letter' ? null : 'letter'; renderUI(); } }, 'Add a letter'),
         el('button', { type: 'button', class: 'summit-btn ghost', 'aria-expanded': String(panel === 'menu'), onclick: () => { panel = panel === 'menu' ? null : 'menu'; renderUI(); } }, 'More'),
         el('button', { type: 'button', class: 'summit-btn ghost', onclick: () => { panel = null; setEditing(false); } }, 'Done'),
@@ -803,10 +831,10 @@
         el('p', { class: 'summit-panel-title' }, `Signed in as ${session.name}${approver ? ' (approver)' : ''}`),
         el('p', { class: 'summit-legend' },
           el('span', { class: 'summit-swatch changed' }), 'Changed, not sent yet ',
-          el('span', { class: 'summit-swatch draft' }), approver ? 'Saved, not published' : 'Sent for review'),
+          el('span', { class: 'summit-swatch draft' }), 'Saved, not on the live site yet'),
         el('div', { class: 'summit-menu' },
           el('a', { href: ADMIN_URL, target: '_blank', rel: 'noopener' }, 'Full editor: photos, bios, documents, search titles ↗'),
-          draft.exists ? el('button', { type: 'button', onclick: () => { panel = 'discard'; renderUI(); } }, approver ? 'Reject all waiting changes' : 'Take back everything I sent') : null,
+          draft.exists ? el('button', { type: 'button', onclick: () => { panel = 'discard'; renderUI(); } }, approver ? 'Reject all waiting changes' : 'Throw away all my saved changes') : null,
           el('button', { type: 'button', onclick: () => { panel = null; signOut(); } }, 'Sign out on this computer'),
         ),
       ));
@@ -814,7 +842,7 @@
 
     if (panel === 'discard') {
       ui.append(el('div', { class: 'summit-panel' },
-        el('p', { class: 'summit-panel-title' }, approver ? 'Reject all waiting changes?' : 'Take back everything you sent?'),
+        el('p', { class: 'summit-panel-title' }, approver ? 'Reject all waiting changes?' : 'Throw away all your saved changes?'),
         el('p', {}, 'The waiting changes are removed. The live site is not affected.'),
         el('div', { class: 'summit-actions' },
           el('button', { type: 'button', class: 'summit-btn danger', onclick: () => { panel = null; run(discardDraft, 'Waiting changes removed.'); } }, 'Yes, remove them'),
@@ -827,7 +855,7 @@
       const form = el('form', { class: 'summit-panel summit-form', onsubmit: (event) => {
         event.preventDefault();
         run(async () => { await addLetter(form); panel = null; },
-          isApprover() ? 'Letter added. Open Review & publish to put it on the website.' : `Letter sent to ${settings.approverName} for review.`);
+          isApprover() ? 'Letter added. Open Review & publish to put it on the website.' : 'Letter saved. Click Send for review when you are ready.');
       } },
       el('p', { class: 'summit-panel-title' }, 'Add a quarterly letter'),
       el('label', { for: 'summit-letter-title' }, 'Title, as printed on the letter'),
@@ -842,7 +870,7 @@
       el('label', { for: 'summit-letter-pdf' }, 'The letter (PDF)'),
       el('input', { id: 'summit-letter-pdf', name: 'pdf', type: 'file', accept: 'application/pdf,.pdf', required: true }),
       el('div', { class: 'summit-actions' },
-        el('button', { type: 'submit', class: 'summit-btn primary', disabled: busy }, approver ? 'Add letter' : 'Send letter for review'),
+        el('button', { type: 'submit', class: 'summit-btn primary', disabled: busy }, 'Add letter'),
         el('button', { type: 'button', class: 'summit-btn ghost', onclick: () => { panel = null; renderUI(); } }, 'Cancel')));
       ui.append(form);
     }
@@ -854,7 +882,7 @@
   function openReview() {
     confirmPublish = false;
     reviewOpen = true;
-    if (unsavedCount()) run(isApprover() ? saveDraft : sendForReview);
+    if (unsavedCount()) run(saveDraft);
     else renderUI();
   }
 
@@ -912,13 +940,18 @@
       el('div', { class: 'summit-review-inner' },
         el('header', { class: 'summit-review-head' },
           el('div', {},
-            el('p', { class: 'summit-review-kicker' }, approver ? `Review${sentBy}` : 'What you sent for review'),
-            el('h2', {}, approver ? 'Changes waiting for approval' : `Waiting for ${settings.approverName}`),
+            el('p', { class: 'summit-review-kicker' }, approver ? `Review${sentBy}` : draft.unsent ? 'Your saved changes' : 'What you sent for review'),
+            el('h2', {}, approver ? 'Changes waiting for approval' : draft.unsent ? 'Saved, not sent yet' : `Waiting for ${settings.approverName}`),
             el('p', { class: 'summit-review-legend' }, el('del', {}, 'struck out'), ' = removed   ', el('ins', {}, 'highlighted'), ' = added')),
           el('div', { class: 'summit-actions' },
             publishButton,
             el('button', { type: 'button', class: 'summit-btn ghost-dark', onclick: close }, 'Close'))),
         message ? el('p', { class: 'summit-review-msg', role: 'status' }, message) : null,
+        approver && draft.unsent && draft.items.length
+          ? el('p', { class: 'summit-review-msg warn' }, draft.pr
+            ? 'Some of these were saved after the last time they were sent for review, so they may still be in progress.'
+            : 'These have been saved but not sent for review yet, so they may still be in progress.')
+          : null,
         confirmPublish ? el('p', { class: 'summit-review-msg warn' }, 'Publishing makes these changes public within about 2 to 3 minutes. Make sure the wording has been approved for compliance.') : null,
         busy ? el('p', { class: 'summit-review-msg' }, 'Working…') : null,
         el('div', { class: 'summit-review-body' }, body)));
