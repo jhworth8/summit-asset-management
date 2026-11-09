@@ -70,6 +70,25 @@
     '/client-relationship-summary/': 'crs',
   };
 
+  const TEAM_FOLDERS = { chairman: 'chairmen', principals: 'principals', advisors: 'advisors', associates: 'associates' };
+
+  // The page a change appears on, as { url, where } for the review screen.
+  function locate(file, path, draftedText) {
+    if (file.endsWith('/site.json')) return { url: null, where: 'Bottom of every page' };
+    if (file.includes('/content/letters/')) return { url: '/news/', where: 'Views & News' };
+    if (file.endsWith('.md')) {
+      const group = draftedText?.match(/^group:\s*(\S+)/m)?.[1];
+      const slug = file.split('/').pop().replace(/\.md$/, '');
+      return { url: group && TEAM_FOLDERS[group] ? `/our-team/${TEAM_FOLDERS[group]}/${slug}/` : '/our-team/', where: `${friendly(file).replace(/^Bio: /, '')}’s bio page` };
+    }
+    if (file.endsWith('/legal.json')) {
+      const url = Object.keys(LEGAL_SECTIONS).find((u) => LEGAL_SECTIONS[u] === path?.[0]) || '/disclosure/';
+      return { url, where: PAGES[url][1] };
+    }
+    const url = Object.keys(PAGES).find((u) => file.endsWith(`/pages/${PAGES[u][0]}.json`));
+    return url ? { url, where: PAGES[url][1] } : { url: null, where: '' };
+  }
+
   // Plain names for content field keys, used on the review screen.
   const LABELS = {
     seoTitle: 'Search result title', seoDescription: 'Search result description', kicker: 'Small heading',
@@ -160,7 +179,13 @@
   };
   const labelFor = (path, file) => {
     if (file.endsWith('.md') && path[0] === 'body') return `Biography paragraph ${path[1] + 1}`;
-    return path.map((part) => (typeof part === 'number' ? `${part + 1}` : LABELS[part] || part.replace(/([A-Z])/g, ' $1').replace(/^./, (c) => c.toUpperCase()))).join(' › ');
+    // Numbers join the word before them: "Item 4", not "Item › 4".
+    const parts = [];
+    for (const part of path) {
+      if (typeof part === 'number' && parts.length) parts[parts.length - 1] += ` ${part + 1}`;
+      else parts.push(typeof part === 'number' ? `${part + 1}` : LABELS[part] || part.replace(/([A-Z])/g, ' $1').replace(/^./, (c) => c.toUpperCase()));
+    }
+    return parts.join(' › ');
   };
 
   async function gh(path, { method = 'GET', body, allow404 = false } = {}) {
@@ -409,7 +434,7 @@
       if (path.includes('/content/letters/') && !live && drafted) {
         const letter = JSON.parse(drafted.text);
         letterPdfs.add(`${LETTERS_PDF}${letter.file.replace(/^\/letters/, '')}`);
-        items.push({ type: 'letter', file: path, page: 'Views & News', label: `New ${letter.kind?.toLowerCase() || 'letter'}`, before: '', after: `“${letter.title}” dated ${letter.date}`, pdf: letter.file });
+        items.push({ type: 'letter', file: path, page: 'Views & News', label: `New ${letter.kind?.toLowerCase() || 'letter'}`, before: '', after: `“${letter.title}” dated ${letter.date}`, pdf: letter.file, ...locate(path, null, null) });
         continue;
       }
       if (!live || !drafted) {
@@ -422,7 +447,7 @@
       if (!diffs.length) {
         items.push({ type: 'file', file: path, page: friendly(path), label: 'Formatting or structure (made in the full editor)', before: '', after: '' });
       }
-      for (const d of diffs) items.push({ type: 'text', file: path, path: d.path, page: friendly(path), label: labelFor(d.path, path), before: d.before, after: d.after });
+      for (const d of diffs) items.push({ type: 'text', file: path, path: d.path, page: friendly(path), label: labelFor(d.path, path), before: d.before, after: d.after, ...locate(path, d.path, drafted.text) });
     }
     const filtered = items.filter((item) => !(item.type === 'asset' && letterPdfs.has(item.file)));
     const pr = await findPullRequest();
@@ -605,6 +630,7 @@
         el.dataset.summitEditable = '';
       }
     }
+    focusPending();
   }
 
   function unmapPage() {
@@ -938,7 +964,7 @@
     if (busy) status = 'Working…';
     else if (draft.conflict) status = `Sorry, ${CONFLICT_TEXT}`;
     else if (count) status = `${plural(count, 'change')} not saved yet`;
-    else if (waiting && approver) status = `${plural(waiting, 'change')} waiting for your review`;
+    else if (waiting && approver) status = `${plural(waiting, 'saved change')}, not on the public site yet`;
     else if (draft.unsent) status = `Progress saved. Not sent to ${settings.approverName} yet.`;
     else if (waiting) status = `Sent to ${settings.approverName} for review. Not on the live site yet.`;
     else status = 'Click any outlined text to change it.';
@@ -1024,6 +1050,46 @@
     if (reviewOpen) document.body.append(reviewScreen());
   }
 
+  let pendingFocus = null; // { file, key } to point at once the page is ready
+
+  function showMe(item) {
+    reviewOpen = false;
+    confirmPublish = false;
+    pendingFocus = item.type === 'text' ? { file: item.file, key: keyOf(item.path) } : null;
+    const here = !item.url || pagePath() === item.url;
+    if (here) {
+      renderUI();
+      focusPending();
+      return;
+    }
+    renderUI();
+    const link = Object.assign(document.createElement('a'), { href: `${BASE}${item.url}` });
+    document.body.append(link);
+    link.click();
+    link.remove();
+  }
+
+  // Scroll to the changed text, open the panel or tab it sits in, and flash it.
+  function focusPending() {
+    if (!pendingFocus) return;
+    const node = nodes.find((n) => n.file === pendingFocus.file && n.key === pendingFocus.key && n.el.isConnected);
+    pendingFocus = null;
+    if (!node) {
+      message = 'That change is not shown on this page right now. It is still saved.';
+      renderUI();
+      return;
+    }
+    const slide = node.el.closest('[data-pillar-slide]');
+    if (slide && !slide.classList.contains('is-active')) document.querySelector(`[data-pillar-tab="${slide.dataset.pillarSlide}"]`)?.click();
+    const panel = node.el.closest('[data-step-panel]');
+    if (panel?.hidden) panel.closest('[data-process-stepper]')?.querySelector(`[data-step-tab="${panel.dataset.stepPanel}"]`)?.click();
+    setTimeout(() => {
+      node.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      node.el.classList.add('summit-flash');
+      setTimeout(() => node.el.classList.remove('summit-flash'), 3000);
+    }, 250);
+  }
+
   function openReview() {
     confirmPublish = false;
     reviewOpen = true;
@@ -1068,8 +1134,13 @@
           }
           return el('article', { class: 'summit-change' },
             el('div', { class: 'summit-change-head' },
-              el('span', {}, item.label),
-              el('button', { type: 'button', class: 'summit-btn small ghost-dark', disabled: busy, onclick: () => run(async () => { await rejectItem(item); await reloadAll(); }, approver ? 'Change rejected.' : 'Change taken back.') }, approver ? 'Reject' : 'Take back')),
+              el('span', { class: 'summit-change-where' },
+                item.where ? el('strong', {}, item.where) : null,
+                item.where ? ' · ' : null,
+                item.label),
+              el('span', { class: 'summit-actions' },
+                item.where ? el('button', { type: 'button', class: 'summit-btn small ghost-dark', disabled: busy, onclick: () => showMe(item) }, 'Show me') : null,
+                el('button', { type: 'button', class: 'summit-btn small ghost-dark', disabled: busy, onclick: () => run(async () => { await rejectItem(item); await reloadAll(); }, approver ? 'Change rejected.' : 'Change taken back.') }, approver ? 'Reject' : 'Take back'))),
             compare);
         })))
       : [el('p', { class: 'summit-empty' }, approver ? 'Nothing is waiting for review.' : 'You have not sent anything for review.')];
@@ -1093,10 +1164,8 @@
             publishButton,
             el('button', { type: 'button', class: 'summit-btn ghost-dark', onclick: close }, 'Close'))),
         message ? el('p', { class: 'summit-review-msg', role: 'status' }, message) : null,
-        approver && draft.unsent && draft.items.length
-          ? el('p', { class: 'summit-review-msg warn' }, draft.pr
-            ? 'Some of these were saved after the last time they were sent for review, so they may still be in progress.'
-            : 'These have been saved but not sent for review yet, so they may still be in progress.')
+        approver && draft.unsent && draft.pr && draft.pr.user?.login !== session.login && draft.items.length
+          ? el('p', { class: 'summit-review-msg warn' }, 'Some of these were saved after the last time they were sent for review, so they may still be in progress.')
           : null,
         confirmPublish ? el('p', { class: 'summit-review-msg warn' }, 'Publishing makes these changes public within about 2 to 3 minutes. Make sure the wording has been approved for compliance.') : null,
         busy ? el('p', { class: 'summit-review-msg' }, 'Working…') : null,
@@ -1194,6 +1263,9 @@
     [data-summit-editing] .summit-changed { box-shadow: inset 0 -0.6em 0 rgb(245 196 81 / 0.55); }
     [data-summit-editing] .summit-draft { box-shadow: inset 0 -0.6em 0 rgb(143 189 230 / 0.55); }
     [data-summit-editing] [data-summit-locked] { cursor: not-allowed; }
+    .summit-change-where strong { color: #172f40; }
+    [data-summit-editing] .summit-flash { outline: 3px solid #f5c451 !important; outline-offset: 6px; animation: summit-flash 0.9s ease-in-out 3; }
+    @keyframes summit-flash { 50% { outline-color: #a51d35; } }
     @media (prefers-reduced-motion: no-preference) { .summit-bar, .summit-panel { animation: summit-in .18s ease-out; } }
     @keyframes summit-in { from { opacity: 0; transform: translateY(6px); } }
   `;
