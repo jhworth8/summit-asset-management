@@ -103,6 +103,8 @@
   let busy = false;
   let message = '';
   let panel = null; // 'menu' | 'letter' | 'discard' | null
+  let pasteKey = false; // sign in with a pasted key instead of the password
+  const usePassword = () => Boolean(settings.lockedKey) && !pasteKey;
   let confirmPublish = false;
   // Wording a piece of text has shown during this visit (published, draft,
   // just typed). The page can show any of these, so all of them are matched.
@@ -161,13 +163,32 @@
     return res.status === 204 ? null : res.json();
   }
 
+  async function loadSettings() {
+    settings = await fetch(`${BASE}/editor/settings.json`).then((r) => r.json()).catch(() => settings);
+  }
+
+  // The editing key can be stored scrambled (AES-GCM, key derived from a
+  // password with PBKDF2) so a person signs in with just a password.
+  // See tools/lock-editor-key.mjs.
+  async function unlockKey(password) {
+    const k = settings.lockedKey;
+    const bytes = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: bytes(k.salt), iterations: k.iterations, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    try {
+      return new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: bytes(k.iv) }, key, bytes(k.data)));
+    } catch {
+      throw new Error('that password is not right. Check it and try again.');
+    }
+  }
+
   async function loadConfig() {
     if (!repo) {
       const text = await fetch(`${BASE}/admin/config.yml`).then((r) => r.text());
       repo = text.match(/^\s*repo:\s*["']?([\w.-]+\/[\w.-]+)/m)?.[1];
       if (!repo) throw new Error('Could not find the repository name in admin/config.yml.');
     }
-    settings = await fetch(`${BASE}/editor/settings.json`).then((r) => r.json()).catch(() => settings);
+    await loadSettings();
   }
 
   async function getFile(path, ref) {
@@ -583,7 +604,7 @@
         message = 'Your editing key no longer works. Sign in again with a new key.';
         signOut(false);
       } else {
-        message = `Something went wrong: ${error.message}`;
+        message = /^that (password|key)/.test(error.message) ? `Sorry, ${error.message}` : `Something went wrong: ${error.message}`;
       }
     } finally {
       busy = false;
@@ -707,9 +728,15 @@
   }
 
   async function signIn(form) {
-    const token = form.token.value.trim();
     const name = norm(form.name.value);
-    if (!token || !name) throw new Error('please enter your name and your editing key.');
+    let token;
+    if (usePassword()) {
+      if (!name || !form.password.value) throw new Error('please enter your name and the password.');
+      token = (await unlockKey(form.password.value)).trim();
+    } else {
+      token = form.token.value.trim();
+      if (!token || !name) throw new Error('please enter your name and your editing key.');
+    }
     session = { token, name };
     try {
       await loadConfig();
@@ -744,7 +771,7 @@
   }
 
   async function start() {
-    if (!session) { renderUI(); return; }
+    if (!session) { await loadSettings(); renderUI(); return; }
     if (!editing) {
       // Signed in but not editing: check quietly for saved progress so the
       // "Edit this page" button can show that something is waiting.
@@ -966,12 +993,16 @@
     el('p', {}, 'You only need to do this once on this computer.'),
     el('label', { for: 'summit-name' }, 'Your name (saved with each change)'),
     el('input', { id: 'summit-name', name: 'name', autocomplete: 'name', required: true }),
-    el('label', { for: 'summit-token' }, 'Editing key'),
-    el('input', { id: 'summit-token', name: 'token', type: 'password', autocomplete: 'off', required: true }),
+    usePassword()
+      ? [el('label', { for: 'summit-password' }, 'Password'),
+        el('input', { id: 'summit-password', name: 'password', type: 'password', autocomplete: 'current-password', required: true })]
+      : [el('label', { for: 'summit-token' }, 'Editing key'),
+        el('input', { id: 'summit-token', name: 'token', type: 'password', autocomplete: 'off', required: true })],
     message ? el('p', { class: 'summit-msg inline', role: 'alert' }, message) : null,
     el('div', { class: 'summit-actions' },
       el('button', { type: 'submit', class: 'summit-btn primary', disabled: busy }, busy ? 'Checking…' : 'Sign in'),
-      el('button', { type: 'button', class: 'summit-btn ghost', onclick: () => setEditing(false) }, 'Cancel')));
+      el('button', { type: 'button', class: 'summit-btn ghost', onclick: () => setEditing(false) }, 'Cancel'),
+      settings.lockedKey ? el('button', { type: 'button', class: 'summit-btn ghost', onclick: () => { pasteKey = !pasteKey; message = ''; renderUI(); } }, pasteKey ? 'Use the password' : 'Use an editing key instead') : null));
     return form;
   }
 

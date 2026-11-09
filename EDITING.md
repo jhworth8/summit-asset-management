@@ -78,7 +78,26 @@ username there.
 
 ---
 
-## One-time setup (Jesse, about 10 minutes)
+## Easiest setup: a password for Dad
+
+Instead of Dad making a key, Jesse locks one key behind a password:
+
+1. Create a key on your own GitHub account:
+   https://github.com/settings/personal-access-tokens/new
+   (Repository access: **Only select repositories** → `summit-asset-management`;
+   permissions **Contents** and **Pull requests**, both **Read and write**.)
+2. In the project folder, run `node tools/lock-editor-key.mjs`. Paste the key
+   and choose a password of at least 16 characters (four random words is good).
+   The key itself is never saved, only a scrambled copy.
+3. Commit and push `redesign/public/editor/settings.json`.
+4. Dad opens his `?edit` link, types his name and the password, and he's in.
+
+The scrambled key is public, so a short password could be guessed. Edits are
+recorded under Jesse's GitHub account, with Dad's typed name in each change
+description. To stop it, delete the key on GitHub, or run
+`node tools/lock-editor-key.mjs --remove`.
+
+## One-time setup with a key of his own (Jesse, about 10 minutes)
 
 Dad needs his own free GitHub login. That's how the site knows his changes
 need approval, and how GitHub knows to email you. He never has to look at
