@@ -1,4 +1,13 @@
 {
-  "approvers": ["jhworth8", "summit15-lance"],
-  "approverName": "Jesse"
+  "approvers": [
+    "jhworth8",
+    "summit15-lance"
+  ],
+  "approverName": "Jesse",
+  "lockedKey": {
+    "iterations": 600000,
+    "salt": "O0VO6nfJLVD7hyl9xkwuEQ==",
+    "iv": "tC1PkTrpUzMX/6yK",
+    "data": "MMIywTdK+BRIJBmTJHmZfqX0ZjAFD0zg4tFFBhJd23qIZNKCr4JL4SOc+BGQni+480s4u1xPIiJKl2F2UtQi5d2NAz3k1ER4EiqrsyNjNu7X0P2Pj5eHVUCWoX79D5R2ycfVNceGZWbyIHgOoQ=="
+  }
 }
