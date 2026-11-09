@@ -63,6 +63,13 @@
     '/client-relationship-summary/': ['legal', 'Client Relationship Summary'],
   };
 
+  const LEGAL_SECTIONS = {
+    '/disclosure/': 'disclosures',
+    '/terms-of-service/': 'terms',
+    '/privacy-notice/': 'privacy',
+    '/client-relationship-summary/': 'crs',
+  };
+
   // Plain names for content field keys, used on the review screen.
   const LABELS = {
     seoTitle: 'Search result title', seoDescription: 'Search result description', kicker: 'Small heading',
@@ -103,12 +110,26 @@
   let busy = false;
   let message = '';
   let panel = null; // 'menu' | 'letter' | 'discard' | null
+  let pageChangedWhileBusy = false;
+  let reviewedSha = null; // the saved version shown on the review screen
+  const CONFLICT_TEXT = 'some saved wording clashes with a change made to the website another way. Ask Jesse to sort it out before publishing.';
   let pasteKey = false; // sign in with a pasted key instead of the password
   const usePassword = () => Boolean(settings.lockedKey) && !pasteKey;
   let confirmPublish = false;
   // Wording a piece of text has shown during this visit (published, draft,
   // just typed). The page can show any of these, so all of them are matched.
   const seenText = new Map(); // "file|key" -> Set of text
+  // After publishing, the deployed pages show the old wording for 2 to 3
+  // minutes. The old wording is remembered for a while so that text stays
+  // editable (and shows the new wording) if the page is reloaded meanwhile.
+  const KEY_RECENT = 'summit-editor-recent';
+  const RECENT_MINUTES = 30;
+  {
+    const recent = store.get(KEY_RECENT, null);
+    if (recent && Date.now() - recent.at < RECENT_MINUTES * 60000) {
+      for (const [id, texts] of Object.entries(recent.values)) seenText.set(id, new Set(texts));
+    }
+  }
 
   // --------------------------------------------------------------- helpers
   const norm = (s) => String(s ?? '').replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
@@ -294,6 +315,9 @@
         for (const [k, v] of Object.entries(value)) {
           if (SKIP_KEYS.has(k)) continue;
           if (path.endsWith('/site.json') && at.length === 0 && !SITE_KEYS.has(k)) continue;
+          // legal.json holds four pages; only the part for this page is on it
+          // (the same sentences appear in more than one part).
+          if (path.endsWith('/legal.json') && at.length === 0 && k !== LEGAL_SECTIONS[pagePath()]) continue;
           walk(v, [...at, k]);
         }
       }
@@ -344,9 +368,23 @@
 
   // -------------------------------------------------------- draft & review
   async function refreshDraft() {
-    const branch = await gh(`/repos/${repo}/branches/${DRAFT}`, { allow404: true });
+    let branch = await gh(`/repos/${repo}/branches/${DRAFT}`, { allow404: true });
     if (!branch) { draft = { exists: false, changed: [], items: [], pr: null }; return; }
-    const compare = await gh(`/repos/${repo}/compare/${MAIN}...${DRAFT}`);
+    let compare = await gh(`/repos/${repo}/compare/${MAIN}...${DRAFT}`);
+    // If the live site changed since the draft started (for example Jesse
+    // pushed an update), bring those changes into the draft first, so the
+    // review only shows real suggestions and publishing doesn't undo them.
+    let conflict = false;
+    if (compare.behind_by > 0) {
+      try {
+        await gh(`/repos/${repo}/merges`, { method: 'POST', body: { base: DRAFT, head: MAIN, commit_message: 'Bring saved changes up to date with the live site' } });
+        branch = await gh(`/repos/${repo}/branches/${DRAFT}`);
+        compare = await gh(`/repos/${repo}/compare/${MAIN}...${DRAFT}`);
+      } catch (error) {
+        if (error.status === 409) conflict = true;
+        else throw error;
+      }
+    }
     const items = [];
     const changed = [];
     const letterPdfs = new Set();
@@ -388,7 +426,7 @@
     const headSha = branch.commit?.sha || null;
     // Saved progress that the approver hasn't been sent yet.
     const unsent = filtered.length > 0 && (!pr || sentShaOf(pr) !== headSha);
-    draft = { exists: filtered.length > 0, changed, items: filtered, pr, headSha, unsent };
+    draft = { exists: filtered.length > 0, changed, items: filtered, pr, headSha, unsent, conflict };
     // A draft branch with nothing left in it (already merged, or every change
     // rejected) is removed so the next edit starts from the live site.
     if (!filtered.length && !pr) {
@@ -437,7 +475,8 @@
   }
 
   async function loadPage() {
-    files = {};
+    const page = pagePath();
+    const next = {};
     for (const path of filesForPage()) {
       const live = await getFile(path, MAIN);
       if (!live) continue;
@@ -448,8 +487,16 @@
         const d = await getFile(path, DRAFT);
         if (d) entry.draft = parse(path, d.text);
       }
-      files[path] = entry;
+      next[path] = entry;
     }
+    // The person moved to another page while this was loading: this content
+    // belongs to the old page, so throw it away and match the new page next.
+    if (pagePath() !== page) {
+      pageChangedWhileBusy = true;
+      return false;
+    }
+    files = next;
+    return true;
   }
 
   function currentValue(path, key) {
@@ -469,6 +516,7 @@
   }
 
   function mapPage() {
+    if (!editing) { unmapPage(); return; }
     for (const node of nodes) if (node.el.isConnected) remember(node.file, node.key, node.el.textContent);
     unmapPage();
     const main = document.querySelector('main');
@@ -545,7 +593,7 @@
       if (norm(el.textContent) !== value) el.textContent = value;
       el.classList.toggle('summit-changed', state === 'changed');
       el.classList.toggle('summit-draft', state === 'draft');
-      if (!el.closest('button, [aria-hidden="true"]')) {
+      if (!el.closest('button, [aria-hidden="true"]:not([data-pillar-slide])')) {
         try { el.contentEditable = 'plaintext-only'; } catch { el.contentEditable = 'true'; }
         if (el.contentEditable !== 'plaintext-only') el.contentEditable = 'true';
         el.spellcheck = true;
@@ -572,6 +620,7 @@
     const { summitFile: file, summitKey: key } = el.dataset;
     const value = norm(el.textContent);
     const f = files[file];
+    if (!f) return;
     const pathArr = JSON.parse(key);
     const drafted = f.draft ? getAt(f.draft.data, pathArr) : undefined;
     const base = norm(typeof drafted === 'string' ? drafted : getAt(f.live.data, pathArr));
@@ -601,42 +650,56 @@
     } catch (error) {
       console.error(error);
       if (error.status === 401) {
-        message = 'Your editing key no longer works. Sign in again with a new key.';
+        message = settings.lockedKey
+          ? 'The editing key behind the password has expired or was turned off. Ask Jesse to set up a new one.'
+          : 'Your editing key no longer works. Sign in again with a new key.';
         signOut(false);
       } else {
-        message = /^that (password|key)/.test(error.message) ? `Sorry, ${error.message}` : `Something went wrong: ${error.message}`;
+        message = /^(that (password|key)|more changes|some saved wording|please |the (letter|pdf))/i.test(error.message) ? `Sorry, ${error.message}` : `Something went wrong: ${error.message}`;
       }
     } finally {
       busy = false;
       renderUI();
+      // A page change that happened while this was running still needs its
+      // text matched; do it now instead of leaving the page uneditable.
+      if (pageChangedWhileBusy) {
+        pageChangedWhileBusy = false;
+        if (editing && session) start();
+      }
     }
   }
 
   async function reloadAll() {
     await refreshDraft();
-    await loadPage();
-    mapPage();
+    if (await loadPage()) mapPage();
   }
 
   async function saveDraft() {
-    const paths = Object.keys(unsaved);
+    // Snapshot: anything typed while this runs stays unsaved instead of lost.
+    const saving = JSON.parse(JSON.stringify(unsaved));
+    const paths = Object.keys(saving);
     if (paths.length) {
       await ensureDraftBranch();
       for (const path of paths) {
         const current = await getFile(path, DRAFT);
         const parsed = parse(path, current.text);
-        for (const [key, value] of Object.entries(unsaved[path])) {
+        for (const [key, value] of Object.entries(saving[path])) {
           const pathArr = JSON.parse(key);
           if (path.endsWith('.md') && pathArr[0] === 'body') parsed.data.body[pathArr[1]] = value;
           else setAt(parsed.data, pathArr, value);
         }
         const text = serialize(path, parsed);
         if (text !== current.text) {
-          const count = Object.keys(unsaved[path]).length;
+          const count = Object.keys(saving[path]).length;
           await putFile(path, toB64(text), current.sha, `Suggested: ${plural(count, 'wording change')} on ${friendly(path)} (by ${session.name})`);
         }
       }
-      unsaved = {};
+      for (const [path, changes] of Object.entries(saving)) {
+        for (const [key, value] of Object.entries(changes)) {
+          if (unsaved[path]?.[key] === value) delete unsaved[path][key];
+        }
+        if (unsaved[path] && !Object.keys(unsaved[path]).length) delete unsaved[path];
+      }
       persistUnsaved();
     }
     await reloadAll();
@@ -665,18 +728,27 @@
     if (unsavedCount()) await saveDraft();
     await refreshDraft();
     if (!draft.exists) throw new Error('There are no changes to publish.');
+    if (reviewedSha && draft.headSha !== reviewedSha) {
+      throw new Error('more changes were saved while you were reviewing. The list is now up to date; check it and publish again.');
+    }
+    if (draft.conflict) throw new Error(CONFLICT_TEXT);
     const pr = draft.pr || await ensurePullRequest();
+    const previous = {};
+    for (const item of draft.items) {
+      if (item.type === 'text' && item.before) previous[`${item.file}|${keyOf(item.path)}`] = [norm(item.before)];
+    }
     try {
       await gh(`/repos/${repo}/pulls/${pr.number}/merge`, {
         method: 'PUT',
-        body: { merge_method: 'squash', commit_title: `Publish website changes (approved by ${session.name})` },
+        body: { merge_method: 'squash', sha: draft.headSha, commit_title: `Publish website changes (approved by ${session.name})` },
       });
     } catch (error) {
       if (error.status === 405 || error.status === 409) {
-        throw new Error(`GitHub would not publish these changes (an approval rule, or a conflicting change). Open them here: ${pr.html_url}`);
+        throw new Error(`GitHub would not publish these changes. Ask Jesse to look at them here: ${pr.html_url}`);
       }
       throw error;
     }
+    store.set(KEY_RECENT, { at: Date.now(), values: previous });
     await gh(`/repos/${repo}/git/refs/heads/${DRAFT}`, { method: 'DELETE' }).catch(() => {});
     reviewOpen = false;
     await reloadAll();
@@ -757,7 +829,14 @@
     if (clear) message = 'Signed out. Editing is turned off on this computer.';
     session = null;
     store.set(KEY_SESSION, null);
-    setEditing(false);
+    if (clear) {
+      setEditing(false);
+    } else {
+      // Signed out because the key stopped working: show the sign-in box with
+      // the explanation instead of making the editor silently disappear.
+      unmapPage();
+      renderUI();
+    }
   }
 
   function setEditing(on) {
@@ -806,6 +885,21 @@
 
   function renderUI() {
     ensureStyle();
+    // Redrawing rebuilds the forms; keep what was typed (and the chosen PDF)
+    // so an error doesn't make the person start over.
+    const kept = {};
+    document.querySelectorAll('[data-summit-ui] input[id], [data-summit-ui] select[id]').forEach((input) => {
+      kept[input.id] = input.type === 'file' ? input.files : input.value;
+    });
+    const attach = (node) => {
+      document.body.append(node);
+      for (const [id, value] of Object.entries(kept)) {
+        const input = node.querySelector(`#${id}`);
+        if (!input) continue;
+        if (input.type === 'file') { if (value?.length) input.files = value; }
+        else input.value = value;
+      }
+    };
     document.querySelector('[data-summit-ui]')?.remove();
     document.querySelector('[data-summit-review]')?.remove();
     const ui = el('div', { class: 'summit-ui', 'data-summit-ui': '' });
@@ -813,7 +907,7 @@
     if (!session) {
       if (!editing) return;
       ui.append(signInPanel());
-      document.body.append(ui);
+      attach(ui);
       return;
     }
 
@@ -822,7 +916,7 @@
         '✎ Edit this page',
         draft.exists ? el('span', { class: 'summit-dot', title: draft.unsent && !isApprover() ? 'You have saved changes that are not sent yet' : 'Changes are waiting for review' }) : null));
       if (message) ui.append(el('p', { class: 'summit-msg', role: 'status' }, message));
-      document.body.append(ui);
+      attach(ui);
       return;
     }
 
@@ -831,6 +925,7 @@
     const waiting = draft.items.length;
     let status;
     if (busy) status = 'Working…';
+    else if (draft.conflict) status = `Sorry, ${CONFLICT_TEXT}`;
     else if (count) status = `${plural(count, 'change')} not saved yet`;
     else if (waiting && approver) status = `${plural(waiting, 'change')} waiting for your review`;
     else if (draft.unsent) status = `Progress saved. Not sent to ${settings.approverName} yet.`;
@@ -841,14 +936,14 @@
       el('span', { class: 'summit-badge' }, approver ? 'Editing · Approver' : 'Editing'),
       el('span', { class: 'summit-status', role: 'status' }, status),
       el('div', { class: 'summit-actions' },
-        count ? el('button', { type: 'button', class: 'summit-btn ghost', disabled: busy, onclick: undoUnsaved }, 'Undo') : null,
+        count ? el('button', { type: 'button', class: 'summit-btn ghost', disabled: busy, onclick: () => { panel = 'undo'; renderUI(); } }, 'Undo…') : null,
         el('button', { type: 'button', class: 'summit-btn', disabled: busy || !count, onclick: () => run(saveDraft, approver ? 'Saved. Open Review & publish when you are ready.' : 'Progress saved. You can stop and come back any time, on any computer.') }, approver ? 'Save' : 'Save progress'),
         approver ? null : el('button', { type: 'button', class: 'summit-btn primary', disabled: busy || (!count && !draft.unsent), onclick: () => run(sendForReview, `Sent to ${settings.approverName}. Nothing is public until it is approved.`) }, 'Send for review'),
         el('button', { type: 'button', class: `summit-btn ${approver ? 'primary' : 'ghost'}`, disabled: busy || (!waiting && !count), onclick: () => openReview() },
           approver ? `Review & publish${waiting ? ` (${waiting})` : ''}` : `See my changes${waiting ? ` (${waiting})` : ''}`),
         el('button', { type: 'button', class: 'summit-btn ghost', disabled: busy, onclick: () => { panel = panel === 'letter' ? null : 'letter'; renderUI(); } }, 'Add a letter'),
-        el('button', { type: 'button', class: 'summit-btn ghost', 'aria-expanded': String(panel === 'menu'), onclick: () => { panel = panel === 'menu' ? null : 'menu'; renderUI(); } }, 'More'),
-        el('button', { type: 'button', class: 'summit-btn ghost', onclick: () => { panel = null; setEditing(false); } }, 'Done'),
+        el('button', { type: 'button', class: 'summit-btn ghost', disabled: busy, 'aria-expanded': String(panel === 'menu'), onclick: () => { panel = panel === 'menu' ? null : 'menu'; renderUI(); } }, 'More'),
+        el('button', { type: 'button', class: 'summit-btn ghost', disabled: busy, onclick: () => { panel = null; setEditing(false); } }, 'Done'),
       ),
     );
     ui.append(bar);
@@ -863,7 +958,18 @@
         el('div', { class: 'summit-menu' },
           el('a', { href: ADMIN_URL, target: '_blank', rel: 'noopener' }, 'Full editor: photos, bios, documents, search titles ↗'),
           draft.exists ? el('button', { type: 'button', onclick: () => { panel = 'discard'; renderUI(); } }, approver ? 'Reject all waiting changes' : 'Throw away all my saved changes') : null,
-          el('button', { type: 'button', onclick: () => { panel = null; signOut(); } }, 'Sign out on this computer'),
+          el('button', { type: 'button', disabled: busy, onclick: () => { panel = null; signOut(); } }, 'Sign out on this computer'),
+        ),
+      ));
+    }
+
+    if (panel === 'undo') {
+      ui.append(el('div', { class: 'summit-panel' },
+        el('p', { class: 'summit-panel-title' }, `Throw away ${plural(count, 'unsaved change')}?`),
+        el('p', {}, 'This puts back the wording from before your unsaved changes, on every page. To undo just your last bit of typing, click back into the text and press Ctrl+Z instead.'),
+        el('div', { class: 'summit-actions' },
+          el('button', { type: 'button', class: 'summit-btn danger', onclick: () => { panel = null; undoUnsaved(); } }, 'Throw them away'),
+          el('button', { type: 'button', class: 'summit-btn ghost', onclick: () => { panel = null; renderUI(); } }, 'Keep them'),
         ),
       ));
     }
@@ -903,7 +1009,7 @@
       ui.append(form);
     }
 
-    document.body.append(ui);
+    attach(ui);
     if (reviewOpen) document.body.append(reviewScreen());
   }
 
@@ -920,6 +1026,7 @@
 
   // The side-by-side review, like suggested edits in a shared document.
   function reviewScreen() {
+    reviewedSha = draft.headSha || null;
     const approver = isApprover();
     const groups = new Map();
     for (const item of draft.items) {
@@ -1103,6 +1210,17 @@
       event.target.closest('[data-summit-editable]').blur();
     }
   });
+  // A piece of text left completely empty can't be saved (every spot on the
+  // page needs words), so put the previous wording back when leaving it.
+  document.addEventListener('focusout', (event) => {
+    const target = event.target.closest?.('[data-summit-editable]');
+    if (!target || norm(target.textContent)) return;
+    const { summitFile: file, summitKey: key } = target.dataset;
+    const { value } = currentValue(file, key);
+    for (const node of nodes) if (node.file === file && node.key === key) node.el.textContent = value;
+    message = 'That text can’t be left empty, so it was put back. To remove a section, ask Jesse.';
+    renderUI();
+  });
   document.addEventListener('paste', (event) => {
     if (!event.target.closest?.('[data-summit-editable]')) return;
     event.preventDefault();
@@ -1129,6 +1247,7 @@
   // toolbar and re-match the new page's text. Unsent edits are kept per file,
   // so they survive moving between pages.
   document.addEventListener('astro:page-load', () => {
+    if (busy) pageChangedWhileBusy = true;
     message = '';
     panel = null;
     if (editing && session) start();
