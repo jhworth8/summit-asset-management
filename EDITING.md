@@ -13,6 +13,12 @@ Nothing reaches the public site until an approver publishes it.
 
 ---
 
+> **Current setup:** Dad (`summit15-lance`) is also an approver, so he can
+> publish his own changes without waiting for Jesse. He sees **Save** and
+> **Review & publish** instead of **Send for review**. To require Jesse's
+> approval again, remove his username from
+> `redesign/public/editor/settings.json`.
+
 ## For Dad: changing words
 
 **Your link:** https://jhworth8.github.io/summit-asset-management/?edit
