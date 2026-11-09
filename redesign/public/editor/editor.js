@@ -166,6 +166,9 @@
   async function gh(path, { method = 'GET', body, allow404 = false } = {}) {
     const res = await fetch(`${API}${path}`, {
       method,
+      // GitHub tells browsers to reuse answers for 60 seconds. Right after a
+      // save that hands back the old file, so always ask for the current one.
+      cache: 'no-store',
       headers: {
         Accept: 'application/vnd.github+json',
         Authorization: `Bearer ${session.token}`,
@@ -427,9 +430,11 @@
     // Saved progress that the approver hasn't been sent yet.
     const unsent = filtered.length > 0 && (!pr || sentShaOf(pr) !== headSha);
     draft = { exists: filtered.length > 0, changed, items: filtered, pr, headSha, unsent, conflict };
-    // A draft branch with nothing left in it (already merged, or every change
-    // rejected) is removed so the next edit starts from the live site.
-    if (!filtered.length && !pr) {
+    // A draft branch with no commits of its own (already merged into the live
+    // site) is removed so the next edit starts fresh. Only GitHub's own count
+    // decides this, never a comparison of file contents, so a saved change
+    // can't be thrown away by mistake.
+    if (compare.ahead_by === 0 && !pr) {
       await gh(`/repos/${repo}/git/refs/heads/${DRAFT}`, { method: 'DELETE' }).catch(() => {});
       draft = { exists: false, changed: [], items: [], pr: null };
     }
@@ -703,6 +708,12 @@
       persistUnsaved();
     }
     await reloadAll();
+    // GitHub can take a moment to report a brand-new save. If a file just
+    // saved isn't showing as changed yet, look again so the page shows it.
+    for (let attempt = 0; attempt < 3 && paths.some((path) => !draft.changed.includes(path)); attempt += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await reloadAll();
+    }
   }
 
   // Editors: save, then ask the approver to review. The first send opens the
