@@ -805,6 +805,7 @@
   }
 
   function renderUI() {
+    ensureStyle();
     document.querySelector('[data-summit-ui]')?.remove();
     document.querySelector('[data-summit-review]')?.remove();
     const ui = el('div', { class: 'summit-ui', 'data-summit-ui': '' });
@@ -1080,7 +1081,18 @@
   `;
 
   // --------------------------------------------------------------- wiring
-  document.head.append(Object.assign(document.createElement('style'), { textContent: css }));
+  // Astro's page transitions replace <head> and the <html> attributes on every
+  // navigation, which drops the editor's styles and the editing marker. Put
+  // them back whenever the page changes, or the toolbar and outlines vanish.
+  function ensureStyle() {
+    if (document.getElementById('summit-editor-style')) return;
+    document.head.append(Object.assign(document.createElement('style'), { id: 'summit-editor-style', textContent: css }));
+  }
+  ensureStyle();
+  document.addEventListener('astro:after-swap', () => {
+    ensureStyle();
+    if (editing && session) document.documentElement.toggleAttribute('data-summit-editing', true);
+  });
 
   document.addEventListener('input', onInput);
   document.addEventListener('keydown', (event) => {
