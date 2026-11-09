@@ -952,7 +952,7 @@
       ui.append(el('button', { type: 'button', class: 'summit-pill', onclick: () => { setEditing(true); start(); } },
         '✎ Edit this page',
         draft.exists ? el('span', { class: 'summit-dot', title: draft.unsent && !isApprover() ? 'You have saved changes that are not sent yet' : 'Changes are waiting for review' }) : null));
-      if (message) ui.append(el('p', { class: 'summit-msg', role: 'status' }, message));
+      if (message) ui.append(messageBox());
       attach(ui);
       return;
     }
@@ -984,7 +984,7 @@
       ),
     );
     ui.append(bar);
-    if (message && !reviewOpen) ui.append(el('p', { class: 'summit-msg', role: 'status' }, message));
+    if (message && !reviewOpen) ui.append(messageBox());
 
     if (panel === 'menu') {
       ui.append(el('div', { class: 'summit-panel' },
@@ -1088,6 +1088,33 @@
       node.el.classList.add('summit-flash');
       setTimeout(() => node.el.classList.remove('summit-flash'), 3000);
     }, 250);
+  }
+
+  // Status messages: confirmations fade out on their own; problems stay until
+  // closed so they can't be missed. Every message has a close button.
+  let messageTimer = 0;
+  let timedMessage = '';
+  const isProblem = (text) => /^(Something went wrong|Sorry|The editing key|Your editing key)/.test(text);
+
+  function dismissMessage() {
+    clearTimeout(messageTimer);
+    message = '';
+    timedMessage = '';
+    renderUI();
+  }
+
+  function messageBox() {
+    if (message !== timedMessage) {
+      clearTimeout(messageTimer);
+      timedMessage = message;
+      if (!isProblem(message)) {
+        const shown = message;
+        messageTimer = setTimeout(() => { if (message === shown) dismissMessage(); }, 6000);
+      }
+    }
+    return el('div', { class: `summit-msg${isProblem(message) ? ' problem' : ''}`, role: isProblem(message) ? 'alert' : 'status' },
+      el('span', {}, message),
+      el('button', { type: 'button', class: 'summit-msg-close', 'aria-label': 'Close this message', onclick: dismissMessage }, '×'));
   }
 
   function openReview() {
@@ -1213,6 +1240,11 @@
     .summit-dot { width: 9px; height: 9px; border-radius: 50%; background: #f5c451; }
     .summit-msg { margin: 0; padding: 10px 12px; color: #fff; overflow-wrap: anywhere; }
     .summit-msg.inline { background: rgb(255 255 255 / 0.08); box-shadow: none; }
+    div.summit-msg { display: flex; align-items: flex-start; gap: 12px; justify-content: space-between; }
+    div.summit-msg.problem { border-color: #f0b7c1; }
+    .summit-msg-close { flex-shrink: 0; width: 26px; height: 26px; margin: -3px -4px -3px 0; padding: 0; border: 0; border-radius: 6px; background: rgb(255 255 255 / 0.12); color: #fff; font: 700 17px/1 system-ui, sans-serif; cursor: pointer; }
+    .summit-msg-close:hover { background: rgb(255 255 255 / 0.24); }
+    .summit-msg-close:focus-visible { outline: 3px solid #f0b7c1; outline-offset: 2px; }
     .summit-panel { display: grid; gap: 8px; padding: 14px; }
     .summit-panel p, .summit-panel ul { margin: 0; color: #d5dee4; }
     .summit-panel-title { color: #fff !important; font-weight: 700; font-size: 16px; }
