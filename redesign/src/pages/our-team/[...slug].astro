@@ -12,6 +12,9 @@ export async function getStaticPaths() {
 const { profile } = Astro.props as { profile: TeamMember };
 const { Content } = await render(profile.entry);
 const featurePhoto = profile.editorialPhoto || profile.photo;
+// Without a wide office photo, show the headshot at headshot size rather
+// than stretching a small portrait across the whole column.
+const headshotOnly = !profile.editorialPhoto;
 ---
 
 <Page
@@ -81,7 +84,7 @@ const featurePhoto = profile.editorialPhoto || profile.photo;
 
     {/* Main Column: Single Featured Portrait Photo & Rich Formatted Biography */}
     <div class="profile-main">
-      <figure class="featured-media">
+      <figure class:list={['featured-media', { 'is-headshot': headshotOnly }]}>
         <div class="media-frame">
           <img
             src={featurePhoto}
@@ -285,6 +288,21 @@ const featurePhoto = profile.editorialPhoto || profile.photo;
       max-height: 540px;
       object-fit: cover;
       object-position: center 20%;
+    }
+
+    .featured-media.is-headshot {
+      max-width: 13rem;
+    }
+
+    .featured-media.is-headshot img {
+      aspect-ratio: 4 / 4.8;
+      max-height: none;
+      object-position: top;
+    }
+
+    .featured-media.is-headshot figcaption {
+      position: static;
+      min-width: 0;
     }
 
     .featured-media figcaption {

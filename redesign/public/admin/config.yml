@@ -405,6 +405,7 @@ collections:
             summary: '{{name}}'
             fields:
               - { name: name, label: Name, widget: string }
+              - { name: description, label: Definition (optional), widget: text, required: false }
               - { name: items, label: Examples, widget: list, required: false, field: { name: item, label: Example, widget: string } }
           - { name: vehiclesNote, label: Investments footnote, widget: text, required: false }
           - name: commitments
@@ -510,6 +511,15 @@ collections:
               - { name: linkLabel, label: Button text, widget: string }
               - { name: url, label: Button link (full web address), widget: string }
           - { name: disclaimer, label: Schwab disclaimer, widget: text }
+          - name: schwabNotice
+            label: Notice shown before leaving for Schwab
+            widget: object
+            fields:
+              - { name: heading, label: Heading, widget: string }
+              - { name: intro, label: First sentence, widget: text }
+              - { name: body, label: Schwab disclosure (shown in italics), widget: text }
+              - { name: backLabel, label: Go back button, widget: string }
+              - { name: continueLabel, label: Continue button, widget: string }
 
       - name: legal
         label: Disclosures & Legal Pages
@@ -545,7 +555,10 @@ collections:
           - name: crs
             label: Client Relationship Summary page
             widget: object
-            fields: [*heading, *intro]
+            fields:
+              - *heading
+              - *intro
+              - { name: documentLink, label: Button text, widget: string }
 
   # ----------------------------------------------------------------- Settings
   - name: settings
@@ -573,7 +586,7 @@ collections:
             hint: When the firm files a new Form ADV or updates Form CRS or the privacy notice, upload the new PDF here and update the date.
             fields:
               - name: brochure
-                label: Form ADV Part 2 (firm brochure)
+                label: Form ADV Part 2 (brochure)
                 widget: object
                 fields:
                   - { name: title, label: Title, widget: string }

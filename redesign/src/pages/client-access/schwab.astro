@@ -1,0 +1,21 @@
+---
+// Stand-alone version of the "Important Notice" shown before leaving for
+// Schwab. Visitors normally see it as a pop-up on the Client Access page;
+// this page covers the link being opened in a new tab or without JavaScript.
+import Page from '../../layouts/Page.astro';
+import SchwabNotice from '../../components/SchwabNotice.astro';
+import content from '../../content/pages/client-access.json';
+import { p } from '../../utils/paths';
+
+const notice = content.schwabNotice;
+---
+<Page
+  title={`${notice.heading} | Summit Asset Management`}
+  description="You are leaving the Summit Asset Management website for Charles Schwab & Co., Inc."
+  section="Client Access"
+  heading={notice.heading}
+  intro={notice.intro}
+  compact
+>
+  <SchwabNotice notice={notice} url={content.schwab.url} mode="page" backHref={p('/client-access')} />
+</Page>

@@ -34,6 +34,7 @@
   },
   "crs": {
     "heading": "Client Relationship Summary",
-    "intro": "Form CRS summarizes our services, fees, conflicts of interest and other information to consider when choosing an investment professional."
+    "intro": "Form CRS summarizes our services, fees, conflicts of interest and other information to consider when choosing an investment professional.",
+    "documentLink": "Open Form CRS"
   }
 }

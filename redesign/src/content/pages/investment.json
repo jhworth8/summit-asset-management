@@ -72,14 +72,17 @@
   "vehicles": [
     {
       "name": "Mutual funds",
+      "description": "A mutual fund pools money from many investors to buy a portfolio of stocks, bonds or other securities chosen by a professional manager. Shares are bought and sold at the fund’s net asset value, which is set once at the end of each trading day.",
       "items": []
     },
     {
       "name": "Exchange traded funds",
+      "description": "An exchange traded fund (ETF) also holds a portfolio of securities, often designed to track a market index. Unlike a mutual fund, its shares trade on a stock exchange throughout the day at market prices, like individual stocks.",
       "items": []
     },
     {
       "name": "Individual securities",
+      "description": "",
       "items": [
         "Stocks",
         "Bonds",
@@ -88,6 +91,7 @@
     },
     {
       "name": "Alternatives",
+      "description": "",
       "items": [
         "Hedge funds of funds",
         "Private partnerships",
@@ -95,7 +99,7 @@
       ]
     }
   ],
-  "vehiclesNote": "Where appropriate, we may also use alternative investments. Some alternative investments are available only to clients who meet SEC eligibility requirements.",
+  "vehiclesNote": "",
   "commitments": [
     {
       "title": "Fee-only",

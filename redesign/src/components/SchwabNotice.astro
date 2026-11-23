@@ -1,0 +1,170 @@
+---
+// The notice shown before a visitor leaves for Schwab's website. It appears
+// as a pop-up on the Client Access page, and as its own page when the link
+// is opened in a new tab or without JavaScript, so nobody skips it.
+interface Props {
+  notice: {
+    heading: string;
+    intro: string;
+    body: string;
+    backLabel: string;
+    continueLabel: string;
+  };
+  url: string;
+  // 'dialog': inside the pop-up (heading included, Go Back closes it).
+  // 'page': on the stand-alone page (the page header shows the heading).
+  mode: 'dialog' | 'page';
+  backHref?: string;
+}
+
+const { notice, url, mode, backHref = '' } = Astro.props;
+---
+
+<div class:list={['exit-notice', `is-${mode}`]}>
+  {mode === 'dialog' && (
+    <>
+      <h2 id="schwab-notice-heading" tabindex="-1" autofocus>{notice.heading}</h2>
+      <p class="exit-intro">{notice.intro}</p>
+    </>
+  )}
+  <p class="exit-terms">{notice.body}</p>
+  <div class="exit-actions">
+    {mode === 'dialog' ? (
+      <button type="button" class="exit-back" data-exit-back>{notice.backLabel}</button>
+    ) : (
+      <a href={backHref} class="exit-back">{notice.backLabel}</a>
+    )}
+    <a
+      href={url}
+      class="exit-continue"
+      data-exit-continue
+      rel="noopener noreferrer"
+      target={mode === 'dialog' ? '_blank' : undefined}
+    >
+      {notice.continueLabel} <span aria-hidden="true">↗</span>
+      {mode === 'dialog' && <span class="visually-hidden">(opens Schwab’s website in a new tab)</span>}
+    </a>
+  </div>
+</div>
+
+<style>
+  .exit-notice {
+    color: var(--color-ink-2);
+  }
+
+  .exit-notice.is-dialog {
+    padding: 2rem 1.5rem 0;
+  }
+
+  .exit-notice h2:focus {
+    outline: none;
+  }
+
+  /* In the pop-up the two buttons stay in view while the text scrolls. */
+  .is-dialog .exit-actions {
+    position: sticky;
+    bottom: 0;
+    margin-top: 1.25rem;
+    padding: 1rem 0 1.5rem;
+    border-top: 1px solid var(--color-rule);
+    background: white;
+  }
+
+  .exit-notice h2 {
+    margin: 0;
+    color: var(--color-board);
+    font-size: clamp(1.7rem, 4vw, 2.2rem);
+    line-height: 1.1;
+  }
+
+  .exit-intro {
+    margin: 1rem 0 0;
+    color: var(--color-board);
+    font-size: 1.05rem;
+    line-height: 1.55;
+  }
+
+  .exit-terms {
+    margin: 1.1rem 0 0;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--color-rule);
+    font-size: 0.92rem;
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  .is-page .exit-terms {
+    max-width: 48rem;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+    font-size: 1rem;
+  }
+
+  .exit-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .exit-back,
+  .exit-continue {
+    display: inline-flex;
+    flex: 1 1 10rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 2.9rem;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid var(--color-board);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .exit-back {
+    background: white;
+    color: var(--color-board);
+  }
+
+  .exit-back:hover {
+    background: var(--color-paper-2);
+  }
+
+  .exit-continue {
+    border-color: var(--color-crimson);
+    background: var(--color-crimson);
+    color: white;
+  }
+
+  .exit-continue:hover {
+    border-color: var(--color-crimson-deep);
+    background: var(--color-crimson-deep);
+  }
+
+  .exit-back:focus-visible,
+  .exit-continue:focus-visible {
+    outline: 3px solid var(--color-crimson-light);
+    outline-offset: 2px;
+  }
+
+  @media (min-width: 40rem) {
+    .exit-notice.is-dialog {
+      padding: 2.5rem 2.5rem 0;
+    }
+
+    .is-dialog .exit-actions {
+      padding-bottom: 2rem;
+    }
+
+    .exit-back,
+    .exit-continue {
+      flex: 0 0 auto;
+      min-width: 9rem;
+    }
+  }
+</style>

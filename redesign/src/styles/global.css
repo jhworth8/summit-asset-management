@@ -18,6 +18,14 @@
 
 @font-face {
   font-family: 'Karla';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400;
+  src: url('/fonts/karla-latin-400-italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Karla';
   font-style: normal;
   font-display: optional;
   font-weight: 700;
@@ -55,6 +63,9 @@
     background: var(--color-paper);
     color: var(--color-ink);
     font-family: var(--font-sans);
+    /* EB Garamond defaults to old-style figures, which sit lower and smaller
+       than capitals ("Form ADV Part 2"). Use full-height figures everywhere. */
+    font-variant-numeric: lining-nums;
     -webkit-font-smoothing: antialiased;
   }
 
