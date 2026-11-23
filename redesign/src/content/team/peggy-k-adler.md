@@ -1,7 +1,7 @@
 ---
 name: Peggy K. Adler
 credentials: MBA
-title: Principal, Senior Vice President
+title: "Chief Administrative Officer, Principal, Senior Vice President"
 shortRole: Principal
 group: principals
 order: 4
