@@ -63,6 +63,7 @@ const subnav = [
         <span>Call our office</span>
         <strong>{firm.phone}</strong>
       </a>
+      <a href={`mailto:${firm.email}`} class="email-link">{firm.email}</a>
       <a href={p('/services/investment-management')} class="sibling-link">Explore investment management →</a>
     </div>
   </div>
@@ -258,6 +259,20 @@ const subnav = [
       color: #ffffff;
       font-family: var(--font-serif);
       letter-spacing: 0.03em;
+    }
+
+    .email-link {
+      margin-top: -0.75rem;
+      color: #ffffff;
+      font-size: 0.95rem;
+      overflow-wrap: anywhere;
+      text-decoration: underline;
+      text-decoration-color: rgba(255, 255, 255, 0.4);
+      text-underline-offset: 0.25em;
+    }
+
+    .email-link:hover {
+      text-decoration-color: #ffffff;
     }
 
     .sibling-link {
