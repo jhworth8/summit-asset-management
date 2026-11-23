@@ -1,7 +1,7 @@
 ---
 name: Soleil Lum
 credentials: CFP®
-title: Associate
+title: "Executive Administrator"
 shortRole: Associate
 group: associates
 order: 7
