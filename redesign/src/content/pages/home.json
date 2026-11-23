@@ -134,16 +134,16 @@
     "imageCaption": "Collective knowledge, with a primary advisor for each client.",
     "points": [
       {
-        "title": "Fee-only",
-        "body": "We are only compensated by a fee based on the amount of investments managed. We do not charge transaction fees, sales commissions, or loads."
-      },
-      {
         "title": "Employee-owned",
         "body": "Summit is 100% employee owned. There’s no pressure from outside owners that might conflict with clients’ interests."
       },
       {
         "title": "Team-based",
         "body": "Each client has a primary relationship with an advisor and the benefit of our collective knowledge."
+      },
+      {
+        "title": "Fee-only",
+        "body": "We are only compensated by a fee based on the amount of investments managed. We do not charge transaction fees, sales commissions, or loads."
       }
     ],
     "links": [
