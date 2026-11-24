@@ -24,7 +24,7 @@
       "name": "Concrete",
       "lead": "We help clients move from concept to concrete action with their financial plans.",
       "points": [
-        "We work to identify items that require attention, suggest solutions, and monitor results."
+        "We work to identify situations that require attention, suggest solutions, and monitor results to provide clarity and coherence."
       ]
     },
     {
@@ -45,15 +45,15 @@
     }
   ],
   "areasKicker": "Planning areas",
-  "areasHeading": "Typical planning areas include:",
+  "areasHeading": "We help clients make smarter financial decisions including...",
   "areas": [
-    "Retirement",
-    "Tax issues",
-    "Insurance",
-    "Education",
-    "Estate and trust",
-    "Charitable giving",
-    "Family partnerships and business succession"
+    "Navigate job changes",
+    "Buy new homes",
+    "Evaluate life insurance",
+    "Plan for retirement",
+    "Move to retirement community or not?",
+    "Review estate plans and trusts",
+    "Decide on charitable gifts"
   ],
   "ctaKicker": "Next steps",
   "ctaHeading": "Bring the pieces together.",
