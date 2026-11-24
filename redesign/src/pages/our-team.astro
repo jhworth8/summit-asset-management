@@ -22,7 +22,7 @@ const filters = [
   <div class="team-filters" role="group" aria-label="Filter team by role" data-team-filters>
     {filters.map(([value, label], index) => (
       <button type="button" data-team-filter={value} aria-pressed={index === 0 ? 'true' : 'false'}>
-        {label}<span>{value === 'all' ? team.length : team.filter((person) => person.group === value).length}</span>
+        {label}
       </button>
     ))}
   </div>

@@ -1,20 +1,79 @@
 ---
 import Page from '../layouts/Page.astro';
+import SchwabNotice from '../components/SchwabNotice.astro';
 import content from '../content/pages/client-access.json';
+import { p } from '../utils/paths';
+
+// The Schwab button leads to the "Important Notice" first: a pop-up here, or
+// the stand-alone notice page if opened in a new tab or without JavaScript.
+const blocks = [
+  { ...content.portal, href: content.portal.url, exitNotice: false },
+  { ...content.schwab, href: p('/client-access/schwab'), exitNotice: true },
+];
 ---
 <Page title={content.seoTitle} description={content.seoDescription} section="Client Access" heading={content.heading} intro={content.intro}>
   <div class="access-grid">
-    {[content.portal, content.schwab].map((block) => (
+    {blocks.map((block) => (
       <section>
         <p>{block.kicker}</p>
         <h2>{block.heading}</h2>
         {block.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
-        <a href={block.url} target="_blank" rel="noopener noreferrer">{block.linkLabel} <span aria-hidden="true">↗</span><span class="visually-hidden">(opens in a new tab)</span></a>
+        {block.exitNotice ? (
+          <a href={block.href} data-schwab-exit aria-haspopup="dialog">{block.linkLabel} <span aria-hidden="true">↗</span></a>
+        ) : (
+          <a href={block.href} target="_blank" rel="noopener noreferrer">{block.linkLabel} <span aria-hidden="true">↗</span><span class="visually-hidden">(opens in a new tab)</span></a>
+        )}
       </section>
     ))}
   </div>
-  <p class="custodian-disclaimer">{content.disclaimer}</p>
+  <div class="custodian-disclaimer">
+    <p>{content.disclaimer}</p>
+  </div>
+
+  <dialog id="schwab-notice" class="exit-dialog" aria-labelledby="schwab-notice-heading">
+    <SchwabNotice notice={content.schwabNotice} url={content.schwab.url} mode="dialog" />
+  </dialog>
+
+  <script>
+    const setupSchwabNotice = () => {
+      const dialog = document.querySelector<HTMLDialogElement>('#schwab-notice');
+      if (!dialog || dialog.dataset.ready === 'true' || typeof dialog.showModal !== 'function') return;
+      dialog.dataset.ready = 'true';
+
+      document.querySelectorAll<HTMLAnchorElement>('[data-schwab-exit]').forEach((link) => {
+        link.addEventListener('click', (event) => {
+          // A new-tab click (Ctrl/Cmd/Shift or middle click) opens the
+          // stand-alone notice page instead, which says the same thing.
+          if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+          event.preventDefault();
+          dialog.showModal();
+          dialog.scrollTop = 0;
+        });
+      });
+
+      dialog.querySelector('[data-exit-back]')?.addEventListener('click', () => dialog.close());
+      // Continue opens Schwab in a new tab; close the notice behind it.
+      dialog.querySelector('[data-exit-continue]')?.addEventListener('click', () => dialog.close());
+      // A click on the dimmed area around the notice counts as Go Back.
+      dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) dialog.close();
+      });
+    };
+    setupSchwabNotice();
+    document.addEventListener('astro:page-load', setupSchwabNotice);
+  </script>
+
   <style>
-    .access-grid{display:grid;border-block:1px solid var(--color-ink)}.access-grid section{padding:1.5rem 0;border-bottom:1px solid var(--color-rule)}.access-grid section:last-child{border-bottom:0}.access-grid section>p:first-child{margin:0;color:var(--color-crimson-deep);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.access-grid h2{margin:.6rem 0 0;color:var(--color-board);font-size:1.8rem;line-height:1.08}.access-grid section>p:not(:first-child){margin:.8rem 0 0;color:var(--color-ink-2);line-height:1.58}.access-grid section>p:last-of-type{margin-bottom:1rem}.access-grid a{display:inline-block;margin-top:.5rem;padding:.8rem 1.1rem;background:var(--color-crimson);color:white;font-size:.85rem;font-weight:700}.access-grid a:hover{background:var(--color-crimson-deep)}.custodian-disclaimer{max-width:56rem;margin-top:2rem;color:var(--color-ink-3);font-size:.78rem;line-height:1.6}@media(min-width:60rem){.access-grid{grid-template-columns:repeat(2,1fr)}.access-grid section{padding:2rem;border-right:1px solid var(--color-rule);border-bottom:0}.access-grid section:first-child{padding-left:0}.access-grid section:last-child{padding-right:0;border-right:0}}
+    .access-grid{display:grid;border-block:1px solid var(--color-ink)}.access-grid section{padding:1.5rem 0;border-bottom:1px solid var(--color-rule)}.access-grid section:last-child{border-bottom:0}.access-grid section>p:first-child{margin:0;color:var(--color-crimson-deep);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.access-grid h2{margin:.6rem 0 0;color:var(--color-board);font-size:1.8rem;line-height:1.08}.access-grid section>p:not(:first-child){margin:.8rem 0 0;color:var(--color-ink-2);line-height:1.58}.access-grid section>p:last-of-type{margin-bottom:1rem}.access-grid a{display:inline-block;margin-top:.5rem;padding:.8rem 1.1rem;background:var(--color-crimson);color:white;font-size:.85rem;font-weight:700}.access-grid a:hover{background:var(--color-crimson-deep)}@media(min-width:60rem){.access-grid{grid-template-columns:repeat(2,1fr)}.access-grid section{padding:2rem;border-right:1px solid var(--color-rule);border-bottom:0}.access-grid section:first-child{padding-left:0}.access-grid section:last-child{padding-right:0;border-right:0}}
+
+    /* Schwab requires this disclosure to be no less prominent than the body
+       text: same size, colour and style as the paragraphs above, and set
+       apart from any other disclosure language. */
+    .custodian-disclaimer{max-width:56rem;margin-top:2.5rem;padding-top:1.75rem;border-top:1px solid var(--color-rule)}
+    .custodian-disclaimer p{margin:0;color:var(--color-ink-2);line-height:1.58}
+
+    .exit-dialog{width:min(100% - 2rem,40rem);max-height:calc(100dvh - 2rem);margin:auto;padding:0;overflow-y:auto;border:0;border-top:5px solid var(--color-crimson);background:white;box-shadow:0 24px 64px rgba(23,47,64,.28);overscroll-behavior:contain}
+    .exit-dialog::backdrop{background:rgba(23,47,64,.6)}
+    :global(html:has(.exit-dialog[open])){overflow:hidden}
   </style>
 </Page>

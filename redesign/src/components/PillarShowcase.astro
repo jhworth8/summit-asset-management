@@ -346,16 +346,21 @@ const total = String(pillars.length).padStart(2, '0');
     margin-bottom: 2rem;
   }
 
+  /* On phones five tabs don't fit in one row; scrolling them sideways cut
+     words off ("Knowledg", "Experienc") and hid the fifth tab. Let them wrap
+     onto two full-width rows so every word shows. */
   @media (max-width: 47.99rem) {
     .pillar-tabs {
-      grid-template-columns: repeat(5, minmax(5.4rem, 1fr));
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
+      display: flex;
+      flex-wrap: wrap;
     }
-    .pillar-tabs::-webkit-scrollbar {
-      display: none;
+    .pillar-tab {
+      flex: 1 1 auto;
     }
+  }
+
+  .tab-label {
+    white-space: nowrap;
   }
 
   .pillar-tab {

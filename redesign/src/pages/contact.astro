@@ -7,7 +7,7 @@ import { firm } from '../data/site';
   <div class="contact-grid">
     <section><p>Telephone</p><a href={firm.phoneHref}>{firm.phone}</a><span>Fax {firm.fax}</span></section>
     <section><p>Email</p><a href={`mailto:${firm.email}`}>{firm.email}</a><span>{content.emailNote}</span></section>
-    <section><p>Office</p><address>{firm.building}<br />{firm.street}<br />{firm.city}, {firm.state} {firm.zip}</address><a class="map-link" href={firm.mapUrl} target="_blank" rel="noopener noreferrer">Open directions in Google Maps →</a></section>
+    <section><p>Office</p><address>{firm.legalName}<br />{firm.street}<br />{firm.city}, {firm.state} {firm.zip}</address><a class="map-link" href={firm.mapUrl} target="_blank" rel="noopener noreferrer">Open directions in Google Maps →</a></section>
   </div>
   <aside class="contact-note"><h2>{content.directionsHeading}</h2><p>{content.directions}</p></aside>
   <style>
