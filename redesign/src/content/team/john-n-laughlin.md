@@ -5,7 +5,7 @@ title: Chief Executive Officer, Principal, Advisor
 shortRole: Principal, Advisor
 group: principals
 order: 3
-email: john@summitassetmanagement.com
+advisorOrder: 2
 photo: /img/John_180x220-thumb180x220.jpg
 editorialPhoto: /img/John_casual.jpg
 ---

@@ -5,7 +5,6 @@ title: "Chief Administrative Officer, Principal, Senior Vice President"
 shortRole: Principal
 group: principals
 order: 4
-email: peggy@summitassetmanagement.com
 photo: /img/peggy-thumb180x220.jpg
 editorialPhoto: /img/Summit_MG_8997.jpg
 ---

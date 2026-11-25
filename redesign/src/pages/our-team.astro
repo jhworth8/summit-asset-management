@@ -4,13 +4,18 @@ import content from '../content/pages/team.json';
 import { getTeam } from '../data/site';
 
 const team = await getTeam();
+// Who appears under each filter. Advisors also takes anyone with an
+// "Order under Advisors" (the chairman and principals who advise clients),
+// shown in that order.
+const groupsOf = (person: (typeof team)[number]) =>
+  [person.group, person.advisorOrder != null ? 'advisors' : ''].filter(Boolean);
 const filters = [
   ['all', 'All'],
   ['chairman', 'Chairman'],
   ['principals', 'Principals'],
   ['advisors', 'Advisors'],
   ['associates', 'Associates'],
-].filter(([value]) => value === 'all' || team.some((person) => person.group === value));
+].filter(([value]) => value === 'all' || team.some((person) => groupsOf(person).includes(value)));
 ---
 
 <Page title={content.seoTitle} description={content.seoDescription} section="Our Team" heading={content.heading} intro={content.intro}>
@@ -29,7 +34,7 @@ const filters = [
 
   <ul class="team-grid" data-team-grid>
     {team.map((person) => (
-      <li data-team-member data-team-group={person.group}>
+      <li data-team-member data-team-groups={groupsOf(person).join(' ')} data-advisor-order={person.advisorOrder ?? ''}>
         <a href={person.href}>
           <img src={person.photo} alt={person.name} width="600" height="720" loading="lazy" />
           <h2>{person.name}{person.credentials && <small>, {person.credentials}</small>}</h2>
@@ -52,7 +57,10 @@ const filters = [
         const applyFilter = (filter: string) => {
           buttons.forEach((item) => item.setAttribute('aria-pressed', String((item.dataset.teamFilter || 'all') === filter)));
           members.forEach((member) => {
-            member.hidden = filter !== 'all' && member.dataset.teamGroup !== filter;
+            const groups = (member.dataset.teamGroups || '').split(' ');
+            member.hidden = filter !== 'all' && !groups.includes(filter);
+            // Under Advisors, list them in their advisor order.
+            member.style.order = filter === 'advisors' ? member.dataset.advisorOrder || '99' : '';
           });
         };
 

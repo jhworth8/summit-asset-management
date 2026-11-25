@@ -26,7 +26,7 @@ const headshotOnly = !profile.editorialPhoto;
   compact
 >
   <article class="profile-layout">
-    {/* Left Column: Role Details, Email Action & Team Directory Navigation */}
+    {/* Left Column: Role Details & Team Directory Navigation */}
     <aside class="profile-sidebar">
       <div class="sidebar-card">
         <dl class="meta-list">
@@ -43,10 +43,6 @@ const headshotOnly = !profile.editorialPhoto;
             )
           }
         </dl>
-
-        <a class="email-button" href={`mailto:${profile.email}`}>
-          Email {profile.name.split(' ')[0]} <span aria-hidden="true">→</span>
-        </a>
       </div>
 
       <nav class="team-subnav" aria-label="Team directory">
@@ -175,26 +171,6 @@ const headshotOnly = !profile.editorialPhoto;
       font-size: 0.94rem;
       font-weight: 600;
       line-height: 1.35;
-    }
-
-    .email-button {
-      display: block;
-      margin-top: 1.25rem;
-      padding: 0.85rem 1rem;
-      background: var(--color-crimson);
-      color: white;
-      font-family: var(--font-sans);
-      font-size: 0.82rem;
-      font-weight: 700;
-      text-align: center;
-      text-decoration: none;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      transition: background 0.2s ease, transform 0.15s ease;
-    }
-
-    .email-button:hover {
-      background: var(--color-crimson-deep);
     }
 
     /* Team Subnavigation */

@@ -7,7 +7,7 @@
   "imageAlt": "Clasped hands resting on a conference table",
   "leadKicker": "Our approach",
   "leadHeading": "Unbiased advice and helpful direction.",
-  "leadEmphasis": "Whether it is a decision to sell a business or a question about how much is enough insurance, our advisors and professionals provide unbiased advice and helpful direction.",
+  "leadEmphasis": "Whether it is a decision about planning for retirement or a question about transferring generational wealth, our advisors and professionals provide unbiased advice and helpful direction.",
   "leadBody": "We are able to suggest specific solutions as we analyze and organize our clients’ financial information. We also work together with clients’ tax and legal counsel to integrate all of the pieces into a clear plan. This enables us to be an effective long-term financial partner for families, businesses, and non-profits.",
   "processKicker": "Our financial planning process",
   "processHeading": "Comprehensive, concrete, coordinated and connected.",
@@ -24,7 +24,7 @@
       "name": "Concrete",
       "lead": "We help clients move from concept to concrete action with their financial plans.",
       "points": [
-        "We work to identify items that require attention, suggest solutions, and monitor results."
+        "We work to identify situations that require attention, suggest solutions, and monitor results to provide clarity and coherence."
       ]
     },
     {
@@ -39,21 +39,26 @@
       "name": "Connected",
       "lead": "We provide long-term continuity for spouses, beneficiaries, and future generations of families.",
       "points": [
-        "We also help with the management of trusts, custodial accounts, business retirement plans, and non-profit boards when fiduciaries change over time.",
+        "We also help with the management of trusts, estate accounts, custodial accounts, business retirement plans, and non-profit boards when fiduciaries change over time.",
         "We become a repository of history and knowledge specific to the client that can be transitioned to successors."
       ]
     }
   ],
   "areasKicker": "Planning areas",
-  "areasHeading": "Typical planning areas include:",
+  "areasHeading": "We help clients make smarter financial decisions including...",
   "areas": [
-    "Retirement",
-    "Tax issues",
-    "Insurance",
-    "Education",
-    "Estate and trust",
-    "Charitable giving",
-    "Family partnerships and business succession"
+    "Navigate job changes",
+    "Buy new homes",
+    "Evaluate life insurance",
+    "Plan for retirement",
+    "Move to retirement community or not?",
+    "Review estate plans and trusts",
+    "Decide on charitable gifts",
+    "Connect to other financial resources",
+    "Provide continuity when spouse dies",
+    "Plan for funding college",
+    "Consolidate and streamline financial matters",
+    "And more"
   ],
   "ctaKicker": "Next steps",
   "ctaHeading": "Bring the pieces together.",
