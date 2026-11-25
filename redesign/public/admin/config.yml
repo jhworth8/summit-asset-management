@@ -70,6 +70,7 @@ collections:
         media_folder: /redesign/public/letters
         public_folder: /letters
         hint: Upload the letter as a PDF.
+      - { name: hidden, label: Hide from the website, widget: boolean, default: false, required: false, hint: 'Hidden letters are kept but not listed on Views & News or the homepage.' }
 
   # --------------------------------------------------------------------- Team
   - name: team
@@ -113,7 +114,7 @@ collections:
           - { label: Associates, value: associates }
         hint: Used for the filters on the Our Team page and in the web address.
       - { name: order, label: Order, widget: number, value_type: int, min: 1 }
-      - { name: email, label: Email, widget: string }
+      - { name: advisorOrder, label: Order under Advisors (leave empty if not an advisor), widget: number, value_type: int, required: false, hint: 'The Advisors button on Our Team lists everyone with a number here, lowest first.' }
       - name: photo
         label: Portrait (180 × 220)
         widget: image

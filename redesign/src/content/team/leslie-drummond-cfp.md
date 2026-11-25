@@ -5,7 +5,7 @@ title: Financial Advisor
 shortRole: Advisor
 group: advisors
 order: 6
-email: leslie@summitassetmanagement.com
+advisorOrder: 5
 photo: /img/Leslie_180x220-thumb180x220.jpg
 editorialPhoto: /img/Leslie_casual.jpg
 ---

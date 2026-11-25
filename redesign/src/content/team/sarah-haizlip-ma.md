@@ -5,7 +5,7 @@ title: Senior Vice President of Client Service, Financial Advisor
 shortRole: Advisor
 group: advisors
 order: 5
-email: sarah@summitassetmanagement.com
+advisorOrder: 4
 photo: /img/Sarah-thumb180x220.jpg
 editorialPhoto: /img/Summit_MG_8530.jpg
 ---

@@ -15,7 +15,9 @@ export const firm = {
 };
 
 export const documents = Object.fromEntries(
-  Object.entries(siteContent.documents).map(([key, doc]) => [key, { ...doc, href: p(doc.file) }]),
+  // "#navpanes=0" asks the PDF viewer (Edge, Acrobat) to open without its
+  // bookmarks / table of contents panel. Viewers that don't support it ignore it.
+  Object.entries(siteContent.documents).map(([key, doc]) => [key, { ...doc, href: `${p(doc.file)}#navpanes=0` }]),
 ) as Record<keyof typeof siteContent.documents, { title: string; date: string; file: string; href: string }>;
 
 export const nav = [
@@ -66,7 +68,7 @@ export async function getTeam(): Promise<TeamMember[]> {
 const monthYear = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
 
 export async function getLetters() {
-  const entries = await getCollection('letters');
+  const entries = await getCollection('letters', ({ data }) => !data.hidden);
   return entries
     .map(({ data }) => {
       // A letter whose PDF is missing would publish a dead link; stop the

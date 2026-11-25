@@ -5,7 +5,7 @@ title: Chief Investment Officer, Principal, Advisor
 shortRole: Principal, Advisor
 group: principals
 order: 2
-email: lance@summitassetmanagement.com
+advisorOrder: 3
 photo: /img/Lance_180x220-thumb180x220.jpg
 editorialPhoto: /img/Summit_MG_8619.jpg
 ---
