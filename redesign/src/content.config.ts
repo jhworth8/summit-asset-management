@@ -16,7 +16,10 @@ const team = defineCollection({
     shortRole: z.string(),
     group: z.enum(['chairman', 'principals', 'advisors', 'associates']),
     order: z.number(),
-    email: z.string().email(),
+    // Position under the Advisors filter on Our Team. Leave empty for
+    // people who are not advisors. Advisors in other groups (chairman,
+    // principals) are listed there too, in this order.
+    advisorOrder: z.number().nullish(),
     photo: z.string(),
     editorialPhoto: optionalText,
     hidden: z.boolean().nullish().transform((value) => value ?? false),
@@ -30,6 +33,8 @@ const letters = defineCollection({
     date: z.coerce.date(),
     kind: z.string().nullish().transform((value) => value || 'Quarterly commentary letter'),
     file: z.string(),
+    // Hidden letters stay in the project but are not listed on the site.
+    hidden: z.boolean().nullish().transform((value) => value ?? false),
   }),
 });
 

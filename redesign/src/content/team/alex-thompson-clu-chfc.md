@@ -5,7 +5,7 @@ title: Chairman, Advisor
 shortRole: Chairman, Advisor
 group: chairman
 order: 1
-email: alex@summitassetmanagement.com
+advisorOrder: 1
 photo: /img/alex_revised_hair-thumb180x220.jpg
 editorialPhoto: /img/Summit_MG_8130.jpg
 ---

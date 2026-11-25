@@ -5,7 +5,6 @@ title: "Executive Administrator"
 shortRole: Associate
 group: associates
 order: 7
-email: soleil@summitassetmanagement.com
 photo: /img/Soleil_8_X_10_updated-thumb180x220.jpg
 editorialPhoto: /img/Soleil_with_painting.jpg
 ---
